@@ -1,0 +1,25 @@
+{
+  "sources": [
+    {
+      "name": "KKTIX",
+      "last_success": "2026-09-15T06:23:56.773Z",
+      "last_error": null,
+      "last_count": 20,
+      "status": "ok"
+    },
+    {
+      "name": "拓元",
+      "last_success": "2026-09-15T06:23:57.675Z",
+      "last_error": null,
+      "last_count": 75,
+      "status": "ok"
+    },
+    {
+      "name": "manual",
+      "last_success": "2026-09-15T06:23:57.676Z",
+      "last_error": null,
+      "last_count": 0,
+      "status": "ok"
+    }
+  ]
+}

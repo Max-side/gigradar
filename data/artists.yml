@@ -1,0 +1,14 @@
+# Artist alias table (SPEC §3.2). Maintained by hand — this is what FR-16/US-16
+# "assign unrecognized artist" writes into. Accuracy here beats AI guessing (D15).
+#
+# canonical: the name shown in the UI and used as the key for exclude rules.
+# aliases: alternate spellings/romanizations seen in scraped titles.
+# tags_origin_default: pre-fills 來源地 tag when a new event by this artist is normalized.
+
+- canonical: 深海系樂團
+  aliases: ["深海系", "Deep Sea Band"]
+  tags_origin_default: 本地
+
+- canonical: ABC Band
+  aliases: ["A.B.C. Band", "ABC樂團"]
+  tags_origin_default: 歐美

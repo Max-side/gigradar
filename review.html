@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>待整理 · GigRadar</title>
+<link rel="stylesheet" href="./styles/main.css" />
+</head>
+<body>
+<div class="app app--no-nav" id="app">
+
+  <div class="page-header--with-back">
+    <a class="back-btn" href="./settings.html" aria-label="返回">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg>
+    </a>
+    <div class="page-title page-title--sm">待整理</div>
+  </div>
+
+  <div class="section" style="padding:8px 18px;">
+    <div class="section-title">未識別藝人／日期（1）</div>
+  </div>
+
+  <!-- M1 骨架階段：寫死假資料；M8 起讀 data/needs-review.json -->
+  <div style="display:flex;flex-direction:column;gap:10px;padding:0 18px 6px;" id="review-artists">
+    <div class="card">
+      <div style="font-size:12px;color:var(--muted);font-family:ui-monospace,monospace;background:var(--surface-2);border-radius:10px;padding:9px 11px;">
+        原始標題：「幻聽 Live House Tour 2026 - Kaohsiung」
+      </div>
+      <div style="font-size:11px;color:var(--muted);">來源：拓元　問題：無法辨識藝人「幻聽」是否已建檔</div>
+      <div style="display:flex;gap:8px;">
+        <button class="btn-dark" style="flex:1;padding:9px;font-size:12px;">指派藝人</button>
+        <button class="btn-ghost" style="flex:1;padding:9px;font-size:12px;">忽略</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="section" style="padding:14px 18px 8px;">
+    <div class="section-title">追蹤名單候選場次 · AI 週巡檢（0）</div>
+  </div>
+  <div style="padding:0 18px 18px;font-size:12px;color:var(--muted);" id="review-candidates">
+    目前沒有候選場次（Phase 2 功能，尚未啟用追蹤名單巡檢）。
+  </div>
+
+</div>
+<script type="module" src="./src/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,28 @@
+# Venue -> city lookup (SPEC §5.3), for sources whose listing page gives a
+# venue name but no address (tixcraft). Matched by substring against the raw
+# venue text, first entry in this list that matches wins — so put specific
+# names (e.g. "Legacy Taichung") ABOVE more generic ones they contain (e.g.
+# "Legacy"), or the generic one will shadow it. Maintained by hand, same
+# spirit as artists.yml — an unmatched venue just gets city: null and can be
+# added here once you notice it in needs-review.
+
+- match: "高雄國家體育場"
+  city: 高雄
+- match: "Zepp New Taipei"
+  city: 新北
+- match: "台北大巨蛋"
+  city: 台北
+- match: "臺北大巨蛋"
+  city: 台北
+- match: "高雄巨蛋"
+  city: 高雄
+- match: "Legacy Taichung"
+  city: 台中
+- match: "Legacy Taipei"
+  city: 台北
+- match: "Legacy"
+  city: 台北
+- match: "台北小巨蛋"
+  city: 台北
+- match: "流行音樂中心"
+  city: 高雄

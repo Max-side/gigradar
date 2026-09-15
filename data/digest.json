@@ -1,0 +1,6 @@
+{
+  "_comment": "Written by scripts/diff.mjs each run (M6+) by comparing this run's events.json against the previous commit's. new.html reads this to show 新上架.",
+  "generated_at": null,
+  "added_ids": [],
+  "updated": []
+}
