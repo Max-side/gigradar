@@ -181,6 +181,7 @@ id      = sha1( normalize(headliner) + "|" + date + "|" + venue_normalized )
 - 步驟 4 的「上次 > 0」比較，用的是 `sources.json` 裡的 `last_count`，而且**只有真的成功抓到 >0 筆時才會更新這個值**——連續好幾天都抓到 0 筆，`last_count` 會一直停在最後一次成功的數字，讓每一天都持續判定為異常並持續告警，不會因為「今天 0 筆、昨天也記成 0 筆」而自己看起來恢復正常。
 - `notify.mjs` 開 issue 前會先查有沒有同標題、帶 `source-anomaly` label 的 open issue，避免同一個來源連續故障時每天洗一個新 issue（呼應 SRS 的「每週維護時間 < 15 分鐘」）。
 - 步驟 3「該來源本次沿用 events.json 中屬於它的舊資料」**還沒做**——目前失敗的來源這次直接貢獻 0 筆給 dedupe，不會用舊資料補位。這是因為合併後的 `events.json` 裡一筆事件的 `sources[]` 可能來自好幾個來源，要抽出「單純屬於某個來源的舊資料」需要動到合併演算法本身，範圍比 M10 大，先記在這裡，還沒排進哪個里程碑。
+  **M11 實測證實這不只是理論風險**：2026-09-16 從 GitHub Actions 手動觸發一次真的執行，拓元回 403、KKTIX 的搜尋策略也全部 403（GH Actions 的 IP 疑似被這兩個網站的反爬蟲當成機房 IP 擋掉，本機測試因為是家用/公司 IP 所以一直正常），因為沒有這個 fallback，直接把 `needs-review.json` 的 79 筆真實資料洗成 4 筆並自動 commit 上去，已用 `git revert` 復原，`daily-update.yml` 的排程也先關掉。細節與後續選項見 `HANDOFF.md`「M11 的重大發現」。
 
 ### 4.3 爬取禮儀（NFR-04）
 
