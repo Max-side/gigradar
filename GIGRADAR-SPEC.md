@@ -355,6 +355,13 @@ export function resolveVisibility(event, prefs, viewFilters) {
   4. Gist 連不上（離線／token 失效）→ 直接用本機版本繼續運作，畫面顯示同步失敗提示，**不清空**本機資料（AC-65 負向測試）。
 - 每次使用者操作（收藏/排除/設定變更）→ debounce 2 秒後寫回 Gist，避免每次點擊都打 API。
 
+**實作備註（M9，2026-09-16）**：
+- 單一 gist 檔案 `gigradar-sync.json`，內容是 `{ prefs, manual_events }`——手動新增場次（US-17）不屬於 UserPrefs schema，但搭同一個檔案一起同步，否則跨裝置看不到彼此手動加的場次。改動 manual_events 時會連帶 bump `prefs.updated_at`，讓另一台裝置的 last-write-wins 比較能偵測到這個變化並抓下來。
+- 「連接」時如果本機還沒有 `gist_id`，會先用同一組 token 打 `GET /gists` 找有沒有 description 等於 `GIST_DESCRIPTION` 常數的既有 gist——這樣同一個 GitHub 帳號在第二台裝置貼上一樣的 PAT 就能自動接上第一台裝置建立的 gist，不需要使用者手動複製 gist id。找不到才 `POST` 建立新的。
+- Token 存在獨立的 `localStorage` key（`gigradar:gist_token`），完全不會出現在 `prefs` 物件裡，所以 FR-63 匯出 JSON 不會外洩 token。
+- `reconcileGistSync()` 在每個會讀 prefs 的頁面（時間表／新上架／收藏／已隱藏管理）載入時都會呼叫一次，讓「在另一台裝置改的設定，開啟這台裝置時自動生效」，不需要使用者手動去設定頁按同步。未連接時是純同步的 early return，不會發任何網路請求。
+- 因為沒有真的 GitHub PAT 可以測試，push/pull 對 GitHub Gist API 的實際串接**沒有跑過真實網路請求驗證**，只驗證了：離線/token 失效時不會清空本機資料（AC-65 負向測試），以及沒連接時完全不會觸發網路請求。真的連上一個帳號的兩台裝置互相同步，還沒有人工測過。
+
 ---
 
 ## 9. 深淺色模式（FR-27）

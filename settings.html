@@ -28,10 +28,15 @@
           <button class="btn-ghost" style="flex:1;padding:9px;font-size:12px;" id="export-btn">匯出 JSON</button>
           <button class="btn-ghost" style="flex:1;padding:9px;font-size:12px;" id="import-btn">匯入 JSON</button>
         </div>
-        <div style="border-top:1px solid var(--border);padding-top:10px;">
-          <label class="field-label" for="gist-token" style="display:block;margin-bottom:6px;">GitHub Personal Access Token（僅 gist 權限）</label>
+        <div style="border-top:1px solid var(--border);padding-top:10px;display:flex;flex-direction:column;gap:8px;">
+          <label class="field-label" for="gist-token" style="display:block;">GitHub Personal Access Token（僅 gist 權限）</label>
           <input class="field-input" type="password" id="gist-token" placeholder="ghp_..." autocomplete="off" />
+          <div style="display:flex;gap:8px;">
+            <button class="btn-dark" style="flex:1;padding:9px;font-size:12px;" id="gist-connect-btn">連接同步</button>
+            <button class="btn-ghost" style="flex:1;padding:9px;font-size:12px;" id="gist-disconnect-btn" hidden>斷開連接</button>
+          </div>
         </div>
+        <input type="file" id="import-file-input" accept="application/json" hidden />
       </div>
     </div>
 

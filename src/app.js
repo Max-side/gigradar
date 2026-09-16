@@ -14,15 +14,20 @@
  * M7: 手動新增場次 (add.html) actually saves to localStorage and shows up
  *   everywhere else — loadEvents() merges in state.js's manual events,
  *   dropping any whose id a real scrape has since produced (AC-17).
- * M8 (current): 待整理頁 (review.html) reads data/needs-review.json for
- *   real. "指派藝人"/"忽略" never write artists.yml themselves (there's no
- *   backend to write to) — they generate a YAML snippet for the user to
- *   paste in by hand and commit, and locally dismiss the item from the queue.
+ * M8: 待整理頁 (review.html) reads data/needs-review.json for real. "指派
+ *   藝人"/"忽略" never write artists.yml themselves (there's no backend to
+ *   write to) — they generate a YAML snippet for the user to paste in by
+ *   hand and commit, and locally dismiss the item from the queue.
+ * M9 (current): Gist 同步 (settings.html) + FR-63/64 匯出/匯入. Every page
+ *   that reads prefs calls reconcileGistSync() before its first render so a
+ *   change made on another device shows up on load, not just after a manual
+ *   settings-page visit.
  */
 
 import { partitionEvents } from "./filter.js";
 import {
   loadPrefs,
+  savePrefs,
   toggleFavorite,
   excludeEvent,
   unexcludeEvent,
@@ -37,6 +42,12 @@ import {
   addManualEvent,
   loadReviewDismissed,
   dismissReviewItem,
+  loadGistToken,
+  connectGistSync,
+  disconnectGistSync,
+  reconcileGistSync,
+  exportPrefsAsJson,
+  importPrefsFromJson,
 } from "./state.js";
 import { renderEventList, renderFavoritesList, renderNewArrivalsList, renderEmptyList } from "./render.js";
 import { splitDate, daysSince } from "./format.js";
@@ -183,6 +194,10 @@ function openMenuFor(event, events, render) {
 async function initTimeline(container) {
   let events;
   try {
+    // Sequential, not Promise.all: loadEvents() reads manual events from
+    // localStorage, and reconcileGistSync() may just have overwritten them —
+    // running them concurrently risks loadEvents() reading the stale copy.
+    await reconcileGistSync();
     events = await loadEvents();
   } catch (err) {
     console.error("Failed to load events.json:", err);
@@ -216,6 +231,7 @@ async function initTimeline(container) {
 async function initNewArrivals(container) {
   let events;
   try {
+    await reconcileGistSync();
     events = await loadEvents();
   } catch (err) {
     console.error("Failed to load events.json:", err);
@@ -254,6 +270,7 @@ async function initNewArrivals(container) {
 async function initFavorites(container) {
   let events;
   try {
+    await reconcileGistSync();
     events = await loadEvents();
   } catch (err) {
     console.error("Failed to load events.json:", err);
@@ -292,6 +309,7 @@ async function initFavorites(container) {
 async function initHiddenManagement(container) {
   let events;
   try {
+    await reconcileGistSync();
     events = await loadEvents();
   } catch (err) {
     console.error("Failed to load events.json:", err);
@@ -448,6 +466,141 @@ async function initReview(container) {
   render();
 }
 
+function formatDateTime(iso) {
+  if (!iso) return null;
+  const d = new Date(iso);
+  const pad = (n) => String(n).padStart(2, "0");
+  return `${d.getFullYear()}/${pad(d.getMonth() + 1)}/${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
+
+/** M9 (FR-65/§8 Gist sync, FR-63/64 backup export/import). settings.html has no single container — this wires individual elements by id instead. */
+function initSettings() {
+  const syncStatus = document.getElementById("sync-status");
+  const syncLast = document.getElementById("sync-last");
+  const backupLast = document.getElementById("backup-last");
+  const tokenInput = document.getElementById("gist-token");
+  const connectBtn = document.getElementById("gist-connect-btn");
+  const disconnectBtn = document.getElementById("gist-disconnect-btn");
+  const exportBtn = document.getElementById("export-btn");
+  const importBtn = document.getElementById("import-btn");
+  const importFileInput = document.getElementById("import-file-input");
+  const strictModeToggle = document.getElementById("strict-mode");
+  const muteKeywordsContainer = document.getElementById("mute-keywords");
+  const muteKeywordInput = document.getElementById("mute-keyword-input");
+
+  function renderSyncStatus() {
+    const prefs = loadPrefs();
+    const connected = !!(prefs.gist_id && loadGistToken());
+    syncStatus.textContent = connected ? "● 已連接" : "○ 未連接";
+    syncLast.textContent = connected ? `上次同步：${formatDateTime(prefs.updated_at) ?? "尚未同步過"}` : "尚未同步過";
+    connectBtn.hidden = connected;
+    disconnectBtn.hidden = !connected;
+    if (connected) tokenInput.value = "";
+    backupLast.textContent = `上次備份日期：${formatDateTime(prefs.last_backup_at) ?? "無"}`;
+  }
+
+  function renderMuteKeywords() {
+    const prefs = loadPrefs();
+    muteKeywordsContainer.innerHTML = prefs.mute_keywords
+      .map(
+        (kw) => `
+      <span class="tag-perf" style="display:inline-flex;align-items:center;gap:5px;">
+        ${escapeHtml(kw)}
+        <button type="button" data-remove-keyword="${escapeHtml(kw)}" style="border:none;background:transparent;color:inherit;cursor:pointer;font-size:11px;line-height:1;padding:0;">✕</button>
+      </span>
+    `
+      )
+      .join("");
+    muteKeywordsContainer.querySelectorAll("[data-remove-keyword]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const prefs = loadPrefs();
+        prefs.mute_keywords = prefs.mute_keywords.filter((kw) => kw !== btn.dataset.removeKeyword);
+        savePrefs(prefs);
+        renderMuteKeywords();
+      });
+    });
+  }
+
+  strictModeToggle.checked = loadPrefs().strict_mode;
+  strictModeToggle.addEventListener("change", () => {
+    const prefs = loadPrefs();
+    prefs.strict_mode = strictModeToggle.checked;
+    savePrefs(prefs);
+  });
+
+  muteKeywordInput.addEventListener("keydown", (ev) => {
+    if (ev.key !== "Enter") return;
+    ev.preventDefault();
+    const kw = muteKeywordInput.value.trim();
+    if (!kw) return;
+    const prefs = loadPrefs();
+    if (!prefs.mute_keywords.includes(kw)) {
+      prefs.mute_keywords = [...prefs.mute_keywords, kw];
+      savePrefs(prefs);
+    }
+    muteKeywordInput.value = "";
+    renderMuteKeywords();
+  });
+
+  connectBtn.addEventListener("click", async () => {
+    const token = tokenInput.value.trim();
+    if (!token) {
+      alert("請先貼上 GitHub Personal Access Token（gist 權限）。");
+      return;
+    }
+    connectBtn.disabled = true;
+    connectBtn.textContent = "連接中…";
+    try {
+      await connectGistSync(token);
+      renderSyncStatus();
+    } catch (err) {
+      console.error("Gist connect failed:", err);
+      alert("連接失敗，請確認 token 是否有效、是否有 gist 權限。");
+    } finally {
+      connectBtn.disabled = false;
+      connectBtn.textContent = "連接同步";
+    }
+  });
+
+  disconnectBtn.addEventListener("click", () => {
+    disconnectGistSync();
+    renderSyncStatus();
+  });
+
+  exportBtn.addEventListener("click", () => {
+    const updated = savePrefs({ ...loadPrefs(), last_backup_at: new Date().toISOString() });
+    const blob = new Blob([exportPrefsAsJson(updated)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `gigradar-backup-${new Date().toISOString().slice(0, 10)}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+    renderSyncStatus();
+  });
+
+  importBtn.addEventListener("click", () => importFileInput.click());
+  importFileInput.addEventListener("change", async () => {
+    const file = importFileInput.files[0];
+    if (!file) return;
+    try {
+      importPrefsFromJson(await file.text());
+      renderSyncStatus();
+      renderMuteKeywords();
+      strictModeToggle.checked = loadPrefs().strict_mode;
+      alert("匯入成功。");
+    } catch (err) {
+      console.error("Failed to import prefs:", err);
+      alert("匯入失敗，請確認檔案格式是否正確。");
+    } finally {
+      importFileInput.value = "";
+    }
+  });
+
+  renderSyncStatus();
+  renderMuteKeywords();
+}
+
 function wireChipGroup(group) {
   group.querySelectorAll(".chip-selectable").forEach((chip) => {
     chip.addEventListener("click", () => {
@@ -553,4 +706,8 @@ if (addForm) {
 const reviewContainer = document.querySelector('[data-page="review"]');
 if (reviewContainer) {
   initReview(reviewContainer);
+}
+
+if (document.getElementById("sync-status")) {
+  initSettings();
 }
