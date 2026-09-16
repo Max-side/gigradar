@@ -9,6 +9,8 @@ import { loadArtists, loadVenues, normalize } from "./normalize.mjs";
 import { dedupe } from "./dedup.mjs";
 import { diff } from "./diff.mjs";
 import { resetProgressLog, logProgress } from "./progress-log.mjs";
+import { notifySourceAnomaly } from "./notify.mjs";
+import { classifySourceRun } from "./source-status.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const DATA_DIR = path.join(__dirname, "..", "data");
@@ -24,6 +26,15 @@ function loadPreviousEvents() {
   }
 }
 
+function loadPreviousSources() {
+  try {
+    const raw = readFileSync(path.join(DATA_DIR, "sources.json"), "utf-8");
+    return JSON.parse(raw).sources ?? [];
+  } catch {
+    return [];
+  }
+}
+
 /**
  * Known gap vs. full SPEC §4.2: on a source failure this does NOT yet fall back
  * to that source's previous events.json entries (AC-11) — it just records the
@@ -34,6 +45,7 @@ async function main() {
   const artistsYml = loadArtists();
   const venuesYml = loadVenues();
   const previousEvents = loadPreviousEvents();
+  const previousSources = loadPreviousSources();
   const sourcesStatus = [];
   const normalizedEvents = [];
   const needsReview = [];
@@ -50,13 +62,17 @@ async function main() {
     }
     logProgress(`=== finished adapter: ${adapter.name}, ${rawEvents.length} raw event(s) ===`);
 
-    sourcesStatus.push({
-      name: adapter.name,
-      last_success: error ? null : new Date().toISOString(),
-      last_error: error,
-      last_count: rawEvents.length,
-      status: error ? "error" : "ok",
-    });
+    const previous = previousSources.find((s) => s.name === adapter.name);
+    const { entry, anomaly } = classifySourceRun(adapter.name, { error, rawCount: rawEvents.length }, previous);
+    sourcesStatus.push(entry);
+
+    if (anomaly) {
+      try {
+        await notifySourceAnomaly({ name: adapter.name, ...anomaly });
+      } catch (err) {
+        logProgress(`notifySourceAnomaly failed for ${adapter.name}: ${err.stack}`);
+      }
+    }
 
     for (const raw of rawEvents) {
       // A single malformed record must never take down the whole run — every

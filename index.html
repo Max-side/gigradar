@@ -25,6 +25,12 @@
     </div>
   </div>
 
+  <!-- FR-14/62, AC-14 (M10): shown when data/sources.json has a non-ok source. -->
+  <a class="hidden-bar" id="source-warning-bar" href="./settings.html" hidden style="background:var(--warn-bg);color:var(--warn);text-decoration:none;">
+    <span id="source-warning-text">⚠ 部分來源今天抓取異常，畫面資料可能不完整</span>
+    <span class="hidden-bar__cta" style="color:var(--warn);">查看 →</span>
+  </a>
+
   <!-- Populated by src/app.js from data/events.json (M4). -->
   <div class="event-list" id="event-list" data-page="timeline">
     <div style="padding:32px 4px;text-align:center;color:var(--muted);font-size:13px;">載入中…</div>

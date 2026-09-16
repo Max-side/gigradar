@@ -176,6 +176,12 @@ id      = sha1( normalize(headliner) + "|" + date + "|" + venue_normalized )
 8. 若 `digest.json` 顯示零差異 → **不 commit**（NFR-04 精神：沒必要就不動 repo，Pages 也不必重新部署）。
 9. 有差異 → commit `data/*.json`，GitHub Pages 自動重新部署。
 
+**實作備註（M10，2026-09-16）**：
+- 步驟 3/4 的判斷邏輯抽成純函式 `scripts/source-status.mjs` 的 `classifySourceRun()`，方便直接單元測試，不用整條 pipeline 跑一次才能驗證。
+- 步驟 4 的「上次 > 0」比較，用的是 `sources.json` 裡的 `last_count`，而且**只有真的成功抓到 >0 筆時才會更新這個值**——連續好幾天都抓到 0 筆，`last_count` 會一直停在最後一次成功的數字，讓每一天都持續判定為異常並持續告警，不會因為「今天 0 筆、昨天也記成 0 筆」而自己看起來恢復正常。
+- `notify.mjs` 開 issue 前會先查有沒有同標題、帶 `source-anomaly` label 的 open issue，避免同一個來源連續故障時每天洗一個新 issue（呼應 SRS 的「每週維護時間 < 15 分鐘」）。
+- 步驟 3「該來源本次沿用 events.json 中屬於它的舊資料」**還沒做**——目前失敗的來源這次直接貢獻 0 筆給 dedupe，不會用舊資料補位。這是因為合併後的 `events.json` 裡一筆事件的 `sources[]` 可能來自好幾個來源，要抽出「單純屬於某個來源的舊資料」需要動到合併演算法本身，範圍比 M10 大，先記在這裡，還沒排進哪個里程碑。
+
 ### 4.3 爬取禮儀（NFR-04）
 
 - 每個 adapter 內部 request 間隔 ≥ 2 秒（`await sleep(2000)`），非平行對同一網域打請求。

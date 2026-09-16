@@ -8,12 +8,17 @@ on:
 jobs:
   update:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write # to commit data/*.json
+      issues: write # FR-14/M10: notify.mjs opens an issue on source anomalies
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 20
       - run: node scripts/fetch.mjs
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # built-in, no extra secret needed (SPEC §10)
       - run: |
           git config user.name "gigradar-bot"
           git config user.email "actions@users.noreply.github.com"

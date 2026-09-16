@@ -18,10 +18,14 @@
  *   藝人"/"忽略" never write artists.yml themselves (there's no backend to
  *   write to) — they generate a YAML snippet for the user to paste in by
  *   hand and commit, and locally dismiss the item from the queue.
- * M9 (current): Gist 同步 (settings.html) + FR-63/64 匯出/匯入. Every page
- *   that reads prefs calls reconcileGistSync() before its first render so a
- *   change made on another device shows up on load, not just after a manual
- *   settings-page visit.
+ * M9: Gist 同步 (settings.html) + FR-63/64 匯出/匯入. Every page that reads
+ *   prefs calls reconcileGistSync() before its first render so a change made
+ *   on another device shows up on load, not just after a manual settings-page
+ *   visit.
+ * M10 (current): 設定頁來源狀態儀表讀 data/sources.json；時間表在有來源異常
+ *   時顯示警示 banner（FR-14/62, AC-14）。實際的告警（開 GitHub issue）在
+ *   pipeline 端（scripts/notify.mjs），前端只負責把 sources.json 的 status
+ *   顯示出來。
  */
 
 import { partitionEvents } from "./filter.js";
@@ -116,6 +120,27 @@ function updateHiddenBar(hiddenByRules) {
   }
 }
 
+/** FR-14/62, AC-14: warn on the timeline if any source's last run wasn't clean. Fire-and-forget — shouldn't block the main render. */
+async function checkSourceWarning() {
+  const bar = document.getElementById("source-warning-bar");
+  if (!bar) return;
+  try {
+    const res = await fetch("./data/sources.json", { cache: "no-store" });
+    if (!res.ok) throw new Error(`GET data/sources.json -> ${res.status}`);
+    const data = await res.json();
+    const anomalous = (data.sources ?? []).filter((s) => s.status !== "ok");
+    bar.hidden = anomalous.length === 0;
+    if (anomalous.length > 0) {
+      const text = document.getElementById("source-warning-text");
+      if (text) text.textContent = `⚠ ${anomalous.map((s) => s.name).join("、")} 抓取異常，畫面資料可能不完整`;
+    }
+  } catch (err) {
+    console.error("Failed to load sources.json:", err);
+    // Not knowing the source status isn't itself an anomaly worth alarming
+    // the user about — just leave the banner hidden.
+  }
+}
+
 /** Only http(s) may be opened — escapeHtml stops attribute breakout, but never checked scheme, so a "javascript:" ticket_url (bad scrape, or an unvalidated manual entry) could otherwise execute on click. */
 function isSafeUrl(url) {
   return /^https?:\/\//i.test(url);
@@ -204,6 +229,8 @@ async function initTimeline(container) {
     container.innerHTML = renderEmptyList("資料載入失敗，請稍後再試。");
     return;
   }
+
+  checkSourceWarning();
 
   function render() {
     const prefs = loadPrefs();
@@ -599,6 +626,43 @@ function initSettings() {
 
   renderSyncStatus();
   renderMuteKeywords();
+  renderSourceStatus();
+}
+
+/** FR-62/M10: 設定頁來源狀態儀表, reads the same sources.json fetch.mjs writes each run. */
+async function renderSourceStatus() {
+  const container = document.getElementById("source-status");
+  if (!container) return;
+  try {
+    const res = await fetch("./data/sources.json", { cache: "no-store" });
+    if (!res.ok) throw new Error(`GET data/sources.json -> ${res.status}`);
+    const data = await res.json();
+    const sources = data.sources ?? [];
+
+    container.innerHTML =
+      sources.length === 0
+        ? `<div style="font-size:12px;color:var(--muted);">尚無資料。</div>`
+        : sources
+            .map((s, i) => {
+              const statusClass = s.status === "ok" ? "status-ok" : "status-warn";
+              const statusText = s.status === "ok" ? "● 正常" : s.status === "anomaly" ? "⚠ 抓到 0 筆" : "⚠ 抓取失敗";
+              const rowBorder = i < sources.length - 1 ? "border-bottom:1px solid var(--border);padding-bottom:10px;" : "";
+              return `
+        <div class="row" style="${rowBorder}">
+          <div style="display:flex;flex-direction:column;gap:2px;min-width:0;">
+            <div style="font-size:13px;font-weight:700;">${escapeHtml(s.name)}</div>
+            <div style="font-size:11px;color:var(--muted);">上次成功：${formatDateTime(s.last_success) ?? "無"}　最近筆數：${s.last_count ?? 0}</div>
+            ${s.last_error ? `<div style="font-size:11px;color:var(--warn);">${escapeHtml(s.last_error)}</div>` : ""}
+          </div>
+          <span class="${statusClass}">${statusText}</span>
+        </div>
+      `;
+            })
+            .join("");
+  } catch (err) {
+    console.error("Failed to load sources.json:", err);
+    container.innerHTML = `<div style="font-size:12px;color:var(--muted);">資料載入失敗，請稍後再試。</div>`;
+  }
 }
 
 function wireChipGroup(group) {

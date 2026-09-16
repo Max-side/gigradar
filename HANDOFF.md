@@ -1,12 +1,12 @@
 # 交接文件 — 換電腦/換 session 接續開發前先看這份
 
-寫於 2026-09-15，2026-09-16 更新至 M9（另外做了一輪全專案 bug review 並全部修掉，見下方測試章節）。這份文件的目的：讓一個完全沒看過這個對話紀錄的人（包含未來的你，或另一台電腦上全新開的 Claude Code session）能在 5 分鐘內知道現在做到哪、能不能信任目前的程式碼、下一步該做什麼。
+寫於 2026-09-15，2026-09-16 更新至 M10（另外做了一輪全專案 bug review 並全部修掉，見下方測試章節）。這份文件的目的：讓一個完全沒看過這個對話紀錄的人（包含未來的你，或另一台電腦上全新開的 Claude Code session）能在 5 分鐘內知道現在做到哪、能不能信任目前的程式碼、下一步該做什麼。
 
 ## 這是什麼專案
 
 個人用的獨立/地下音樂演出雷達。**完整需求**看 [`GIGRADAR-SRS.md`](./GIGRADAR-SRS.md)，**技術架構與所有踩過的坑**看 [`GIGRADAR-SPEC.md`](./GIGRADAR-SPEC.md)——這兩份是唯一該信任的來源，這份 HANDOFF 只是導覽，內容有衝突以那兩份為準。
 
-## 現在的狀態：M1~M9 完成，都在瀏覽器裡實測過，不是只寫完沒測（一個例外見下方 M9 那一列）
+## 現在的狀態：M1~M10 完成，都在瀏覽器裡實測過，不是只寫完沒測（一個例外見下方 M9 那一列）
 
 | 里程碑 | 內容 | 狀態 |
 |---|---|---|
@@ -19,7 +19,7 @@
 | M7 | 手動新增場次實際存檔到 localStorage（決策 S1：不寫回 repo），跟 `events.json` 合併顯示，真的被抓到後自動去重 | ✅ 有跨環境雜湊一致性測試 `scripts/id-consistency.test.mjs` |
 | M8 | 待整理頁讀真實 `data/needs-review.json`；「指派藝人」產生 YAML 片段供人工貼到 `artists.yml`（見下方說明，不是自動寫檔） | ✅ |
 | M9 | Gist 同步（連接/斷開/雙向同步/離線 fallback）＋ FR-63/64 匯出匯入、設定頁的嚴格模式與靜音關鍵字順便一起接上 | ⚠️ 見下方說明 |
-| M10 | 來源異常告警（GitHub issue）、設定頁來源狀態儀表 | ❌ |
+| M10 | 來源異常告警（GitHub issue）、設定頁來源狀態儀表、時間表異常 banner | ✅（真的開 issue 那段沒有跑過真實 CI，見下方說明） |
 | M11 | GitHub Actions 排程上線 | ⚠️ workflow 檔案已寫好放在 `.github/workflows/daily-update.yml`，但**還沒驗證過在 Actions 上真的能跑**（只在本機手動跑過） |
 | M12 | 覆蓋率抽樣 | ❌ |
 
@@ -53,6 +53,14 @@ npm test                # 跑全部單元測試（見下方「測試怎麼跑」
 5. **前端 `fetch("./data/events.json")` 一定要加 `{ cache: "no-store" }`**——不加的話瀏覽器分頁開著、或同一個 session 內重複導覽，會一直吃到舊的快取版本，即使檔案內容已經在磁碟上更新了。M7 測「手動新增場次被真實抓到後應該消失」時就是被這個絆住，才發現這個問題，已經修在 `src/app.js` 的 `loadEvents()`。
 6. **日期比較不要用 `new Date(dateStr) > new Date()`**——`new Date("2026-10-15")` 會被當成 UTC 午夜，跟本地/台灣時間的「現在」比較時，同一天的場次在某些時段會被誤判成「已過期」。`scripts/normalize.mjs` 的 `statusFromTickets` 和 `src/filter.js` 的 `isPast()` 都踩過這個坑，兩處都已經改成用日期字串（`YYYY-MM-DD`）直接比較，不要再改回 Date 物件比較。
 7. **`normalize()`（或任何 per-item 的 pipeline 處理函式）處理陣列時一定要包 try/catch**——單一筆原始資料格式異常就丟例外的話，會讓整個 pipeline run 中斷，當天完全不會更新，而不是只把那一筆丟進待整理。`scripts/fetch.mjs` 已經修好，之後新增 per-item 處理邏輯要延續這個模式。
+
+## M10 的告警沒有跑過真實 GitHub Actions
+
+`scripts/notify.mjs`（FR-14/AC-14，來源抓到 0 筆但上次 >0，或直接 fetch 失敗時開 GitHub issue）只在有 `GITHUB_TOKEN`＋`GITHUB_REPOSITORY` 環境變數時才會真的打 API，本機 `npm run fetch` 沒有這兩個變數，所以永遠是「印一行 log 就跳過」，這是刻意設計成不會擋住本機開發。已經驗證過的：
+- `scripts/source-status.mjs`（純函式，決定 sources.json 每個來源的 `status`/`last_success`/`last_count` 該怎麼算）有完整單元測試，包含「連續兩天都抓到 0 筆要一直維持異常，不能第一天過後自己「痊癒」」這條容易漏掉的規則。
+- 前端兩處讀 `sources.json` 的地方（時間表的異常 banner、設定頁的來源狀態儀表）都在瀏覽器裡塞了假的 `ok`/`anomaly`/`error` 三種狀態實測過，畫面正確。
+
+**沒測到的**：`.github/workflows/daily-update.yml` 裡新加的 `env: GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}` 和 `permissions: issues: write` 有沒有真的讓 Actions 環境下的 `notify.mjs` 成功開出一個 issue，只能等 M11 把 workflow 真的推上 GitHub 跑一次才能確認（目前 M1~M10 都還只在本機開發驗證，見決策 S3）。
 
 ## M9 沒有真的用 GitHub PAT 測過
 
@@ -89,4 +97,4 @@ npm test    # 等同 node --test scripts/*.test.mjs src/*.test.js
 
 ## 建議下一步
 
-M10（來源異常告警＋設定頁來源狀態儀表）是下一個獨立的小塊，見 SPEC §11、AC-14。如果手上有 GitHub PAT，也很值得先把上面提到的「M9 沒有真的測過」那件事補上——目前的信心來自程式邏輯審查加上失敗路徑的實測，不是端到端的真實同步驗證。如果想先看到「真的有資料」的畫面，可以先做 M8 提到的「補幾筆 artists.yml」那件事（現在待整理頁能幫你產生要貼的 YAML 片段了），會讓後續每個里程碑的手動測試都輕鬆很多。
+M11（GitHub Actions 排程真的推上線）是下一個獨立的小塊——這一步做完之後，M9 的 Gist 同步和 M10 的來源異常告警才有真實環境可以驗證，值得優先排在 M12（覆蓋率抽樣）前面。如果想先看到「真的有資料」的畫面，可以先做 M8 提到的「補幾筆 artists.yml」那件事（現在待整理頁能幫你產生要貼的 YAML 片段了），會讓後續每個里程碑的手動測試都輕鬆很多。
