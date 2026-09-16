@@ -11,6 +11,7 @@ import { diff } from "./diff.mjs";
 import { resetProgressLog, logProgress } from "./progress-log.mjs";
 import { notifySourceAnomaly } from "./notify.mjs";
 import { classifySourceRun } from "./source-status.mjs";
+import { fallbackEventsForSource, fallbackReviewItemsForSource } from "./source-fallback.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const DATA_DIR = path.join(__dirname, "..", "data");
@@ -35,17 +36,22 @@ function loadPreviousSources() {
   }
 }
 
-/**
- * Known gap vs. full SPEC §4.2: on a source failure this does NOT yet fall back
- * to that source's previous events.json entries (AC-11) — it just records the
- * error in sources.json. That's still open (tracked past M6 now).
- */
+function loadPreviousNeedsReview() {
+  try {
+    const raw = readFileSync(path.join(DATA_DIR, "needs-review.json"), "utf-8");
+    return JSON.parse(raw).items ?? [];
+  } catch {
+    return [];
+  }
+}
+
 async function main() {
   resetProgressLog();
   const artistsYml = loadArtists();
   const venuesYml = loadVenues();
   const previousEvents = loadPreviousEvents();
   const previousSources = loadPreviousSources();
+  const previousNeedsReview = loadPreviousNeedsReview();
   const sourcesStatus = [];
   const normalizedEvents = [];
   const needsReview = [];
@@ -67,6 +73,18 @@ async function main() {
     sourcesStatus.push(entry);
 
     if (anomaly) {
+      // AC-11/SPEC §4.2 step 3: don't let a blocked/broken source erase its
+      // share of real data — reuse what it contributed last run instead.
+      // rawEvents is always [] here (both the "threw" and "0 results" cases
+      // leave it empty), so there's nothing from this run to lose by doing so.
+      const fallbackEvents = fallbackEventsForSource(previousEvents, adapter.name);
+      const fallbackReview = fallbackReviewItemsForSource(previousNeedsReview, adapter.name);
+      logProgress(
+        `${adapter.name}: ${anomaly.reason}, reusing ${fallbackEvents.length} previous event(s) and ${fallbackReview.length} previous needs-review item(s)`
+      );
+      normalizedEvents.push(...fallbackEvents);
+      needsReview.push(...fallbackReview);
+
       try {
         await notifySourceAnomaly({ name: adapter.name, ...anomaly });
       } catch (err) {
