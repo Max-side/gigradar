@@ -4,10 +4,13 @@
  * knows how to render, so it's safe to load on every page unconditionally.
  *
  * M4: 時間表 (index.html) reads data/events.json for real.
- * M5 (current): favorites + exclude rules (US-06~14) wired on top of that —
- *   star/✕ buttons on cards, the exclude bottom-sheet, undo toast, and the
- *   block-confirmation dialog for artists with favorited events (FR-48).
- * M6 will add: new.html reading data/digest.json.
+ * M5: favorites + exclude rules (US-06~14) — star/✕ on cards, the exclude
+ *   bottom-sheet, undo toast, block-confirmation dialog (FR-48), 已隱藏管理.
+ * M6 (current): 新上架 (new.html) reads first_seen_at (via diff.mjs's
+ *   reconciliation in events.json) instead of a separate digest fetch —
+ *   digest.json exists for the pipeline's own bookkeeping, but the frontend
+ *   only needs what's already on each event. Also wires FR-34's "已更新"
+ *   badge on favorites, now that diff.mjs actually sets updated_fields.
  */
 
 import { partitionEvents } from "./filter.js";
@@ -24,9 +27,17 @@ import {
   countHiddenByArtist,
   countHiddenByType,
 } from "./state.js";
-import { renderEventList, renderFavoritesList, renderEmptyList } from "./render.js";
-import { splitDate } from "./format.js";
+import { renderEventList, renderFavoritesList, renderNewArrivalsList, renderEmptyList } from "./render.js";
+import { splitDate, daysSince } from "./format.js";
 import { openExcludeMenu, confirmBlockArtist, showUndoToast } from "./interactions.js";
+
+function escapeHtml(s) {
+  return String(s)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
 
 async function loadEvents() {
   const res = await fetch("./data/events.json");
@@ -61,6 +72,73 @@ function updateHiddenBar(hiddenByRules) {
   }
 }
 
+function wireTicketButtons(container) {
+  container.querySelectorAll("[data-ticket-url]").forEach((btn) => {
+    btn.addEventListener("click", () => window.open(btn.dataset.ticketUrl, "_blank", "noopener"));
+  });
+}
+
+function wireFavoriteToggle(container, render) {
+  container.querySelectorAll("[data-favorite-toggle]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      toggleFavorite(btn.dataset.favoriteToggle);
+      render();
+    });
+  });
+}
+
+/** Shared by 時間表 and 新上架 — both show the full ✕ exclude menu on cards. */
+function wireExcludeMenu(container, events, render) {
+  container.querySelectorAll("[data-exclude-menu]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const event = events.find((e) => e.id === btn.dataset.excludeMenu);
+      if (event) openMenuFor(event, events, render);
+    });
+  });
+}
+
+function openMenuFor(event, events, render) {
+  const headliner = event.headliners[0] ?? event.title_raw;
+  const type = event.tags_type[0];
+
+  openExcludeMenu(event, {
+    onHideEvent() {
+      excludeEvent(event.id);
+      render();
+      showUndoToast(`已排除「${headliner}」`, () => {
+        unexcludeEvent(event.id);
+        render();
+      });
+    },
+    onBlockArtist() {
+      const doBlock = () => {
+        excludeArtist(headliner);
+        render();
+        showUndoToast(`已封鎖演出者「${headliner}」`, () => {
+          unexcludeArtist(headliner);
+          render();
+        });
+      };
+      const prefs = loadPrefs();
+      const favoritedCount = countFavoritedByArtist(headliner, events, prefs);
+      if (favoritedCount > 0) {
+        confirmBlockArtist(headliner, favoritedCount, doBlock);
+      } else {
+        doBlock();
+      }
+    },
+    onBlockType() {
+      if (!type) return;
+      excludeType(type);
+      render();
+      showUndoToast(`已封鎖類型「${type}」`, () => {
+        unexcludeType(type);
+        render();
+      });
+    },
+  });
+}
+
 async function initTimeline(container) {
   let events;
   try {
@@ -85,70 +163,48 @@ async function initTimeline(container) {
         ? renderEmptyList("目前沒有符合條件的演出，明天再回來看看。")
         : renderEventList(groupByDate(visible));
 
-    wireCardActions();
+    wireTicketButtons(container);
+    wireFavoriteToggle(container, render);
+    wireExcludeMenu(container, events, render);
     updateHiddenBar(hiddenByRules);
   }
 
-  function wireCardActions() {
-    container.querySelectorAll("[data-ticket-url]").forEach((btn) => {
-      btn.addEventListener("click", () => window.open(btn.dataset.ticketUrl, "_blank", "noopener"));
-    });
+  render();
+}
 
-    container.querySelectorAll("[data-favorite-toggle]").forEach((btn) => {
-      btn.addEventListener("click", () => {
-        toggleFavorite(btn.dataset.favoriteToggle);
-        render();
-      });
-    });
-
-    container.querySelectorAll("[data-exclude-menu]").forEach((btn) => {
-      btn.addEventListener("click", () => {
-        const event = events.find((e) => e.id === btn.dataset.excludeMenu);
-        if (event) openMenuFor(event);
-      });
-    });
+async function initNewArrivals(container) {
+  let events;
+  try {
+    events = await loadEvents();
+  } catch (err) {
+    console.error("Failed to load events.json:", err);
+    container.innerHTML = renderEmptyList("資料載入失敗，請稍後再試。");
+    return;
   }
 
-  function openMenuFor(event) {
-    const headliner = event.headliners[0] ?? event.title_raw;
-    const type = event.tags_type[0];
+  function render() {
+    const prefs = loadPrefs();
+    const { visible } = partitionEvents(events, prefs, {});
 
-    openExcludeMenu(event, {
-      onHideEvent() {
-        excludeEvent(event.id);
-        render();
-        showUndoToast(`已排除「${headliner}」`, () => {
-          unexcludeEvent(event.id);
-          render();
-        });
-      },
-      onBlockArtist() {
-        const doBlock = () => {
-          excludeArtist(headliner);
-          render();
-          showUndoToast(`已封鎖演出者「${headliner}」`, () => {
-            unexcludeArtist(headliner);
-            render();
-          });
-        };
-        const prefs = loadPrefs();
-        const favoritedCount = countFavoritedByArtist(headliner, events, prefs);
-        if (favoritedCount > 0) {
-          confirmBlockArtist(headliner, favoritedCount, doBlock);
-        } else {
-          doBlock();
-        }
-      },
-      onBlockType() {
-        if (!type) return;
-        excludeType(type);
-        render();
-        showUndoToast(`已封鎖類型「${type}」`, () => {
-          unexcludeType(type);
-          render();
-        });
-      },
-    });
+    const withAge = visible
+      .map((item) => ({ ...item, ageDays: daysSince(item.event.first_seen_at) }))
+      .filter((item) => item.ageDays <= 7);
+    withAge.sort((a, b) => a.ageDays - b.ageDays);
+
+    const today = withAge.filter((item) => item.ageDays <= 0);
+    const pastWeek = withAge.filter((item) => item.ageDays > 0);
+
+    const summary = document.getElementById("new-summary");
+    if (summary) summary.textContent = `今日新增 ${today.length} 筆 · 近 7 日共 ${withAge.length} 筆`;
+
+    container.innerHTML =
+      withAge.length === 0
+        ? renderEmptyList("最近 7 天沒有新場次公布。")
+        : renderNewArrivalsList(today, pastWeek);
+
+    wireTicketButtons(container);
+    wireFavoriteToggle(container, render);
+    wireExcludeMenu(container, events, render);
   }
 
   render();
@@ -178,26 +234,18 @@ async function initFavorites(container) {
         ? renderEmptyList("還沒有收藏任何場次，去時間表逛逛吧。")
         : renderFavoritesList(favorited);
 
-    container.querySelectorAll("[data-ticket-url]").forEach((btn) => {
-      btn.addEventListener("click", () => window.open(btn.dataset.ticketUrl, "_blank", "noopener"));
-    });
-    container.querySelectorAll("[data-favorite-toggle]").forEach((btn) => {
-      btn.addEventListener("click", () => {
-        toggleFavorite(btn.dataset.favoriteToggle);
-        render();
+    wireTicketButtons(container);
+    wireFavoriteToggle(container, render);
+
+    container.querySelectorAll("[data-updated-fields]").forEach((link) => {
+      link.addEventListener("click", (ev) => {
+        ev.preventDefault();
+        alert(`更新內容：${link.dataset.updatedFields}`);
       });
     });
   }
 
   render();
-}
-
-function escapeHtml(s) {
-  return String(s)
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;");
 }
 
 async function initHiddenManagement(container) {
@@ -286,6 +334,11 @@ async function initHiddenManagement(container) {
 const timelineContainer = document.querySelector('[data-page="timeline"]');
 if (timelineContainer) {
   initTimeline(timelineContainer);
+}
+
+const newArrivalsContainer = document.querySelector('[data-page="new-arrivals"]');
+if (newArrivalsContainer) {
+  initNewArrivals(newArrivalsContainer);
 }
 
 const favoritesContainer = document.querySelector('[data-page="favorites"]');

@@ -18,32 +18,12 @@
 
   <div class="page-header">
     <div class="page-title">新上架</div>
-    <span class="badge-onsale" style="margin-top:10px;">今日新增 <span id="today-count">1</span> 筆 · 近 7 日共 <span id="week-count">2</span> 筆</span>
+    <span class="badge-onsale" style="margin-top:10px;" id="new-summary">今日新增 0 筆 · 近 7 日共 0 筆</span>
   </div>
 
-  <!-- M1 骨架階段：寫死假資料；M6 起由 src/app.js 讀 data/digest.json 動態產生 -->
-  <div class="event-list" id="event-list">
-    <div class="day-group">
-      <div class="day-label">今天新增</div>
-      <div class="event-card" data-event-id="demo-3">
-        <div class="event-date">
-          <div class="event-date__day">02</div>
-          <div class="event-date__weekday">MON</div>
-        </div>
-        <div class="event-body">
-          <div style="display:flex;align-items:center;gap:6px;">
-            <span class="badge-new">新</span>
-            <div class="event-title">幾何浪</div>
-          </div>
-          <div class="tag-row"><span class="tag-perf">專場</span></div>
-          <div class="event-meta">The Wall · 台北 · 11/2 19:30</div>
-          <div class="event-price">NT$700 up <span class="muted">· KKTIX</span></div>
-        </div>
-        <button class="pill-arrow" aria-label="購票">
-          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-        </button>
-      </div>
-    </div>
+  <!-- Populated by src/app.js from data/events.json's first_seen_at (M6). -->
+  <div class="event-list" id="event-list" data-page="new-arrivals">
+    <div style="padding:32px 4px;text-align:center;color:var(--muted);font-size:13px;">載入中…</div>
   </div>
 
   <nav class="bottom-nav">

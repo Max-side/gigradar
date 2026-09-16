@@ -20,7 +20,7 @@ const X_ICON = `<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stro
  * `mode: "favorites"` swaps the star+✕ pair for a single unfavorite star and
  * adds a "距今 N 天" line (favorites.html, US-07) instead of the exclude menu.
  */
-export function renderEventCard(event, { pinned = false, mode = "timeline" } = {}) {
+export function renderEventCard(event, { pinned = false, mode = "timeline", showNewBadge = false } = {}) {
   const { day, weekday } = splitDate(event.date);
 
   const tags = [
@@ -39,6 +39,9 @@ export function renderEventCard(event, { pinned = false, mode = "timeline" } = {
   const pinnedBadge = mode === "timeline" && pinned ? `<span class="badge-pinned">已收藏，忽略排除規則</span>` : "";
   const daysUntilLine =
     mode === "favorites" ? `<div style="font-size:12px;font-weight:700;color:var(--coral-ink);">距今 ${daysUntil(event.date)} 天</div>` : "";
+  const newBadge = showNewBadge ? `<span class="badge-new">新</span>` : "";
+  const updatedBadge =
+    mode === "favorites" && event.updated_fields?.length ? `<span class="badge-updated">已更新</span>` : "";
 
   let priceLine;
   let ctaButton;
@@ -67,7 +70,11 @@ export function renderEventCard(event, { pinned = false, mode = "timeline" } = {
       </div>
       <div class="event-body">
         <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;">
-          <div class="event-title">${escapeHtml(event.headliners.join(" / "))}</div>
+          <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+            ${newBadge}
+            <div class="event-title">${escapeHtml(event.headliners.join(" / "))}</div>
+            ${updatedBadge}
+          </div>
           <div style="display:flex;gap:2px;flex:0 0 auto;">
             ${actionButtons}
           </div>
@@ -75,6 +82,11 @@ export function renderEventCard(event, { pinned = false, mode = "timeline" } = {
         ${daysUntilLine}
         ${tags ? `<div class="tag-row">${tags}</div>` : ""}
         ${pinnedBadge}
+        ${
+          mode === "favorites" && event.updated_fields?.length
+            ? `<a href="#" style="font-size:12px;font-weight:700;" data-updated-fields="${escapeHtml(event.updated_fields.join("、"))}">查看變更內容 →</a>`
+            : ""
+        }
         <div class="event-meta">${metaText}</div>
         ${onSaleBadge}
         ${priceLine}
@@ -101,6 +113,20 @@ export function renderEventList(groups) {
 /** Flat, date-sorted list (no day-group headers) — used by favorites.html. */
 export function renderFavoritesList(items) {
   return items.map((event) => renderEventCard(event, { pinned: true, mode: "favorites" })).join("");
+}
+
+/** new.html (FR-23): 今天新增 / 過去 7 天 sections, each event tagged with the 新 badge. */
+export function renderNewArrivalsList(todayItems, pastWeekItems) {
+  const section = (label, items) =>
+    items.length === 0
+      ? ""
+      : `
+    <div class="day-group">
+      <div class="day-label">${escapeHtml(label)}</div>
+      ${items.map(({ event, pinned }) => renderEventCard(event, { pinned, showNewBadge: true })).join("")}
+    </div>
+  `;
+  return section("今天新增", todayItems) + section("過去 7 天", pastWeekItems);
 }
 
 export function renderEmptyList(message) {

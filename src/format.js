@@ -25,6 +25,13 @@ export function formatPrice(min, max) {
   return `NT$${min.toLocaleString()} up`;
 }
 
+/** Whole days elapsed since an ISO datetime (e.g. Event.first_seen_at). */
+export function daysSince(isoDateTime) {
+  const then = new Date(isoDateTime);
+  const now = new Date();
+  return Math.floor((now - then) / 86400000);
+}
+
 /** e.g. "3 天後" for an on_sale_at datetime; null if already on sale / unknown. */
 export function formatOnSaleCountdown(onSaleAtIso) {
   if (!onSaleAtIso) return null;
