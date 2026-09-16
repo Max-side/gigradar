@@ -6,11 +6,14 @@
  * M4: 時間表 (index.html) reads data/events.json for real.
  * M5: favorites + exclude rules (US-06~14) — star/✕ on cards, the exclude
  *   bottom-sheet, undo toast, block-confirmation dialog (FR-48), 已隱藏管理.
- * M6 (current): 新上架 (new.html) reads first_seen_at (via diff.mjs's
- *   reconciliation in events.json) instead of a separate digest fetch —
- *   digest.json exists for the pipeline's own bookkeeping, but the frontend
- *   only needs what's already on each event. Also wires FR-34's "已更新"
- *   badge on favorites, now that diff.mjs actually sets updated_fields.
+ * M6: 新上架 (new.html) reads first_seen_at (via diff.mjs's reconciliation in
+ *   events.json) instead of a separate digest fetch — digest.json exists for
+ *   the pipeline's own bookkeeping, but the frontend only needs what's
+ *   already on each event. Also wires FR-34's "已更新" badge on favorites,
+ *   now that diff.mjs actually sets updated_fields.
+ * M7 (current): 手動新增場次 (add.html) actually saves to localStorage and
+ *   shows up everywhere else — loadEvents() merges in state.js's manual
+ *   events, dropping any whose id a real scrape has since produced (AC-17).
  */
 
 import { partitionEvents } from "./filter.js";
@@ -26,6 +29,8 @@ import {
   countFavoritedByArtist,
   countHiddenByArtist,
   countHiddenByType,
+  loadManualEvents,
+  addManualEvent,
 } from "./state.js";
 import { renderEventList, renderFavoritesList, renderNewArrivalsList, renderEmptyList } from "./render.js";
 import { splitDate, daysSince } from "./format.js";
@@ -40,10 +45,19 @@ function escapeHtml(s) {
 }
 
 async function loadEvents() {
-  const res = await fetch("./data/events.json");
+  // no-store: events.json is overwritten daily by the Actions job (SPEC §4.2);
+  // without this, a browser tab left open — or even just repeat navigations
+  // within the same session — can keep serving a stale cached copy (caught
+  // during M7 testing: a newly-scraped event didn't replace its manual
+  // stand-in until this was added).
+  const res = await fetch("./data/events.json", { cache: "no-store" });
   if (!res.ok) throw new Error(`GET data/events.json -> ${res.status}`);
   const data = await res.json();
-  return data.events ?? [];
+  const realEvents = data.events ?? [];
+  const realIds = new Set(realEvents.map((e) => e.id));
+  // AC-17: once a real scrape produces the same id, the manual copy is dropped.
+  const manualEvents = loadManualEvents().filter((e) => !realIds.has(e.id));
+  return [...realEvents, ...manualEvents];
 }
 
 function groupByDate(items) {
@@ -331,6 +345,76 @@ async function initHiddenManagement(container) {
   render();
 }
 
+function wireChipGroup(group) {
+  group.querySelectorAll(".chip-selectable").forEach((chip) => {
+    chip.addEventListener("click", () => {
+      const pressed = chip.getAttribute("aria-pressed") === "true";
+      chip.setAttribute("aria-pressed", pressed ? "false" : "true");
+    });
+  });
+}
+
+function selectedChips(group) {
+  return Array.from(group.querySelectorAll('.chip-selectable[aria-pressed="true"]')).map((c) => c.textContent.trim());
+}
+
+function initManualAdd(form) {
+  document.querySelectorAll("[data-chip-group]").forEach(wireChipGroup);
+
+  const headlinerField = document.getElementById("f-headliner");
+  const addCoartistBtn = document.getElementById("add-coartist");
+  const coArtistInputs = [];
+
+  addCoartistBtn?.addEventListener("click", () => {
+    const row = document.createElement("div");
+    row.style.cssText = "display:flex;gap:8px;align-items:center;";
+    const input = document.createElement("input");
+    input.className = "field-input";
+    input.type = "text";
+    input.placeholder = "共演者名稱";
+    input.style.flex = "1";
+    const removeBtn = document.createElement("button");
+    removeBtn.type = "button";
+    removeBtn.textContent = "✕";
+    removeBtn.style.cssText = "flex:0 0 auto;border:none;background:transparent;color:var(--muted);font-size:14px;";
+    removeBtn.addEventListener("click", () => {
+      row.remove();
+      const idx = coArtistInputs.indexOf(input);
+      if (idx !== -1) coArtistInputs.splice(idx, 1);
+    });
+    row.append(input, removeBtn);
+    addCoartistBtn.before(row);
+    coArtistInputs.push(input);
+    input.focus();
+  });
+
+  form.addEventListener("submit", async (ev) => {
+    ev.preventDefault();
+    const submitBtn = form.querySelector('button[type="submit"]');
+    submitBtn.disabled = true;
+
+    try {
+      const headliners = [headlinerField.value.trim(), ...coArtistInputs.map((i) => i.value.trim())].filter(Boolean);
+      await addManualEvent({
+        date: document.getElementById("f-date").value,
+        time: document.getElementById("f-time").value || null,
+        headliners,
+        venue: document.getElementById("f-venue").value.trim(),
+        city: document.getElementById("f-city").value.trim(),
+        ticketUrl: document.getElementById("f-url").value.trim(),
+        tagsType: selectedChips(document.querySelector('[data-chip-group="tags_type"]')),
+        tagsOrigin: selectedChips(document.querySelector('[data-chip-group="tags_origin"]')),
+        note: document.getElementById("f-note").value.trim(),
+      });
+      window.location.href = "./index.html";
+    } catch (err) {
+      console.error("Failed to save manual event:", err);
+      alert("儲存失敗，請再試一次。");
+      submitBtn.disabled = false;
+    }
+  });
+}
+
 const timelineContainer = document.querySelector('[data-page="timeline"]');
 if (timelineContainer) {
   initTimeline(timelineContainer);
@@ -349,4 +433,9 @@ if (favoritesContainer) {
 const hiddenContainer = document.querySelector('[data-page="hidden"]');
 if (hiddenContainer) {
   initHiddenManagement(hiddenContainer);
+}
+
+const addForm = document.getElementById("add-form");
+if (addForm) {
+  initManualAdd(addForm);
 }

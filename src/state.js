@@ -3,6 +3,8 @@
  * M1: localStorage read/write only. Gist sync (M9) plugs into syncToGist/syncFromGist below.
  */
 
+import { computeEventId } from "./id.js";
+
 const STORAGE_KEY = "gigradar:prefs";
 
 export function defaultPrefs() {
@@ -116,6 +118,71 @@ export function countHiddenByArtist(artistName, events, prefs) {
 }
 export function countHiddenByType(tag, events, prefs) {
   return events.filter((e) => !prefs.favorites.includes(e.id) && e.tags_type.includes(tag)).length;
+}
+
+// --- Manual events (US-17, FR-17, SPEC §7 / decision S1) ----------------
+// These never touch the backend pipeline — the "manual" adapter always
+// returns [] (decision S1). They live only here, merged into the real
+// events.json list at render time (src/app.js's loadEvents), and dropped
+// automatically once a real scrape produces the same id (AC-17).
+
+const MANUAL_EVENTS_KEY = "gigradar:manual_events";
+
+export function loadManualEvents() {
+  try {
+    const raw = localStorage.getItem(MANUAL_EVENTS_KEY);
+    return raw ? JSON.parse(raw) : [];
+  } catch {
+    return [];
+  }
+}
+
+function saveManualEventsList(list) {
+  localStorage.setItem(MANUAL_EVENTS_KEY, JSON.stringify(list));
+  // TODO (M9): sync this list to the Gist alongside prefs.
+}
+
+/**
+ * @param {object} fields - { date, time, headliners: string[], venue, city,
+ *   ticketUrl, tagsType: string[], tagsOrigin: string[], note }
+ */
+export async function addManualEvent(fields) {
+  const headliners = fields.headliners.filter(Boolean);
+  const id = await computeEventId(headliners[0], fields.date, fields.venue);
+  const now = new Date().toISOString();
+
+  const event = {
+    id,
+    merged_ids: [id],
+    title_raw: headliners.join(" / "),
+    headliners,
+    lineup: headliners,
+    is_festival: false,
+    venue: fields.venue,
+    city: fields.city || "未知",
+    date: fields.date,
+    time: fields.time || null,
+    on_sale_at: null,
+    price_min: null,
+    price_max: null,
+    status: "announced",
+    tags_type: fields.tagsType ?? [],
+    tags_origin: fields.tagsOrigin ?? [],
+    ticket_url: fields.ticketUrl || "",
+    sources: [{ name: "manual", url: fields.ticketUrl || "", raw_id: id }],
+    first_seen_at: now,
+    updated_at: now,
+    note: fields.note || "",
+  };
+
+  const list = loadManualEvents();
+  list.push(event);
+  saveManualEventsList(list);
+  return event;
+}
+
+export function removeManualEvent(id) {
+  saveManualEventsList(loadManualEvents().filter((e) => e.id !== id));
 }
 
 // --- Gist sync (M9 — not implemented yet) -----------------------------
