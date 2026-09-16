@@ -83,19 +83,38 @@ function guessTagsType(titleRaw, headlinerCount) {
 }
 
 function priceFromTickets(ticketsRaw) {
-  const prices = ticketsRaw.map((t) => t.price).filter((p) => typeof p === "number");
+  // Prefer tiers that are actually purchasable — a closed early-bird tier's
+  // price shouldn't be shown as the current price_min. Only fall back to
+  // closed tiers (for reference) when EVERY tier is closed, i.e. the event
+  // is already sold out and there's no "current" price to speak of anyway.
+  const openTickets = ticketsRaw.filter((t) => !t.closed);
+  const relevant = openTickets.length > 0 ? openTickets : ticketsRaw;
+  const prices = relevant.map((t) => t.price).filter((p) => typeof p === "number");
   if (prices.length === 0) return { min: null, max: null };
   return { min: Math.min(...prices), max: Math.max(...prices) };
 }
 
+/**
+ * "YYYY-MM-DD" for the current date in Taiwan time (UTC+8, no DST) — never
+ * compare event dates via `new Date(dateStr) > new Date()`: the pipeline runs
+ * in UTC (GitHub Actions, cron "0 0 * * *" = 08:00 Taiwan per D1), so a bare
+ * date string parsed as UTC midnight sits ~8h behind the real Taiwan "today",
+ * misclassifying every today-dated, sold-out show as already "ended" on
+ * every single run. String comparison of two YYYY-MM-DD values is safe and
+ * sidesteps timezone math entirely.
+ */
+function taiwanTodayDateStr() {
+  const taiwanNow = new Date(Date.now() + 8 * 60 * 60 * 1000);
+  return taiwanNow.toISOString().slice(0, 10);
+}
+
 function statusFromTickets(ticketsRaw, eventDate) {
-  const now = new Date();
   const anyOpen = ticketsRaw.some((t) => !t.closed);
   if (anyOpen) return { status: "on_sale", on_sale_at: null };
   if (ticketsRaw.length === 0) return { status: "announced", on_sale_at: null };
   // All tiers closed. Can't distinguish "sold out" from "moved to door sales only" —
   // documented limitation, see SPEC §5.2.
-  return { status: new Date(eventDate) > now ? "sold_out" : "ended", on_sale_at: null };
+  return { status: eventDate >= taiwanTodayDateStr() ? "sold_out" : "ended", on_sale_at: null };
 }
 
 /**

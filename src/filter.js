@@ -48,10 +48,14 @@ export function resolveVisibility(event, prefs, viewFilters = {}) {
   return { bucket: "show" };
 }
 
-function isPast(dateStr) {
+/** Exported so state.js's hidden-rule counters can apply the same "future only" rule. */
+export function isPast(dateStr) {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
-  return new Date(dateStr) < today;
+  // "T00:00:00" forces local-time parsing, matching format.js's splitDate/daysUntil —
+  // a bare "YYYY-MM-DD" parses as UTC midnight instead, which for viewers at or
+  // behind UTC can make a same-day event compare as already past.
+  return new Date(dateStr + "T00:00:00") < today;
 }
 
 function passesViewFilters(event, viewFilters) {

@@ -59,11 +59,26 @@ async function main() {
     });
 
     for (const raw of rawEvents) {
-      const result = normalize(raw, artistsYml, venuesYml);
-      if (result.event) {
-        normalizedEvents.push(result.event);
-      } else {
-        needsReview.push(result.needsReview);
+      // A single malformed record must never take down the whole run — every
+      // other successfully-scraped event (and this run's writes) would be
+      // lost with it (found in review: this loop had no isolation at all).
+      try {
+        const result = normalize(raw, artistsYml, venuesYml);
+        if (result.event) {
+          normalizedEvents.push(result.event);
+        } else {
+          needsReview.push(result.needsReview);
+        }
+      } catch (err) {
+        logProgress(`normalize() threw for raw_id=${raw.raw_id}: ${err.stack}`);
+        needsReview.push({
+          raw_id: raw.raw_id,
+          title_raw: raw.title_raw ?? null,
+          url: raw.url ?? null,
+          source: raw.source_name,
+          reason: "normalize_error",
+          detail: err.message,
+        });
       }
     }
   }

@@ -55,8 +55,15 @@ async function loadEvents() {
   const data = await res.json();
   const realEvents = data.events ?? [];
   const realIds = new Set(realEvents.map((e) => e.id));
-  // AC-17: once a real scrape produces the same id, the manual copy is dropped.
-  const manualEvents = loadManualEvents().filter((e) => !realIds.has(e.id));
+  // AC-17: once a real scrape produces a matching id, the manual copy is
+  // dropped. Check every id a future scrape of this show could produce
+  // (possible_real_ids), not just the manual event's own bare id — a show
+  // that turns out to have both a matinee and evening real listing gets
+  // bucket-suffixed ids from dedup.mjs that the manual copy must also match.
+  const manualEvents = loadManualEvents().filter((e) => {
+    const candidates = e.possible_real_ids ?? [e.id];
+    return !candidates.some((id) => realIds.has(id));
+  });
   return [...realEvents, ...manualEvents];
 }
 
@@ -86,9 +93,17 @@ function updateHiddenBar(hiddenByRules) {
   }
 }
 
+/** Only http(s) may be opened — escapeHtml stops attribute breakout, but never checked scheme, so a "javascript:" ticket_url (bad scrape, or an unvalidated manual entry) could otherwise execute on click. */
+function isSafeUrl(url) {
+  return /^https?:\/\//i.test(url);
+}
+
 function wireTicketButtons(container) {
   container.querySelectorAll("[data-ticket-url]").forEach((btn) => {
-    btn.addEventListener("click", () => window.open(btn.dataset.ticketUrl, "_blank", "noopener"));
+    btn.addEventListener("click", () => {
+      const url = btn.dataset.ticketUrl;
+      if (isSafeUrl(url)) window.open(url, "_blank", "noopener");
+    });
   });
 }
 
@@ -394,6 +409,13 @@ function initManualAdd(form) {
     submitBtn.disabled = true;
 
     try {
+      const ticketUrl = document.getElementById("f-url").value.trim();
+      if (ticketUrl && !isSafeUrl(ticketUrl)) {
+        alert("售票／資訊連結必須是 http:// 或 https:// 開頭的網址。");
+        submitBtn.disabled = false;
+        return;
+      }
+
       const headliners = [headlinerField.value.trim(), ...coArtistInputs.map((i) => i.value.trim())].filter(Boolean);
       await addManualEvent({
         date: document.getElementById("f-date").value,
@@ -401,7 +423,7 @@ function initManualAdd(form) {
         headliners,
         venue: document.getElementById("f-venue").value.trim(),
         city: document.getElementById("f-city").value.trim(),
-        ticketUrl: document.getElementById("f-url").value.trim(),
+        ticketUrl,
         tagsType: selectedChips(document.querySelector('[data-chip-group="tags_type"]')),
         tagsOrigin: selectedChips(document.querySelector('[data-chip-group="tags_origin"]')),
         note: document.getElementById("f-note").value.trim(),

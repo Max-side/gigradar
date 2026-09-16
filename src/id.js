@@ -23,3 +23,33 @@ export async function computeEventId(headliner, date, venue) {
     .join("")
     .slice(0, 16);
 }
+
+/**
+ * Mirrors dedup.mjs's timeBucket — coarse time-of-day bucket, or null when no
+ * time is known. Kept independent from dedup.mjs for the same reason as
+ * computeEventId above (Node vs browser modules); id-consistency.test.mjs
+ * covers this too.
+ */
+export function timeBucket(time) {
+  if (!time) return null;
+  const hour = Number(time.split(":")[0]);
+  return hour < 17 ? "day" : "evening";
+}
+
+/**
+ * Every id a future real scrape of this show COULD end up with: the bare id
+ * dedup.mjs uses when only one time-of-day shows up for this
+ * headliner/date/venue, plus the bucket-suffixed id it uses instead when a
+ * matinee AND an evening show both exist that day (SPEC §4.1). A manual event
+ * only knows its own time, not whether some other show will later collide
+ * with it — so it must recognize either outcome as "this is now the real
+ * one, drop my manual copy" (AC-17). Without this, a manually-added event
+ * whose artist turns out to have both a matinee and evening show that day
+ * would never match either real id and would show up as a permanent
+ * duplicate — the exact gap this function closes.
+ */
+export async function computePossibleEventIds(headliner, date, venue, time) {
+  const baseId = await computeEventId(headliner, date, venue);
+  const bucket = timeBucket(time);
+  return bucket ? [baseId, `${baseId}-${bucket}`] : [baseId];
+}

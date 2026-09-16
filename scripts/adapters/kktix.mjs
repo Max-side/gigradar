@@ -28,9 +28,12 @@ const REQUEST_TIMEOUT_MS = 30000; // SPEC §4.3 — every adapter request needs 
 
 const ORG_PAGE_VENUES = ["thewalllivehouse", "kafka", "pipelivemusic", "emergelivehouse", "emergelivehouse2"];
 
+// Match both the colloquial (台北/台中) and official (臺北/臺中) character
+// variants — real Taiwanese address data uses both, and a silent no-match
+// here takes the exact same code path as an intentional false-positive drop.
 const SEARCH_VENUES = [
-  { keyword: "Legacy Taipei", match: (venue, address) => /^Legacy(\s|$)/.test(venue) && address.startsWith("台北") },
-  { keyword: "Legacy Taichung", match: (venue, address) => /^Legacy(\s|$)/.test(venue) && address.startsWith("台中") },
+  { keyword: "Legacy Taipei", match: (venue, address) => /^Legacy(\s|$)/.test(venue) && /^[台臺]北/.test(address) },
+  { keyword: "Legacy Taichung", match: (venue, address) => /^Legacy(\s|$)/.test(venue) && /^[台臺]中/.test(address) },
   { keyword: "Revolver", match: (venue) => /^Revolver/i.test(venue) },
   { keyword: "Clapper Studio", match: (venue) => /^Clapper/i.test(venue) },
 ];
@@ -72,7 +75,10 @@ async function fetchOrgListing(org) {
   const urls = [];
   $(".current-events #event-list li.clearfix h2 a").each((_, el) => {
     const href = $(el).attr("href");
-    if (href) urls.push(href);
+    // Strip query strings like the search path already does (line ~86) — an
+    // unstripped tracking param here pollutes raw_id, since fetchEventDetail
+    // derives raw_id from the URL's last path segment.
+    if (href) urls.push(href.split("?")[0]);
   });
   return urls;
 }

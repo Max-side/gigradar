@@ -36,6 +36,9 @@ function mergeGroup(group, id) {
     if (event.price_min != null && (result.price_min == null || event.price_min < result.price_min)) {
       result.price_min = event.price_min;
     }
+    if (event.price_max != null && (result.price_max == null || event.price_max > result.price_max)) {
+      result.price_max = event.price_max;
+    }
     const existingPriority = Math.min(...result.sources.map((s) => SOURCE_PRIORITY[s.name] ?? 99));
     const newPriority = SOURCE_PRIORITY[event.sources[0]?.name] ?? 99;
     if (newPriority < existingPriority) {

@@ -119,3 +119,21 @@ test("dedupe unions lineup, tags_type and tags_origin across merged sources", ()
   assert.deepEqual(new Set(merged.lineup), new Set(["深海系樂團", "配角甲", "配角乙"]));
   assert.deepEqual(new Set(merged.tags_origin), new Set(["本地", "海外"]));
 });
+
+test("mergeGroup fix: price_max is merged across sources, not just price_min", () => {
+  const fromKktix = makeEvent({
+    price_min: 800,
+    price_max: 3800,
+    sources: [{ name: "KKTIX", url: "https://example.com/a", raw_id: "a" }],
+  });
+  const fromTixcraft = makeEvent({
+    price_min: null,
+    price_max: null, // 拓元's listing-only scrape never has price data
+    sources: [{ name: "拓元", url: "https://example.com/b", raw_id: "b" }],
+  });
+
+  const [merged] = dedupe([fromTixcraft, fromKktix]); // tixcraft processed first
+
+  assert.equal(merged.price_min, 800);
+  assert.equal(merged.price_max, 3800, "price_max must pick up KKTIX's value even though it merged second");
+});

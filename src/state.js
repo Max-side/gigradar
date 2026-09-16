@@ -3,7 +3,8 @@
  * M1: localStorage read/write only. Gist sync (M9) plugs into syncToGist/syncFromGist below.
  */
 
-import { computeEventId } from "./id.js";
+import { computeEventId, computePossibleEventIds } from "./id.js";
+import { isPast } from "./filter.js";
 
 const STORAGE_KEY = "gigradar:prefs";
 
@@ -112,12 +113,13 @@ export function countFavoritedByArtist(artistName, events, prefs) {
 export function countHiddenByArtist(artistName, events, prefs) {
   return events.filter(
     (e) =>
+      !isPast(e.date) &&
       !prefs.favorites.includes(e.id) &&
       (prefs.strict_mode ? e.lineup.includes(artistName) : e.headliners.includes(artistName))
   ).length;
 }
 export function countHiddenByType(tag, events, prefs) {
-  return events.filter((e) => !prefs.favorites.includes(e.id) && e.tags_type.includes(tag)).length;
+  return events.filter((e) => !isPast(e.date) && !prefs.favorites.includes(e.id) && e.tags_type.includes(tag)).length;
 }
 
 // --- Manual events (US-17, FR-17, SPEC §7 / decision S1) ----------------
@@ -149,11 +151,17 @@ function saveManualEventsList(list) {
 export async function addManualEvent(fields) {
   const headliners = fields.headliners.filter(Boolean);
   const id = await computeEventId(headliners[0], fields.date, fields.venue);
+  // AC-17: if this show turns out to have both a matinee and evening real
+  // scrape later, dedup.mjs gives THOSE a bucket-suffixed id, not this bare
+  // one — record every id a future scrape could produce so loadEvents() can
+  // recognize either outcome and drop this manual copy (see src/id.js).
+  const possibleRealIds = await computePossibleEventIds(headliners[0], fields.date, fields.venue, fields.time);
   const now = new Date().toISOString();
 
   const event = {
     id,
     merged_ids: [id],
+    possible_real_ids: possibleRealIds,
     title_raw: headliners.join(" / "),
     headliners,
     lineup: headliners,
