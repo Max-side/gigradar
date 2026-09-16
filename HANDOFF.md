@@ -1,12 +1,12 @@
 # 交接文件 — 換電腦/換 session 接續開發前先看這份
 
-寫於 2026-09-15，2026-09-16 更新至 M10 完成、M11 進行中但卡在一個需要人類決策的架構問題（見下方「M11 的重大發現」，**這是目前最重要的一段，先看這個**）。這份文件的目的：讓一個完全沒看過這個對話紀錄的人（包含未來的你，或另一台電腦上全新開的 Claude Code session）能在 5 分鐘內知道現在做到哪、能不能信任目前的程式碼、下一步該做什麼。
+寫於 2026-09-15，2026-09-16 更新至 M11 完成（過程中踩到一個真實的資料損毀事故，已經修好並在真實環境驗證過，見下方「M11 的重大發現」）。這份文件的目的：讓一個完全沒看過這個對話紀錄的人（包含未來的你，或另一台電腦上全新開的 Claude Code session）能在 5 分鐘內知道現在做到哪、能不能信任目前的程式碼、下一步該做什麼。
 
 ## 這是什麼專案
 
 個人用的獨立/地下音樂演出雷達。**完整需求**看 [`GIGRADAR-SRS.md`](./GIGRADAR-SRS.md)，**技術架構與所有踩過的坑**看 [`GIGRADAR-SPEC.md`](./GIGRADAR-SPEC.md)——這兩份是唯一該信任的來源，這份 HANDOFF 只是導覽，內容有衝突以那兩份為準。
 
-## 現在的狀態：M1~M10 完成，都在瀏覽器裡實測過，不是只寫完沒測（一個例外見下方 M9 那一列）；M11 排程目前是**故意關閉**的狀態
+## 現在的狀態：M1~M11 完成，都在瀏覽器裡實測過，不是只寫完沒測（一個例外見下方 M9 那一列）；排程已重新打開並在真實 GitHub Actions 環境驗證過
 
 | 里程碑 | 內容 | 狀態 |
 |---|---|---|
@@ -20,7 +20,7 @@
 | M8 | 待整理頁讀真實 `data/needs-review.json`；「指派藝人」產生 YAML 片段供人工貼到 `artists.yml`（見下方說明，不是自動寫檔） | ✅ |
 | M9 | Gist 同步（連接/斷開/雙向同步/離線 fallback）＋ FR-63/64 匯出匯入、設定頁的嚴格模式與靜音關鍵字順便一起接上 | ⚠️ 見下方說明 |
 | M10 | 來源異常告警（GitHub issue）、設定頁來源狀態儀表、時間表異常 banner | ✅（真的開 issue 那段沒有跑過真實 CI，見下方說明） |
-| M11 | GitHub Actions 排程上線 | ⚠️ 排程**故意暫停**——真的跑過一次，發現 GitHub Actions 的 IP 會被拓元/KKTIX 部分擋掉，見下方「M11 的重大發現」 |
+| M11 | GitHub Actions 排程上線 | ✅ 排程已重新打開，每天 08:00 CST 自動跑；過程中發現並修好一個真實的資料損毀問題，見下方「M11 的重大發現」 |
 | M12 | 覆蓋率抽樣 | ❌ |
 
 完整里程碑定義見 `GIGRADAR-SPEC.md` §11。
@@ -54,32 +54,26 @@ npm test                # 跑全部單元測試（見下方「測試怎麼跑」
 6. **日期比較不要用 `new Date(dateStr) > new Date()`**——`new Date("2026-10-15")` 會被當成 UTC 午夜，跟本地/台灣時間的「現在」比較時，同一天的場次在某些時段會被誤判成「已過期」。`scripts/normalize.mjs` 的 `statusFromTickets` 和 `src/filter.js` 的 `isPast()` 都踩過這個坑，兩處都已經改成用日期字串（`YYYY-MM-DD`）直接比較，不要再改回 Date 物件比較。
 7. **`normalize()`（或任何 per-item 的 pipeline 處理函式）處理陣列時一定要包 try/catch**——單一筆原始資料格式異常就丟例外的話，會讓整個 pipeline run 中斷，當天完全不會更新，而不是只把那一筆丟進待整理。`scripts/fetch.mjs` 已經修好，之後新增 per-item 處理邏輯要延續這個模式。
 
-## M11 的重大發現：GitHub Actions 的 IP 會被來源網站部分擋掉
-
-這是目前整個專案最需要決定方向的問題，先讀完再繼續開發。
+## M11 的重大發現：GitHub Actions 的 IP 會被來源網站部分擋掉（已修好）
 
 2026-09-16 手動觸發了一次 `workflow_dispatch`（在真的 GitHub Actions 環境跑，不是本機），結果：
 - **拓元直接 403**（`GET https://tixcraft.com/activity -> 403`）——`notify.mjs` 正確地自動開了 [issue #1](https://github.com/Max-side/gigradar/issues/1)，這不是誤判，是真的被擋。
 - **KKTIX 的全站搜尋策略（4 個場館：Legacy Taipei/Taichung、Revolver、Clapper Studio）也全部 403**，只有 org 頁策略還抓得到東西。
 
-最可能的原因：這兩個網站的反爬蟲機制會擋掉常見的雲端/機房 IP 段（GitHub Actions runner 的 IP 就是這種），但放行一般家用/公司網路的 IP——這正好解釋了為什麼本機一直測都正常，只有在 Actions 上才出事。
+最可能的原因：這兩個網站的反爬蟲機制會擋掉常見的雲端/機房 IP 段（GitHub Actions runner 的 IP 就是這種），但放行一般家用/公司網路的 IP——這正好解釋了為什麼本機一直測都正常，只有在 Actions 上才出事。這個封鎖本身**沒有解決**，往後每次排程執行拓元和 KKTIX 搜尋大概率都還是會失敗，這是要接受的現實，不是一次性的意外。
 
-**已經造成的損害、已經修好的部分**：因為 `fetch.mjs` 目前來源失敗時不會沿用舊資料（SPEC §4.2 步驟 3 那個已知缺口，原本以為只是「還沒做」，這次證實是「真的會出事」），那次執行直接把 `needs-review.json` 的 79 筆真實資料洗成 4 筆，而且自動 commit 推上了 `main`。已經用 `git revert`（583fe35）復原。**為了不要明天 00:00 UTC 又自動跑一次重蹈覆轍，已經先把 `daily-update.yml` 的 `schedule` 觸發器註解掉，只留 `workflow_dispatch` 可以手動測試**——這代表現在完全沒有自動排程在跑，需要人工決定何時重新打開。
+**造成的損害**：因為 `fetch.mjs` 當時來源失敗時不會沿用舊資料（SPEC §4.2 步驟 3 那個已知缺口，原本以為只是「還沒做」，這次證實是「真的會出事」），那次執行直接把 `needs-review.json` 的 79 筆真實資料洗成 4 筆，而且自動 commit 推上了 `main`。已經用 `git revert`（583fe35）復原。
 
-**在重新打開排程之前，必須先解決以下至少一項**：
-1. 補上「來源失敗時沿用 `events.json`/`needs-review.json` 中屬於它的舊資料」這個 fallback（SPEC §4.2 步驟 3），這樣就算來源被擋，也只是「這次沒有新資料」而不是「把舊資料洗掉」——這是最基本的安全網，不解決封鎖問題本身，但能防止資料損毀，建議優先做這個。
-2. 想辦法解決封鎖本身：換一個不會被當成機房 IP 的執行環境（例如自架一台常駐的家用/小型 VPS 執行 cron，而不是 GitHub Actions）、或幫 fetch 請求加代理、或研究這兩個網站的封鎖規則能不能繞過（不保證做得到，也要考慮 NFR-04 爬取禮儀的分寸）。
-3. 重新評估：如果拓元長期沒辦法從雲端環境抓，是否接受「自動排程只維護 KKTIX 的 org 頁資料，拓元/KKTIX 搜尋改成你自己在本機手動 `npm run fetch` 再 commit」這種混合模式（犧牲一些自動化，但穩定）。
+**已經修好的部分**：新增 `scripts/source-fallback.mjs`——來源異常時，把上一輪屬於這個來源的 `events.json`/`needs-review.json` 資料重新餵回這輪的處理流程（而不是讓它們憑空消失），再讓 `dedupe()` 用同一套邏輯跟其他來源這輪抓到的新資料合併。**已經在真實 GitHub Actions 環境重跑一次驗證**：同樣的 403 又發生了，但這次 needs-review 維持在 79 筆，commit 只改了 6 行 metadata，不再洗掉真實資料（對照組：修好前 vs 修好後的兩次真實執行紀錄都在 [Actions 頁面](https://github.com/Max-side/gigradar/actions/workflows/daily-update.yml)上）。排程已經重新打開。
 
-這是產品/架構層級的決定，不是我能自己拍板的事，下次接手時先跟人類確認方向再繼續 M11。
+**這個 fallback 解決的是「不要洗掉資料」，不是「解決封鎖」本身**——拓元/KKTIX 搜尋策略只要一直被擋，`needs-review.json`/`events.json` 就會一直停在 2026-09-16 這批舊資料，不會有新場次進來，只是不會再變得比現在更差。如果之後想真的解決封鎖（換執行環境、代理、或接受混合模式改成本機手動跑那兩個來源），是下一個獨立的產品/架構決定，不算 M11 的範圍。
 
-## M10 的告警沒有跑過真實 GitHub Actions
+## M10 的告警：本機不會打 API，但已經在真實 GitHub Actions 上驗證過
 
 `scripts/notify.mjs`（FR-14/AC-14，來源抓到 0 筆但上次 >0，或直接 fetch 失敗時開 GitHub issue）只在有 `GITHUB_TOKEN`＋`GITHUB_REPOSITORY` 環境變數時才會真的打 API，本機 `npm run fetch` 沒有這兩個變數，所以永遠是「印一行 log 就跳過」，這是刻意設計成不會擋住本機開發。已經驗證過的：
 - `scripts/source-status.mjs`（純函式，決定 sources.json 每個來源的 `status`/`last_success`/`last_count` 該怎麼算）有完整單元測試，包含「連續兩天都抓到 0 筆要一直維持異常，不能第一天過後自己「痊癒」」這條容易漏掉的規則。
 - 前端兩處讀 `sources.json` 的地方（時間表的異常 banner、設定頁的來源狀態儀表）都在瀏覽器裡塞了假的 `ok`/`anomaly`/`error` 三種狀態實測過，畫面正確。
-
-**沒測到的**：`.github/workflows/daily-update.yml` 裡新加的 `env: GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}` 和 `permissions: issues: write` 有沒有真的讓 Actions 環境下的 `notify.mjs` 成功開出一個 issue，只能等 M11 把 workflow 真的推上 GitHub 跑一次才能確認（目前 M1~M10 都還只在本機開發驗證，見決策 S3）。
+- M11 實際觸發真實 GitHub Actions 執行時，`notify.mjs` 真的成功開了 [issue #1](https://github.com/Max-side/gigradar/issues/1)，第二次執行時也正確認出 issue 已存在、沒有重複開新的——這部分已經不是「沒測到」了，見下方「M11 的重大發現」。
 
 ## M9 沒有真的用 GitHub PAT 測過
 
@@ -116,4 +110,4 @@ npm test    # 等同 node --test scripts/*.test.mjs src/*.test.js
 
 ## 建議下一步
 
-**先處理上面「M11 的重大發現」**，這會影響整個專案能不能真的做到「全自動、免費」（NFR-06/D13 的前提）。決定好方向（補 fallback／換執行環境／接受混合模式）之後才適合重新打開 `daily-update.yml` 的排程。如果想先看到「真的有資料」的畫面，可以先做 M8 提到的「補幾筆 artists.yml」那件事（現在待整理頁能幫你產生要貼的 YAML 片段了），會讓後續每個里程碑的手動測試都輕鬆很多。
+M12（覆蓋率抽樣）是最後一個里程碑。不過更值得優先做的是上面提到的「拓元/KKTIX 搜尋長期被 GitHub Actions 擋」這個根本問題還沒解——現在資料不會再被洗掉，但也不會有新資料流入這兩個來源，等於實質上停止更新。建議先做 M8 提到的「補幾筆 artists.yml」讓已經抓到的 4 筆 KKTIX org 頁資料能正常顯示，同時觀察排程接下來幾天的 `data/sources.json`，確認封鎖是不是每天都發生、還是偶發的，再決定要不要投入解決封鎖本身。

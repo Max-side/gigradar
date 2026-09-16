@@ -180,8 +180,8 @@ id      = sha1( normalize(headliner) + "|" + date + "|" + venue_normalized )
 - 步驟 3/4 的判斷邏輯抽成純函式 `scripts/source-status.mjs` 的 `classifySourceRun()`，方便直接單元測試，不用整條 pipeline 跑一次才能驗證。
 - 步驟 4 的「上次 > 0」比較，用的是 `sources.json` 裡的 `last_count`，而且**只有真的成功抓到 >0 筆時才會更新這個值**——連續好幾天都抓到 0 筆，`last_count` 會一直停在最後一次成功的數字，讓每一天都持續判定為異常並持續告警，不會因為「今天 0 筆、昨天也記成 0 筆」而自己看起來恢復正常。
 - `notify.mjs` 開 issue 前會先查有沒有同標題、帶 `source-anomaly` label 的 open issue，避免同一個來源連續故障時每天洗一個新 issue（呼應 SRS 的「每週維護時間 < 15 分鐘」）。
-- 步驟 3「該來源本次沿用 events.json 中屬於它的舊資料」**還沒做**——目前失敗的來源這次直接貢獻 0 筆給 dedupe，不會用舊資料補位。這是因為合併後的 `events.json` 裡一筆事件的 `sources[]` 可能來自好幾個來源，要抽出「單純屬於某個來源的舊資料」需要動到合併演算法本身，範圍比 M10 大，先記在這裡，還沒排進哪個里程碑。
-  **M11 實測證實這不只是理論風險**：2026-09-16 從 GitHub Actions 手動觸發一次真的執行，拓元回 403、KKTIX 的搜尋策略也全部 403（GH Actions 的 IP 疑似被這兩個網站的反爬蟲當成機房 IP 擋掉，本機測試因為是家用/公司 IP 所以一直正常），因為沒有這個 fallback，直接把 `needs-review.json` 的 79 筆真實資料洗成 4 筆並自動 commit 上去，已用 `git revert` 復原，`daily-update.yml` 的排程也先關掉。細節與後續選項見 `HANDOFF.md`「M11 的重大發現」。
+- 步驟 3「該來源本次沿用 events.json 中屬於它的舊資料」**已實作**（`scripts/source-fallback.mjs`，M11，2026-09-16）：`fallbackEventsForSource()` 從上一輪 `events.json` 抽出屬於該來源的貢獻（只留該來源自己的 `sources[]` 項目，拿掉 `id`/`merged_ids`），重新丟回這輪的 pipeline，讓 `dedupe()` 用同一套邏輯跟其他來源這輪抓到的新資料自然合併；`fallbackReviewItemsForSource()` 對 `needs-review.json` 做一樣的事。
+  **緣起（M11 實測證實這不只是理論風險）**：2026-09-16 從 GitHub Actions 手動觸發一次真的執行，拓元回 403、KKTIX 的搜尋策略也全部 403（GH Actions 的 IP 疑似被這兩個網站的反爬蟲當成機房 IP 擋掉，本機測試因為是家用/公司 IP 所以一直正常），當時還沒有這個 fallback，直接把 `needs-review.json` 的 79 筆真實資料洗成 4 筆並自動 commit 上去，已用 `git revert` 復原。補上 fallback 後在真實 GitHub Actions 環境重跑一次驗證：同樣的 403 又發生，但這次資料維持在 79 筆，只有 metadata 變動，`daily-update.yml` 的排程已重新打開。**注意**：這個 fallback 只防止資料被洗掉，不解決封鎖本身——只要拓元/KKTIX 搜尋持續被擋，這兩個來源就不會有新資料流入，等同實質停止更新，是否要解決封鎖是另一個獨立的決定。細節見 `HANDOFF.md`「M11 的重大發現」。
 
 ### 4.3 爬取禮儀（NFR-04）
 

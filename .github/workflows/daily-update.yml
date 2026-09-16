@@ -1,16 +1,16 @@
 name: Daily Update
 
 on:
-  # Schedule temporarily disabled (2026-09-16): a real run from a GitHub-hosted
-  # runner got 403'd by tixcraft (拓元) and partially by KKTIX's search-based
-  # strategy — see issue #1. Because fetch.mjs has no "keep previous data when
-  # a source fails" fallback yet (tracked in GIGRADAR-SPEC.md §4.2), that run
-  # wiped real needs-review.json data, which had to be reverted (583fe35).
-  # Re-enable the schedule below once that fallback exists, or once the
-  # blocking is confirmed resolved another way.
-  # schedule:
-  #   - cron: "0 0 * * *" # 08:00 CST = 00:00 UTC (SRS D1)
-  workflow_dispatch: {} # manual trigger — safe to run for testing, just don't rely on its output yet
+  # Re-enabled 2026-09-16 after adding the source-fallback safety net
+  # (scripts/source-fallback.mjs): a run from GitHub Actions still gets 403'd
+  # by tixcraft (拓元) and KKTIX's search strategy (see issue #1), but fetch.mjs
+  # now reuses each blocked source's previous data instead of wiping it —
+  # verified against a real run (commit f6f39d3 only touched 6 metadata
+  # lines, not the 600-line data loss from before this fix). See
+  # GIGRADAR-SPEC.md §4.2 and HANDOFF.md's "M11 的重大發現" for the full story.
+  schedule:
+    - cron: "0 0 * * *" # 08:00 CST = 00:00 UTC (SRS D1)
+  workflow_dispatch: {} # manual trigger for debugging
 
 jobs:
   update:
