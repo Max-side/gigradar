@@ -140,3 +140,90 @@ function escapeHtml(s) {
     .replace(/>/g, "&gt;")
     .replace(/"/g, "&quot;");
 }
+
+/**
+ * FR-16/US-16 (SPEC M8): 待整理頁「指派藝人」. Only collects the fields
+ * needed to build an artists.yml entry — it never writes the file itself
+ * (this is a static frontend, and M8 is explicitly a manual-commit dev
+ * action per SPEC §11).
+ * @param {{ title_raw?: string }} item
+ * @param {(fields: { canonical: string, aliases: string[], tagsOrigin: string }) => void} onSubmit
+ */
+export function openAssignArtistDialog(item, onSubmit) {
+  const guessedName = (item.title_raw ?? "").split(/[-–(（]/)[0].trim();
+
+  const html = `
+    <div class="overlay-scrim" data-close></div>
+    <div class="dialog-box" role="dialog" aria-modal="true">
+      <div class="dialog-box__title">指派藝人</div>
+      <div class="dialog-box__body">原始標題：「${escapeHtml(item.title_raw ?? "")}」</div>
+      <div class="field-group">
+        <label class="field-label" for="assign-canonical">正式藝人名稱</label>
+        <input class="field-input" id="assign-canonical" type="text" value="${escapeHtml(guessedName)}" />
+      </div>
+      <div class="field-group">
+        <label class="field-label" for="assign-aliases">別名（逗號分隔，選填）</label>
+        <input class="field-input" id="assign-aliases" type="text" placeholder="例如：暱稱、英文拼寫" />
+      </div>
+      <div class="field-group">
+        <label class="field-label" for="assign-origin">來源地</label>
+        <select class="field-input" id="assign-origin">
+          <option value="本地">本地</option>
+          <option value="海外">海外</option>
+          <option value="日韓">日韓</option>
+          <option value="歐美">歐美</option>
+        </select>
+      </div>
+      <div style="display:flex;gap:10px;">
+        <button class="btn-ghost" data-close style="flex:1;">取消</button>
+        <button class="btn-primary" data-confirm style="flex:1;">產生 YAML</button>
+      </div>
+    </div>
+  `;
+  overlayRoot().innerHTML = html;
+  const root = overlayRoot();
+  root.querySelectorAll("[data-close]").forEach((el) => el.addEventListener("click", clearOverlay));
+  root.querySelector("[data-confirm]")?.addEventListener("click", () => {
+    const canonical = root.querySelector("#assign-canonical").value.trim();
+    if (!canonical) return;
+    const aliases = root
+      .querySelector("#assign-aliases")
+      .value.split(",")
+      .map((s) => s.trim())
+      .filter(Boolean);
+    const tagsOrigin = root.querySelector("#assign-origin").value;
+    clearOverlay();
+    onSubmit({ canonical, aliases, tagsOrigin });
+  });
+}
+
+/** Shows a copyable YAML snippet for the user to paste into data/artists.yml by hand. */
+export function showYamlSnippetDialog(snippet) {
+  const html = `
+    <div class="overlay-scrim" data-close></div>
+    <div class="dialog-box" role="dialog" aria-modal="true">
+      <div class="dialog-box__title">貼到 data/artists.yml</div>
+      <div class="dialog-box__body">
+        複製下面這段，貼到 <code>data/artists.yml</code> 檔案最後，存檔後 commit，下次 <code>npm run fetch</code> 就會正確歸類這位藝人的場次。
+      </div>
+      <textarea class="field-input" readonly rows="5" style="font-family:ui-monospace,monospace;font-size:12px;" id="yaml-snippet">${escapeHtml(snippet)}</textarea>
+      <div style="display:flex;gap:10px;margin-top:10px;">
+        <button class="btn-ghost" data-close style="flex:1;">關閉</button>
+        <button class="btn-primary" data-copy style="flex:1;">複製</button>
+      </div>
+    </div>
+  `;
+  overlayRoot().innerHTML = html;
+  const root = overlayRoot();
+  root.querySelectorAll("[data-close]").forEach((el) => el.addEventListener("click", clearOverlay));
+  root.querySelector("[data-copy]")?.addEventListener("click", async () => {
+    const textarea = root.querySelector("#yaml-snippet");
+    try {
+      await navigator.clipboard.writeText(textarea.value);
+      root.querySelector("[data-copy]").textContent = "已複製";
+    } catch {
+      textarea.focus();
+      textarea.select();
+    }
+  });
+}

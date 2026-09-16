@@ -1,12 +1,12 @@
 # 交接文件 — 換電腦/換 session 接續開發前先看這份
 
-寫於 2026-09-15，2026-09-16 更新至 M7。這份文件的目的：讓一個完全沒看過這個對話紀錄的人（包含未來的你，或另一台電腦上全新開的 Claude Code session）能在 5 分鐘內知道現在做到哪、能不能信任目前的程式碼、下一步該做什麼。
+寫於 2026-09-15，2026-09-16 更新至 M8（另外做了一輪全專案 bug review 並全部修掉，見下方測試章節）。這份文件的目的：讓一個完全沒看過這個對話紀錄的人（包含未來的你，或另一台電腦上全新開的 Claude Code session）能在 5 分鐘內知道現在做到哪、能不能信任目前的程式碼、下一步該做什麼。
 
 ## 這是什麼專案
 
 個人用的獨立/地下音樂演出雷達。**完整需求**看 [`GIGRADAR-SRS.md`](./GIGRADAR-SRS.md)，**技術架構與所有踩過的坑**看 [`GIGRADAR-SPEC.md`](./GIGRADAR-SPEC.md)——這兩份是唯一該信任的來源，這份 HANDOFF 只是導覽，內容有衝突以那兩份為準。
 
-## 現在的狀態：M1~M7 完成，都在瀏覽器裡實測過，不是只寫完沒測
+## 現在的狀態：M1~M8 完成，都在瀏覽器裡實測過，不是只寫完沒測
 
 | 里程碑 | 內容 | 狀態 |
 |---|---|---|
@@ -17,7 +17,7 @@
 | M5 | 收藏／排除規則／復原 toast／已隱藏管理頁 | ✅ |
 | M6 | `diff.mjs` 產生 `digest.json`＋修正 `first_seen_at` 只在真的新事件才重設；新上架頁；順便把 FR-34「已更新」badge 接到收藏頁 | ✅ 有單元測試 `scripts/diff.test.mjs` |
 | M7 | 手動新增場次實際存檔到 localStorage（決策 S1：不寫回 repo），跟 `events.json` 合併顯示，真的被抓到後自動去重 | ✅ 有跨環境雜湊一致性測試 `scripts/id-consistency.test.mjs` |
-| M8 | 待整理頁的「指派藝人」寫回 `artists.yml` | ❌ |
+| M8 | 待整理頁讀真實 `data/needs-review.json`；「指派藝人」產生 YAML 片段供人工貼到 `artists.yml`（見下方說明，不是自動寫檔） | ✅ |
 | M9 | Gist 同步（設定頁的 PAT 輸入框目前不會做任何事） | ❌ |
 | M10 | 來源異常告警（GitHub issue）、設定頁來源狀態儀表 | ❌ |
 | M11 | GitHub Actions 排程上線 | ⚠️ workflow 檔案已寫好放在 `.github/workflows/daily-update.yml`，但**還沒驗證過在 Actions 上真的能跑**（只在本機手動跑過） |
@@ -37,7 +37,7 @@ npm run serve         # 開本機伺服器
 
 ```bash
 npm run fetch          # 會打真的 KKTIX / 拓元網站，跑完會覆寫 data/*.json
-node --test scripts/dedup.test.mjs    # 跑 dedup 的單元測試
+npm test                # 跑全部單元測試（見下方「測試怎麼跑」）
 ```
 
 ⚠️ **`npm run fetch` 目前一定會讓 `data/events.json` 變回空的**——不是 bug，是因為 `data/artists.yml` 現在只有兩筆示範資料（深海系樂團、ABC Band），跟真實抓到的樂團名字對不上，所有場次都會被歸類到「待整理」而不是正式清單。如果你想在畫面上看到真的資料流動，兩個選項：
@@ -51,6 +51,20 @@ node --test scripts/dedup.test.mjs    # 跑 dedup 的單元測試
 3. **本機測試用瀏覽器開發時，如果改了 `.js` 檔案但畫面沒反應**，通常是瀏覽器快取住舊的 module 檔案，換個 port（例如 `python3 -m http.server 8001`）重開就會抓到新的，比硬重整可靠。
 4. **背景執行長時間指令時，Node 的 `console.log` 在 stdout 被導向檔案時是全緩衝的**，不會即時寫入，會看起來像卡住。要看即時進度得用 `fs.appendFileSync` 寫檔（`scripts/progress-log.mjs` 已經這樣做了，看 `fetch-progress.log`，這個檔案不會進 git）。
 5. **前端 `fetch("./data/events.json")` 一定要加 `{ cache: "no-store" }`**——不加的話瀏覽器分頁開著、或同一個 session 內重複導覽，會一直吃到舊的快取版本，即使檔案內容已經在磁碟上更新了。M7 測「手動新增場次被真實抓到後應該消失」時就是被這個絆住，才發現這個問題，已經修在 `src/app.js` 的 `loadEvents()`。
+6. **日期比較不要用 `new Date(dateStr) > new Date()`**——`new Date("2026-10-15")` 會被當成 UTC 午夜，跟本地/台灣時間的「現在」比較時，同一天的場次在某些時段會被誤判成「已過期」。`scripts/normalize.mjs` 的 `statusFromTickets` 和 `src/filter.js` 的 `isPast()` 都踩過這個坑，兩處都已經改成用日期字串（`YYYY-MM-DD`）直接比較，不要再改回 Date 物件比較。
+7. **`normalize()`（或任何 per-item 的 pipeline 處理函式）處理陣列時一定要包 try/catch**——單一筆原始資料格式異常就丟例外的話，會讓整個 pipeline run 中斷，當天完全不會更新，而不是只把那一筆丟進待整理。`scripts/fetch.mjs` 已經修好，之後新增 per-item 處理邏輯要延續這個模式。
+
+## M8「指派藝人」為什麼不會真的寫 `artists.yml`
+
+這是刻意的（SPEC §11 M8 那一列寫得很明白：「本機開發時手動 commit，非使用者操作」）。這個專案是純靜態前端（決策 D14），沒有後端可以接受寫檔請求，瀏覽器本身也不能直接改動 repo 裡的檔案。所以 `review.html` 的「指派藝人」按鈕做的事情是：跳出一個小表單（正式藝人名稱／別名／來源地），送出後產生一段格式跟 `data/artists.yml` 一致的 YAML 片段，顯示在可複製的文字框裡——由你自己貼進檔案、存檔、commit。按下「指派藝人」或「忽略」都會把該筆記錄從畫面上的待整理佇列裡移除（存在 `localStorage` 的 `gigradar:review_dismissed`，只影響這個瀏覽器，不會跨裝置同步，也不會改到 `needs-review.json` 本身——那個檔案要等下一次 `npm run fetch` 讀到更新後的 `artists.yml` 才會自然瘦身）。
+
+## 測試怎麼跑
+
+```bash
+npm test    # 等同 node --test scripts/*.test.mjs src/*.test.js
+```
+
+目前 23 個測試全過。`scripts/*.test.mjs` 測 pipeline（dedup/normalize/diff/id 一致性），`src/*.test.js` 測前端純邏輯（目前只有 `filter.js`）——兩邊都用 Node 內建的 `node:test`，沒有額外測試框架依賴。新增前端純函式時比照 `src/filter.test.js` 加測試就好。
 
 ## 決策紀錄在哪裡
 
@@ -66,4 +80,4 @@ node --test scripts/dedup.test.mjs    # 跑 dedup 的單元測試
 
 ## 建議下一步
 
-M8（待整理頁「指派藝人」寫回 `artists.yml`）是下一個獨立的小塊。如果想先看到「真的有資料」的畫面，先做上面提到的「補幾筆 artists.yml」那件事，會讓後續每個里程碑的手動測試都輕鬆很多。
+M9（Gist 同步，設定頁的 PAT 輸入框目前不會做任何事）是下一個獨立的小塊，見 `src/state.js` 裡 `syncToGist`/`syncFromGist` 的 TODO 註解和 SPEC §8、決策 S1/S2。如果想先看到「真的有資料」的畫面，可以先做 M8 提到的「補幾筆 artists.yml」那件事（現在待整理頁能幫你產生要貼的 YAML 片段了），會讓後續每個里程碑的手動測試都輕鬆很多。

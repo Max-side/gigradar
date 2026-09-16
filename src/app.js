@@ -11,9 +11,13 @@
  *   the pipeline's own bookkeeping, but the frontend only needs what's
  *   already on each event. Also wires FR-34's "已更新" badge on favorites,
  *   now that diff.mjs actually sets updated_fields.
- * M7 (current): 手動新增場次 (add.html) actually saves to localStorage and
- *   shows up everywhere else — loadEvents() merges in state.js's manual
- *   events, dropping any whose id a real scrape has since produced (AC-17).
+ * M7: 手動新增場次 (add.html) actually saves to localStorage and shows up
+ *   everywhere else — loadEvents() merges in state.js's manual events,
+ *   dropping any whose id a real scrape has since produced (AC-17).
+ * M8 (current): 待整理頁 (review.html) reads data/needs-review.json for
+ *   real. "指派藝人"/"忽略" never write artists.yml themselves (there's no
+ *   backend to write to) — they generate a YAML snippet for the user to
+ *   paste in by hand and commit, and locally dismiss the item from the queue.
  */
 
 import { partitionEvents } from "./filter.js";
@@ -31,10 +35,18 @@ import {
   countHiddenByType,
   loadManualEvents,
   addManualEvent,
+  loadReviewDismissed,
+  dismissReviewItem,
 } from "./state.js";
 import { renderEventList, renderFavoritesList, renderNewArrivalsList, renderEmptyList } from "./render.js";
 import { splitDate, daysSince } from "./format.js";
-import { openExcludeMenu, confirmBlockArtist, showUndoToast } from "./interactions.js";
+import {
+  openExcludeMenu,
+  confirmBlockArtist,
+  showUndoToast,
+  openAssignArtistDialog,
+  showYamlSnippetDialog,
+} from "./interactions.js";
 
 function escapeHtml(s) {
   return String(s)
@@ -360,6 +372,82 @@ async function initHiddenManagement(container) {
   render();
 }
 
+function reviewReasonLabel(reason) {
+  if (reason === "artist_unrecognized") return "無法辨識藝人是否已建檔";
+  if (reason === "normalize_error") return "解析失敗（欄位格式異常）";
+  return reason;
+}
+
+function yamlEntryFor({ canonical, aliases, tagsOrigin }) {
+  const aliasList = aliases.map((a) => `"${a.replace(/"/g, '\\"')}"`).join(", ");
+  return `- canonical: ${canonical}\n  aliases: [${aliasList}]\n  tags_origin_default: ${tagsOrigin}`;
+}
+
+/** M8 (FR-16/61, US-16): 待整理頁 reads the real needs-review.json queue. */
+async function initReview(container) {
+  let items;
+  try {
+    const res = await fetch("./data/needs-review.json", { cache: "no-store" });
+    if (!res.ok) throw new Error(`GET data/needs-review.json -> ${res.status}`);
+    const data = await res.json();
+    items = data.items ?? [];
+  } catch (err) {
+    console.error("Failed to load needs-review.json:", err);
+    container.innerHTML = renderEmptyList("資料載入失敗，請稍後再試。");
+    return;
+  }
+
+  function render() {
+    const dismissed = new Set(loadReviewDismissed());
+    const pending = items.filter((item) => !dismissed.has(item.raw_id));
+
+    const heading = document.getElementById("review-heading");
+    if (heading) heading.textContent = `未識別藝人／日期（${pending.length}）`;
+
+    container.innerHTML =
+      pending.length === 0
+        ? renderEmptyList("目前沒有待整理的場次，做得好。")
+        : pending
+            .map(
+              (item, i) => `
+        <div class="card">
+          <div style="font-size:12px;color:var(--muted);font-family:ui-monospace,monospace;background:var(--surface-2);border-radius:10px;padding:9px 11px;">
+            原始標題：「${escapeHtml(item.title_raw ?? "（無標題）")}」
+          </div>
+          <div style="font-size:11px;color:var(--muted);">
+            來源：${escapeHtml(item.source)}　問題：${escapeHtml(reviewReasonLabel(item.reason))}${item.detail ? `（${escapeHtml(item.detail)}）` : ""}
+          </div>
+          <div style="display:flex;gap:8px;">
+            <button class="btn-dark" style="flex:1;padding:9px;font-size:12px;" data-assign="${i}">指派藝人</button>
+            <button class="btn-ghost" style="flex:1;padding:9px;font-size:12px;" data-ignore="${i}">忽略</button>
+          </div>
+        </div>
+      `
+            )
+            .join("");
+
+    container.querySelectorAll("[data-assign]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const item = pending[Number(btn.dataset.assign)];
+        openAssignArtistDialog(item, (fields) => {
+          showYamlSnippetDialog(yamlEntryFor(fields));
+          dismissReviewItem(item.raw_id);
+          render();
+        });
+      });
+    });
+    container.querySelectorAll("[data-ignore]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const item = pending[Number(btn.dataset.ignore)];
+        dismissReviewItem(item.raw_id);
+        render();
+      });
+    });
+  }
+
+  render();
+}
+
 function wireChipGroup(group) {
   group.querySelectorAll(".chip-selectable").forEach((chip) => {
     chip.addEventListener("click", () => {
@@ -460,4 +548,9 @@ if (hiddenContainer) {
 const addForm = document.getElementById("add-form");
 if (addForm) {
   initManualAdd(addForm);
+}
+
+const reviewContainer = document.querySelector('[data-page="review"]');
+if (reviewContainer) {
+  initReview(reviewContainer);
 }

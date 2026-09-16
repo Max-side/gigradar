@@ -193,6 +193,32 @@ export function removeManualEvent(id) {
   saveManualEventsList(loadManualEvents().filter((e) => e.id !== id));
 }
 
+// --- 待整理 dismissals (US-16, FR-16/61, SPEC M8) ------------------------
+// "指派藝人"/"忽略" only ever produce a YAML snippet the user pastes into
+// data/artists.yml by hand (SPEC §11 M8: writing that file back is a manual
+// dev/commit action, not something this static frontend can do). This list
+// just declutters the queue in THIS browser until the next `npm run fetch`
+// naturally drops the item from needs-review.json — it's not synced anywhere.
+
+const REVIEW_DISMISSED_KEY = "gigradar:review_dismissed";
+
+export function loadReviewDismissed() {
+  try {
+    const raw = localStorage.getItem(REVIEW_DISMISSED_KEY);
+    return raw ? JSON.parse(raw) : [];
+  } catch {
+    return [];
+  }
+}
+
+export function dismissReviewItem(rawId) {
+  const list = loadReviewDismissed();
+  if (!list.includes(rawId)) {
+    list.push(rawId);
+    localStorage.setItem(REVIEW_DISMISSED_KEY, JSON.stringify(list));
+  }
+}
+
 // --- Gist sync (M9 — not implemented yet) -----------------------------
 
 let syncTimer = null;
