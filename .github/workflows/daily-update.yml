@@ -16,6 +16,9 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
+          cache: npm
+      - run: npm ci
+      - run: npm test
       - run: node scripts/fetch.mjs
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # built-in, no extra secret needed (SPEC §10)

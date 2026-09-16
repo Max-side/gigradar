@@ -434,6 +434,6 @@ jobs:
 |---|---|---|
 | S1 | 手動新增場次的資料歸屬 | **只存個人 Gist，不寫回 repo**。手動新增場次是「個人補件」，同步靠 Gist 跨裝置；若隔天被自動抓到，靠 `id` 相同去重，不重複顯示，但不會變成全站資料 |
 | S2 | Gist 認證方式 | **Personal Access Token**（僅 `gist` 權限），使用者自行在 GitHub 產生後貼到設定頁，不自架 OAuth server |
-| S3 | GitHub repo 持有者 | 使用者現有 GitHub 帳號；repo 建立與推送在 M11（上線）階段執行，M1~M10 先在本機開發與驗證 |
+| S3 | GitHub repo 持有者 | 使用者現有 GitHub 帳號；repo 建立與推送在 M11（上線）階段執行，M1~M10 先在本機開發與驗證 ~~**變更（2026-09-16）**：repo（https://github.com/Max-side/gigradar）實際上從 M1 就建立並每個里程碑都推送了，不是等到 M11 才推。原因：多台電腦開發（公司/家裡）需要 git 隨時同步，等到 M11 才建 repo 反而不可行。M11 真正剩下的工作只有「讓 `.github/workflows/daily-update.yml` 真的在 GitHub Actions 上跑過」，不是建 repo 本身。~~ |
 
 日後若要變更，請在此表加註變更日期與理由。
