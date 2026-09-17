@@ -56,7 +56,9 @@ gigradar/
 │   ├── artists.yml              # 藝人別名表（人工維護）
 │   ├── sources.json             # 各來源最後成功時間、筆數、狀態
 │   ├── needs-review.json        # 待整理佇列
-│   └── digest.json              # 每日 diff 摘要（新增/更新/移除的場次 id）
+│   ├── digest.json              # 每日 diff 摘要（新增/更新/移除的場次 id）
+│   └── watchlist.yml            # FR-19 手動版追蹤名單（M12 起）——不被任何程式讀取，
+│                                 # 純粹給人類在對話裡叫 AI「照名單查一次」用，見 HANDOFF.md
 ├── scripts/                     # GitHub Actions 執行的 Node.js pipeline
 │   ├── fetch.mjs                # 入口：逐來源呼叫 adapter
 │   ├── adapters/
@@ -262,7 +264,8 @@ Legacy Taipei 與 Legacy Taichung 的場館欄位都只寫「Legacy」，需要�
 **兩個踩過的坑（M2 實作記錄）**：
 
 1. **adapter 檔案裡絕對不要讓內部函式直接呼叫裸的 `fetch(...)`**——每個 adapter 依 §5 介面規範要 `export async function fetch()`，這會在整個模組內把全域 `fetch` API 遮蔽掉（function 宣告會 hoist）。結果是模組內任何地方寫 `fetch(url, {...})` 都會呼叫到自己那個零參數的 adapter `fetch()`，等於無窮遞迴呼叫自己，且因為每層遞迴前都有 `await sleep(2000)`，行為看起來就像「卡住但每 2 秒還有動靜」，非常難從外部行為判斷是死迴圈還是真的網路慢。**解法：模組內一律用 `globalThis.fetch(...)` 呼叫真正的網路 API**，`kktix.mjs` 已經這樣修正並留了註解，之後新增 adapter（拓元等）務必比照辦理。
-2. `https://kktix.com/events?search=...` 這個全站搜尋端點實測第一次請求偶爾會回 403（懷疑是輕量的機器人偵測），**但重試一次幾乎都會成功**——這正是 §4.3 要求的「timeout + 重試一次」機制存在的理由，實測中每次都是重試後就過了，不需要更複雜的處理。
+2. `https://kktix.com/events?search=...` 這個全站搜尋端點 2026-09-15 M2 剛開發時，第一次請求偶爾回 403、重試一次幾乎都會成功，當時判斷是輕量機器人偵測，靠 §4.3 的「timeout + 重試一次」機制就夠。
+   **更新（2026-09-17，M12 擴充場館時複測）**：這個判斷已經過期了——現在這個端點會回真正的 Cloudflare JS challenge（`<title>Just a moment...</title>`），重試完全沒用，而且**不是只有 GitHub Actions 的機房 IP 才會這樣，本機用一般家用網路、換成真的瀏覽器 User-Agent，一樣被擋**。也就是說 `SEARCH_VENUES`（Legacy Taipei/Taichung、Revolver、Clapper Studio）這 4 個場館目前實質上完全抓不到新資料，不分執行環境。`ORG_PAGE_VENUES` 用的 `<org>.kktix.cc/` 端點不受影響，還是 plain fetch 直接 200。要修好 `SEARCH_VENUES`，得換成能執行 JS、通過 Cloudflare 驗證的做法（例如 headless 瀏覽器），這已經不是「加減設定重試次數」能解決的層級，也要考量這樣做算不算規避網站的反機器人機制——是一個獨立、需要另外決定要不要投入的方向，見 `HANDOFF.md`「KKTIX 搜尋策略現況更新」。
 
 ### 5.2 KKTIX 頁面 HTML 結構（供 `normalize.mjs` 對照）
 
@@ -436,5 +439,6 @@ jobs:
 | S1 | 手動新增場次的資料歸屬 | **只存個人 Gist，不寫回 repo**。手動新增場次是「個人補件」，同步靠 Gist 跨裝置；若隔天被自動抓到，靠 `id` 相同去重，不重複顯示，但不會變成全站資料 |
 | S2 | Gist 認證方式 | **Personal Access Token**（僅 `gist` 權限），使用者自行在 GitHub 產生後貼到設定頁，不自架 OAuth server |
 | S3 | GitHub repo 持有者 | 使用者現有 GitHub 帳號；repo 建立與推送在 M11（上線）階段執行，M1~M10 先在本機開發與驗證 ~~**變更（2026-09-16）**：repo（https://github.com/Max-side/gigradar）實際上從 M1 就建立並每個里程碑都推送了，不是等到 M11 才推。原因：多台電腦開發（公司/家裡）需要 git 隨時同步，等到 M11 才建 repo 反而不可行。M11 真正剩下的工作只有「讓 `.github/workflows/daily-update.yml` 真的在 GitHub Actions 上跑過」，不是建 repo 本身。~~ |
+| S4 | FR-19 追蹤名單巡檢的實作方式（2026-09-17） | **手動/對話觸發，不做成自動排程**。原設計是「每週 AI 網路搜尋自動巡檢」，但排程本身免費、AI 搜尋本身要付費，兩者是分開的成本，不管排程放在 GitHub Actions 還是自己的機器上都一樣要付 AI API 的錢。改成使用者在 Claude Code 對話裡主動說「照追蹤名單查一次」，由 AI 用既有對話工具（瀏覽器/搜尋）即時查詢——這個用法算在使用者本來就有的 Claude 方案裡，不需要另外申請/支付 API。代價是不會自動發生，需要使用者記得主動觸發。追蹤名單存在 `data/watchlist.yml`，純粹是人類/AI 對話用的參考清單，不被任何程式讀取。 |
 
 日後若要變更，請在此表加註變更日期與理由。

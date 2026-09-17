@@ -26,7 +26,25 @@ const UA = "GigRadar/1.0 (personal use, non-commercial; github.com/<you>/gigrada
 const REQUEST_DELAY_MS = 2000;
 const REQUEST_TIMEOUT_MS = 30000; // SPEC §4.3 — every adapter request needs a hard timeout so one slow page can't hang the whole pipeline.
 
-const ORG_PAGE_VENUES = ["thewalllivehouse", "kafka", "pipelivemusic", "emergelivehouse", "emergelivehouse2"];
+// cohesionmusic added 2026-09-17 (M12 coverage follow-up): confirmed via
+// browser research that 凝聚力展演空間/Cohesion Space runs its own org account
+// with regular monthly shows — the SEARCH_VENUES-style candidates checked in
+// the same pass (Zepp, Blue Note, SUB LIVE, 野地方 Wild Lab) all turned out to
+// be rented multi-promoter venues instead (different org per show), which
+// SEARCH_VENUES can't currently reach anyway (see the Cloudflare note below).
+const ORG_PAGE_VENUES = ["thewalllivehouse", "kafka", "pipelivemusic", "emergelivehouse", "emergelivehouse2", "cohesionmusic"];
+
+// 2026-09-17: kktix.com/events?search=... now returns a genuine Cloudflare JS
+// challenge (403, <title>Just a moment...</title>) to plain HTTP clients —
+// confirmed from both GitHub Actions AND a residential IP with a real browser
+// UA, so this is NOT the IP-reputation issue tixcraft has, it's a hard block
+// on this endpoint for any non-browser request. SEARCH_VENUES below is
+// consequently non-functional right now; kept in place (harmless — it just
+// logs a warning and contributes 0 raw events, same as any other adapter
+// failure) rather than removed, since a future Cloudflare change could make
+// it work again without code changes. See GIGRADAR-SPEC.md §5.1 and
+// HANDOFF.md "KKTIX 搜尋策略現況更新" before spending time debugging "why does
+// this return 0 results" — it's not a bug, it's this known block.
 
 // Match both the colloquial (台北/台中) and official (臺北/臺中) character
 // variants — real Taiwanese address data uses both, and a silent no-match
@@ -73,7 +91,16 @@ async function fetchOrgListing(org) {
   const html = await fetchHtml(`https://${org}.kktix.cc/`);
   const $ = cheerio.load(html);
   const urls = [];
-  $(".current-events #event-list li.clearfix h2 a").each((_, el) => {
+  // Not every org page uses the same template: some wrap the upcoming-events
+  // <ul> in id="event-list" (thewalllivehouse), others use class="event-list"
+  // instead with a different ancestor (cohesionmusic) — found while adding
+  // cohesionmusic (M12 follow-up, 2026-09-17) when the original
+  // ".current-events #event-list li.clearfix h2 a" matched 0 events there.
+  // "li.clearfix h2 a" is the one structural pattern verified stable across
+  // every org page checked, AND doesn't match the "曾舉辦的活動" (past events)
+  // section, which uses different markup — no [href*="/events/"] filter needed
+  // beyond that, but kept for clarity against unrelated links elsewhere on the page.
+  $("li.clearfix h2 a[href*='/events/']").each((_, el) => {
     const href = $(el).attr("href");
     // Strip query strings like the search path already does (line ~86) — an
     // unstripped tracking param here pollutes raw_id, since fetchEventDetail

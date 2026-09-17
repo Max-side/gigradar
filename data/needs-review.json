@@ -1,14 +1,6 @@
 {
   "items": [
     {
-      "raw_id": "tramhaus",
-      "title_raw": "Tramhaus Live In Taipei 2026",
-      "url": "https://thewalllivehouse.kktix.cc/events/tramhaus",
-      "source": "KKTIX",
-      "reason": "artist_unrecognized",
-      "detail": null
-    },
-    {
       "raw_id": "september2026",
       "title_raw": "「跨校聯誼Vol.2」九月高校 / 午後幽靈 / Sunday Something",
       "url": "https://thewalllivehouse.kktix.cc/events/september2026",
@@ -28,6 +20,94 @@
       "raw_id": "uhdry",
       "title_raw": "go!go!vanillas Asia Tour 2026 in Taipei",
       "url": "https://emergelivehouse2.kktix.cc/events/uhdry",
+      "source": "KKTIX",
+      "reason": "artist_unrecognized",
+      "detail": null
+    },
+    {
+      "raw_id": "westregionbounty",
+      "title_raw": "【西部地區懸賞公告 2.0】",
+      "url": "https://cohesionmusic.kktix.cc/events/westregionbounty",
+      "source": "KKTIX",
+      "reason": "artist_unrecognized",
+      "detail": null
+    },
+    {
+      "raw_id": "asiametalfestival",
+      "title_raw": "【ASIA METAL FESTIVAL 2026 — TAIPEI】",
+      "url": "https://cohesionmusic.kktix.cc/events/asiametalfestival",
+      "source": "KKTIX",
+      "reason": "artist_unrecognized",
+      "detail": null
+    },
+    {
+      "raw_id": "silicagel26",
+      "title_raw": "Silica Gel Asia Tour <Syn.THE.Size: Ballad of You> - TAIPEI",
+      "url": "https://youngteam.kktix.cc/events/silicagel26",
+      "source": "KKTIX",
+      "reason": "artist_unrecognized",
+      "detail": null
+    },
+    {
+      "raw_id": "kiefer2026",
+      "title_raw": "Kiefer LIVE IN TAIPEI 2026",
+      "url": "https://romanticoffice.kktix.cc/events/kiefer2026",
+      "source": "KKTIX",
+      "reason": "artist_unrecognized",
+      "detail": null
+    },
+    {
+      "raw_id": "0bc26b19",
+      "title_raw": "【午場】HANAZAWA KANA LIVE 2026 KANAMEGURI in TAIPEI",
+      "url": "https://welcome-music.kktix.cc/events/0bc26b19",
+      "source": "KKTIX",
+      "reason": "artist_unrecognized",
+      "detail": null
+    },
+    {
+      "raw_id": "f268d2ca",
+      "title_raw": "Andr [Shedding Skin 脱皮] 2026 Asia Tour in  Taipei [Special Edition]",
+      "url": "https://fujimusic.kktix.cc/events/f268d2ca",
+      "source": "KKTIX",
+      "reason": "artist_unrecognized",
+      "detail": null
+    },
+    {
+      "raw_id": "therampage-live-2026-1",
+      "title_raw": "【9/25售票頁】THE RAMPAGE PREMIUM LIVE EVENT 2026 in TAIPEI",
+      "url": "https://ldh.kktix.cc/events/therampage-live-2026-1",
+      "source": "KKTIX",
+      "reason": "artist_unrecognized",
+      "detail": null
+    },
+    {
+      "raw_id": "therampage-live-2026-4",
+      "title_raw": "【9/26特典加購】THE RAMPAGE PREMIUM LIVE EVENT 2026 in TAIPEI",
+      "url": "https://ldh.kktix.cc/events/therampage-live-2026-4",
+      "source": "KKTIX",
+      "reason": "artist_unrecognized",
+      "detail": null
+    },
+    {
+      "raw_id": "therampage-live-2026-3",
+      "title_raw": "【9/25特典加購】THE RAMPAGE PREMIUM LIVE EVENT 2026 in TAIPEI",
+      "url": "https://ldh.kktix.cc/events/therampage-live-2026-3",
+      "source": "KKTIX",
+      "reason": "artist_unrecognized",
+      "detail": null
+    },
+    {
+      "raw_id": "11da7a3a",
+      "title_raw": "【晚場】HANAZAWA KANA LIVE 2026 KANAMEGURI in TAIPEI",
+      "url": "https://welcome-music.kktix.cc/events/11da7a3a",
+      "source": "KKTIX",
+      "reason": "artist_unrecognized",
+      "detail": null
+    },
+    {
+      "raw_id": "fantastics-live-2026-2",
+      "title_raw": "【特典加購】FANTASTICS LIVE 2026 in TAIPEI \"放大絶\"",
+      "url": "https://ldh.kktix.cc/events/fantastics-live-2026-2",
       "source": "KKTIX",
       "reason": "artist_unrecognized",
       "detail": null
@@ -81,17 +161,17 @@
       "detail": null
     },
     {
-      "raw_id": "26_busskztp",
-      "title_raw": "【歌迷返鄉專車】x 臺北大巨蛋Stray Kids演唱會【非官方服務】",
-      "url": "https://tixcraft.com/activity/detail/26_busskztp",
+      "raw_id": "26_straykids",
+      "title_raw": "Stray Kids World Tour ＜RUN IT TAIPEI＞",
+      "url": "https://tixcraft.com/activity/detail/26_straykids",
       "source": "拓元",
       "reason": "artist_unrecognized",
       "detail": null
     },
     {
-      "raw_id": "26_straykids",
-      "title_raw": "Stray Kids World Tour ＜RUN IT TAIPEI＞",
-      "url": "https://tixcraft.com/activity/detail/26_straykids",
+      "raw_id": "26_busskztp",
+      "title_raw": "【歌迷返鄉專車】x 臺北大巨蛋Stray Kids演唱會【非官方服務】",
+      "url": "https://tixcraft.com/activity/detail/26_busskztp",
       "source": "拓元",
       "reason": "artist_unrecognized",
       "detail": null
@@ -121,9 +201,9 @@
       "detail": null
     },
     {
-      "raw_id": "26_aaa",
-      "title_raw": "2026 Asia Artist Awards in Kaohsiung",
-      "url": "https://tixcraft.com/activity/detail/26_aaa",
+      "raw_id": "26_renetp",
+      "title_raw": "劉若英 [飛行日] 2026巡迴演唱會 台北站 Rene [Final Call] 2026 Live Tour Taipei Arena",
+      "url": "https://tixcraft.com/activity/detail/26_renetp",
       "source": "拓元",
       "reason": "artist_unrecognized",
       "detail": null
@@ -145,6 +225,14 @@
       "detail": null
     },
     {
+      "raw_id": "26_aaa",
+      "title_raw": "2026 Asia Artist Awards in Kaohsiung",
+      "url": "https://tixcraft.com/activity/detail/26_aaa",
+      "source": "拓元",
+      "reason": "artist_unrecognized",
+      "detail": null
+    },
+    {
       "raw_id": "26_domijd",
       "title_raw": "DOMi ＆ JD BECK - WHO ASKED? Tour",
       "url": "https://tixcraft.com/activity/detail/26_domijd",
@@ -161,17 +249,17 @@
       "detail": null
     },
     {
-      "raw_id": "26_joji_c",
-      "title_raw": "【Mastercard專區】JOJI SOLARIS",
-      "url": "https://tixcraft.com/activity/detail/26_joji_c",
+      "raw_id": "26_joji",
+      "title_raw": "JOJI SOLARIS",
+      "url": "https://tixcraft.com/activity/detail/26_joji",
       "source": "拓元",
       "reason": "artist_unrecognized",
       "detail": null
     },
     {
-      "raw_id": "26_joji",
-      "title_raw": "JOJI SOLARIS",
-      "url": "https://tixcraft.com/activity/detail/26_joji",
+      "raw_id": "26_joji_c",
+      "title_raw": "【Mastercard專區】JOJI SOLARIS",
+      "url": "https://tixcraft.com/activity/detail/26_joji_c",
       "source": "拓元",
       "reason": "artist_unrecognized",
       "detail": null
@@ -233,17 +321,17 @@
       "detail": null
     },
     {
-      "raw_id": "26_bini_v",
-      "title_raw": "【加購福利-Add on Benefit】BINI：SIGNALS WORLD TOUR 2026 TAIPEI",
-      "url": "https://tixcraft.com/activity/detail/26_bini_v",
+      "raw_id": "26_bini",
+      "title_raw": "BINI：SIGNALS WORLD TOUR 2026 TAIPEI",
+      "url": "https://tixcraft.com/activity/detail/26_bini",
       "source": "拓元",
       "reason": "artist_unrecognized",
       "detail": null
     },
     {
-      "raw_id": "26_bini",
-      "title_raw": "BINI：SIGNALS WORLD TOUR 2026 TAIPEI",
-      "url": "https://tixcraft.com/activity/detail/26_bini",
+      "raw_id": "26_bini_v",
+      "title_raw": "【加購福利-Add on Benefit】BINI：SIGNALS WORLD TOUR 2026 TAIPEI",
+      "url": "https://tixcraft.com/activity/detail/26_bini_v",
       "source": "拓元",
       "reason": "artist_unrecognized",
       "detail": null
@@ -276,6 +364,14 @@
       "raw_id": "26_kimjiwon",
       "title_raw": "2026 KIM JI WON FANMEETING ＜WONEDERLAND＞ in TAIPEI",
       "url": "https://tixcraft.com/activity/detail/26_kimjiwon",
+      "source": "拓元",
+      "reason": "artist_unrecognized",
+      "detail": null
+    },
+    {
+      "raw_id": "26_82major",
+      "title_raw": "82MAJOR ＜82CLUB ： OUT OF CONTROL＞ in TAIPEI",
+      "url": "https://tixcraft.com/activity/detail/26_82major",
       "source": "拓元",
       "reason": "artist_unrecognized",
       "detail": null
@@ -337,17 +433,17 @@
       "detail": null
     },
     {
-      "raw_id": "26_theboyz",
-      "title_raw": "潤少╳徐晧程徐晧程╳c8ight陳全 《男孩兒 THE BOYZ》演唱會",
-      "url": "https://tixcraft.com/activity/detail/26_theboyz",
+      "raw_id": "26_twskh",
+      "title_raw": "2026 TWS TOUR ‘24/7：FOR：YOU’ IN KAOHSIUNG",
+      "url": "https://tixcraft.com/activity/detail/26_twskh",
       "source": "拓元",
       "reason": "artist_unrecognized",
       "detail": null
     },
     {
-      "raw_id": "26_twskh",
-      "title_raw": "2026 TWS TOUR ‘24/7：FOR：YOU’ IN KAOHSIUNG",
-      "url": "https://tixcraft.com/activity/detail/26_twskh",
+      "raw_id": "26_theboyz",
+      "title_raw": "潤少╳徐晧程徐晧程╳c8ight陳全 《男孩兒 THE BOYZ》演唱會",
+      "url": "https://tixcraft.com/activity/detail/26_theboyz",
       "source": "拓元",
       "reason": "artist_unrecognized",
       "detail": null
@@ -401,17 +497,17 @@
       "detail": null
     },
     {
-      "raw_id": "26_busbbdome",
-      "title_raw": "臺北大巨蛋演唱會-歌迷返鄉專車【非官方服務】",
-      "url": "https://tixcraft.com/activity/detail/26_busbbdome",
+      "raw_id": "26_patrick",
+      "title_raw": "派偉俊 Patrick Brasca《BAD IDEA》2026個人演唱會",
+      "url": "https://tixcraft.com/activity/detail/26_patrick",
       "source": "拓元",
       "reason": "artist_unrecognized",
       "detail": null
     },
     {
-      "raw_id": "26_patrick",
-      "title_raw": "派偉俊 Patrick Brasca《BAD IDEA》2026個人演唱會",
-      "url": "https://tixcraft.com/activity/detail/26_patrick",
+      "raw_id": "26_busbbdome",
+      "title_raw": "臺北大巨蛋演唱會-歌迷返鄉專車【非官方服務】",
+      "url": "https://tixcraft.com/activity/detail/26_busbbdome",
       "source": "拓元",
       "reason": "artist_unrecognized",
       "detail": null
@@ -457,22 +553,6 @@
       "detail": null
     },
     {
-      "raw_id": "26_lany_c",
-      "title_raw": "【Mastercard專區】LANY：soft world tour",
-      "url": "https://tixcraft.com/activity/detail/26_lany_c",
-      "source": "拓元",
-      "reason": "artist_unrecognized",
-      "detail": null
-    },
-    {
-      "raw_id": "26_lany",
-      "title_raw": "LANY：soft world tour",
-      "url": "https://tixcraft.com/activity/detail/26_lany",
-      "source": "拓元",
-      "reason": "artist_unrecognized",
-      "detail": null
-    },
-    {
       "raw_id": "26_fearless",
       "title_raw": "【NIEL 無畏FEARLESS SHOWCASE IN TAIPEI】",
       "url": "https://tixcraft.com/activity/detail/26_fearless",
@@ -489,9 +569,33 @@
       "detail": null
     },
     {
+      "raw_id": "26_lany",
+      "title_raw": "LANY：soft world tour",
+      "url": "https://tixcraft.com/activity/detail/26_lany",
+      "source": "拓元",
+      "reason": "artist_unrecognized",
+      "detail": null
+    },
+    {
+      "raw_id": "26_lany_c",
+      "title_raw": "【Mastercard專區】LANY：soft world tour",
+      "url": "https://tixcraft.com/activity/detail/26_lany_c",
+      "source": "拓元",
+      "reason": "artist_unrecognized",
+      "detail": null
+    },
+    {
       "raw_id": "26_dai0920",
       "title_raw": "Do As Infinity 27th Anniversary LIVE TOUR IN TAIPEI",
       "url": "https://tixcraft.com/activity/detail/26_dai0920",
+      "source": "拓元",
+      "reason": "artist_unrecognized",
+      "detail": null
+    },
+    {
+      "raw_id": "26_therose",
+      "title_raw": "THE ROSE ROSETOPIA ASIA TOUR 2026 IN KAOHSIUNG",
+      "url": "https://tixcraft.com/activity/detail/26_therose",
       "source": "拓元",
       "reason": "artist_unrecognized",
       "detail": null
@@ -513,14 +617,6 @@
       "detail": null
     },
     {
-      "raw_id": "26_therose",
-      "title_raw": "THE ROSE ROSETOPIA ASIA TOUR 2026 IN KAOHSIUNG",
-      "url": "https://tixcraft.com/activity/detail/26_therose",
-      "source": "拓元",
-      "reason": "artist_unrecognized",
-      "detail": null
-    },
-    {
       "raw_id": "26_youngji_c",
       "title_raw": "【Mastercard專區】2026 LEE YOUNGJI WORLD TOUR ＜2.0＞",
       "url": "https://tixcraft.com/activity/detail/26_youngji_c",
@@ -529,17 +625,17 @@
       "detail": null
     },
     {
-      "raw_id": "26_pmkhbus",
-      "title_raw": "【歌迷返鄉專車】x Post Malone Presents The BIG ASS Stadium World Tour",
-      "url": "https://tixcraft.com/activity/detail/26_pmkhbus",
+      "raw_id": "26_malone_c",
+      "title_raw": "【Mastercard專區】Post Malone Presents The BIG ASS Stadium World Tour",
+      "url": "https://tixcraft.com/activity/detail/26_malone_c",
       "source": "拓元",
       "reason": "artist_unrecognized",
       "detail": null
     },
     {
-      "raw_id": "26_malone_c",
-      "title_raw": "【Mastercard專區】Post Malone Presents The BIG ASS Stadium World Tour",
-      "url": "https://tixcraft.com/activity/detail/26_malone_c",
+      "raw_id": "26_pmkhbus",
+      "title_raw": "【歌迷返鄉專車】x Post Malone Presents The BIG ASS Stadium World Tour",
+      "url": "https://tixcraft.com/activity/detail/26_pmkhbus",
       "source": "拓元",
       "reason": "artist_unrecognized",
       "detail": null
