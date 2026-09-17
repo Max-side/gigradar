@@ -21,7 +21,7 @@
 | M9 | Gist 同步（連接/斷開/雙向同步/離線 fallback）＋ FR-63/64 匯出匯入、設定頁的嚴格模式與靜音關鍵字順便一起接上 | ⚠️ 見下方說明 |
 | M10 | 來源異常告警（GitHub issue）、設定頁來源狀態儀表、時間表異常 banner | ✅（真的開 issue 那段沒有跑過真實 CI，見下方說明） |
 | M11 | GitHub Actions 排程上線 | ✅ 排程已重新打開，每天 08:00 CST 自動跑；過程中發現並修好一個真實的資料損毀問題，見下方「M11 的重大發現」 |
-| M12 | 覆蓋率抽樣 | ❌ |
+| M12 | 覆蓋率抽樣 | ✅ 抽樣做完了，結果不理想（見下方），但這正是 G4 這一步該做的事——找出真正的缺口 |
 
 完整里程碑定義見 `GIGRADAR-SPEC.md` §11。
 
@@ -108,6 +108,15 @@ npm test    # 等同 node --test scripts/*.test.mjs src/*.test.js
 
 見 `README.md` 裡的連結（Claude Design 畫布，跟帳號綁定，不是本機檔案）。
 
+## M12 覆蓋率抽樣結果：3.4%，遠低於 80% 目標——但根因很明確
+
+完整報告在 [`reports/coverage-sample-2026-09-17.md`](./reports/coverage-sample-2026-09-17.md)。方法：拿獨立的彙整站
+[Artists.tw](https://www.artists.tw/gigs) 當基準（SRS 決策 D11），抽最近期 29 場音樂演出人工比對，只中了 1 場。
+
+**根因不是 adapter 壞掉，是追蹤的場館清單本來就只有 9 個**（The Wall、海邊的卡夫卡、pipelivemusic、Emerge Livehouse ×2、Legacy Taipei、Legacy Taichung、Revolver、Clapper Studio），而 Artists.tw 光是「近期至少 3 場演出」的場館就有 44 個——女巫店、Zepp、Blue Note、SUB Live House、FINAL、文昌號、Legacy TERA、野地方、凝聚力等等全部不在清單裡，抓不到完全是預期中的事，不是 bug。
+
 ## 建議下一步
 
-M12（覆蓋率抽樣）是最後一個里程碑。不過更值得優先做的是上面提到的「拓元/KKTIX 搜尋長期被 GitHub Actions 擋」這個根本問題還沒解——現在資料不會再被洗掉，但也不會有新資料流入這兩個來源，等於實質上停止更新。建議先做 M8 提到的「補幾筆 artists.yml」讓已經抓到的 4 筆 KKTIX org 頁資料能正常顯示，同時觀察排程接下來幾天的 `data/sources.json`，確認封鎖是不是每天都發生、還是偶發的，再決定要不要投入解決封鎖本身。
+**擴充 KKTIX 追蹤場館清單**是把覆蓋率拉到 80% 最直接的路，比繼續處理 M11 的 IP 封鎖問題影響更大（封鎖只讓已追蹤場館的資料變舊；場館清單太窄則是新鮮資料根本不會進來）。作法比照 M2 當初判斷 The Wall vs Legacy 的方式：對照 Artists.tw「依場館瀏覽」清單，把上面提到的場館逐一分類進 `ORG_PAGE_VENUES` 或 `SEARCH_VENUES`，一次加幾個、加完就重新跑一次抽樣驗證有沒有提升——這是需要另外排時間的 adapter 擴充工作，不是這次順手做的範圍。
+
+其次才是「拓元/KKTIX 搜尋長期被 GitHub Actions 擋」這件事——現在資料不會再被洗掉，但也不會有新資料流入，等於這兩個來源實質停止更新。可以先做 M8 提到的「補幾筆 artists.yml」讓已經抓到的資料能正常顯示，同時觀察排程接下來幾天的 `data/sources.json`，確認封鎖是不是每天都發生。
