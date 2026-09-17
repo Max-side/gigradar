@@ -100,3 +100,25 @@ GigRadar 本地的 `data/needs-review.json`（79 筆，KKTIX／拓元這次執�
 **新覆蓋率：8 / 29 ≈ 27.6%**，而且這次每一場命中都是可重現的穩定結果，不是碰運氣——跟上一版複查時特別強調「Legacy Taipei 那場是運氣、隨時可能消失」不同，這次 KKTIX 搜尋策略是真的修好了。
 
 還沒收錄的 21 場（女巫店、Zepp、Blue Note、Sappho、The Wall 部分場次、文昌號、FINAL、玉成戲院、Legacy TERA、凝聚力的另一場 JIAHN FANCON、中壢藝術館）大部分是因為：這些平台/場館根本不在四個來源的涵蓋範圍內（女巫店、Zepp、Blue Note 等主要不透過 KKTIX/拓元/iNDIEVOX/FANSI GO 賣票），不是解析失敗——要再往上，得看 Ticket Plus（寬宏售票）能補多少、或真的擴大追蹤場館清單。
+
+## 第三次追蹤：加入 Ticket Plus 之後（同日晚上）
+
+新增 `scripts/adapters/ticketplus.mjs`——這是五個來源裡資料品質最好的一個，整個平台是靠公開、不需要認證的 JSON API（`apis.ticketplus.com.tw/config/api/v1/getS3`）運作，`date`/`time`/`location`/`address` 全部是乾淨的結構化欄位，不需要像 iNDIEVOX/FANSI GO 那樣解析自由格式文字。用同一份 29 場樣本再測一次：
+
+| # | 演出 | 場館 | 這次結果 |
+|---|---|---|---|
+| 1 | 溫室雜草《衝突的意義》 | 玉成戲院 | ✅（Ticket Plus） |
+| 2 | Mili One Million Moons Asia Tour | Zepp New Taipei | ✅（Ticket Plus） |
+| 3 | 呂杰達x鄭翔予x鍾建暉 | 女巫店 | ✅（Ticket Plus） |
+| 10 | RUSH BALL 台日共演 | The Wall Live House | ✅（Ticket Plus） |
+| 12 | RUSH BALL 2026 with FRIENDSHIP | The Wall Live House | ✅（Ticket Plus） |
+| 13 | 巴賴Balai 女巫專演 | 女巫店 | ✅（Ticket Plus） |
+| 29 | 2026 JIAHN SOLO FANCON | 凝聚力音樂娛樂 Cohesion Space | ✅（Ticket Plus） |
+
+（加上前兩輪已經命中的 8 場：Suming、西部地區懸賞公告、LEE YOUNGJI、https://、Andr、P!SCO-16、乙水、虎小島）
+
+**最終覆蓋率：15 / 29 ≈ 51.7%**（原始 3.4% → 加凝聚力場館 10.3% → 加 iNDIEVOX/FANSI GO/修好 KKTIX 搜尋 27.6% → 加 Ticket Plus 51.7%）。**Ticket Plus 一次加入就多命中 7 場，是單一動作裡效益最大的一次**——因為它剛好覆蓋了女巫店、Zepp、The Wall 這幾個原本完全碰不到的場館。
+
+還沒收錄的 14 場：Sappho Live Jazz（爵士，可能是小眾平台或自售）、台北藍調 Blue Note（同上）、20th Century Nights/突如其來的 OPEN STAGE @ 文昌號 WHOA（查過 KKTIX 上完全沒有這場館的資料）、bjarki/IMPRNT @ FINAL（場館名稱太通用不好單獨查證）、洪佩瑜 @ Legacy TERA、且聽天命 @ Legacy Taipei（可能是 09-17 之後才公告，資料仍是那個時間點的快照）、宮崎駿音樂會 @ 中壢藝術館（正式音樂廳，可能走完全不同的官方售票管道）。這些大部分屬於「根本不在五個來源涵蓋範圍」的類型，不是抓取邏輯的問題。
+
+五個來源都做完了（KKTIX、拓元、iNDIEVOX、FANSI GO、Ticket Plus，Max 一開始要求的完整清單），52% 左右可以視為現階段的實際天花板，再往上大概要靠擴大追蹤場館清單、或接受這是免費工具的合理範圍。

@@ -69,6 +69,7 @@ gigradar/
 │   │   ├── tixcraft.mjs
 │   │   ├── indievox.mjs         # M12 追加（2026-09-17），無反爬蟲，見 §5.4
 │   │   ├── fansi.mjs             # M12 追加（2026-09-17），Playwright，見 §5.5
+│   │   ├── ticketplus.mjs        # M12 追加（2026-09-17），公開 JSON API，見 §5.6
 │   │   └── manual.mjs           # 讀取 data/manual-events.json，直接視為一個「來源」
 │   ├── normalize.mjs             # 日期/場館/價格正規化＋藝人比對 artists.yml
 │   ├── dedup.mjs                  # §4 ID 與去重演算法
@@ -347,6 +348,23 @@ table tbody tr                             -> 每一種票種一列
 **用 Playwright 順便修好 KKTIX 的 `SEARCH_VENUES`**：既然專案已經要為 FANSI GO 加 Playwright 這個相依套件，順便把 `kktix.mjs` 的 `fetchSearchResultUrls`（M11/M12 一路記錄的 Cloudflare 擋爬蟲問題）也改用 Playwright——實測**確認修好了**：同樣的 4 個搜尋關鍵字（Legacy Taipei/Taichung、Revolver、Clapper Studio）這次全部成功，0 個 sub-request 失敗。原理：Cloudflare 的 JS challenge 只擋不會執行 JS 的請求（plain `fetch()`/`curl`），真的瀏覽器引擎會自動跑完那段驗證腳本再送出請求。`fetchOrgListing`／`fetchEventDetail` 兩個既有函式**沒有改**，繼續用 plain fetch——這兩個端點本來就沒有這層防護，沒必要為了不需要的地方多花啟動瀏覽器的成本。
 
 **新增相依套件**：`playwright`（`npm install playwright` + `npx playwright install chromium`，後者會下載約 280MB 的 Chromium/Headless Shell 二進位檔到 `~/Library/Caches/ms-playwright`，不進 git）。共用的瀏覽器啟動/關閉邏輯抽到 `scripts/browser.mjs`（`withPage(fn)`），`kktix.mjs` 和 `fansi.mjs` 都用它，避免重複寫 `chromium.launch()`/`browser.close()` 的樣板程式碼。
+
+### 5.6 Ticket Plus 端點實測結果（2026-09-17，五個來源最後一個）
+
+**五個來源裡資料品質最好的一個**，而且不需要 Playwright、不需要 Cloudflare 對策、也不需要自由格式文字解析。原始頁面（`ticketplus.com.tw`）是一個 Vue SPA，plain fetch 拿到的 HTML 只有約 6KB 的空殼，完全沒有場次資料——但它渲染畫面用的是一個**公開、不需要登入/API key 的 JSON API**：
+
+```
+https://apis.ticketplus.com.tw/config/api/v1/getS3?path={資源路徑}
+```
+
+- `path=main/mainEvents.json`：目前所有上架中的活動，`allEventId` 陣列（實測 91 筆）長度跟 `allEventMainPageInfo` 物件的 key 數量完全一致，確認這是**全站目錄**，不是首頁精選的子集。
+- `path=event/{eventId}/sessions.json`：該活動底下每一場實際場次（一個活動可能有多場，例如同一巡演的台北/台中場、或同一天的日夜場），每筆都是結構化欄位：`name`（含場次區分，例如「01/09場次」）、`date`（`"2027-01-09 ~ 2027-01-09"`）、`time`（`"18:00 ~ 18:00"`）、`location`（場館名稱）、`address`（完整地址，含城市）、`hidden`（布林值，未上架/已下架的場次）。
+
+**跟其他來源共用解析器**：`location`/`address` 兩個獨立欄位，adapter 組成 `"location / address"` 字串（跟 KKTIX 的 `venue_raw` 格式完全一樣），`normalize.mjs` 直接重用 `parseKktixVenue`，沒有另外寫函式；日期是 `date`+`time` 兩個欄位串在一起（`"2027-01-09 ~ 2027-01-09 18:00 ~ 18:00"`），新寫了 `parseTicketPlusDate` 抓開頭的日期跟第一個時間。
+
+**踩過的一個小坑**：少數活動的「場次」其實是官方週邊商品預購，不是真的表演（`location` 欄位會是「預購商品」這種非場館字串），用 `session.name.includes("周邊商品")` 濾掉，跟 FANSI GO 濾掉「周邊」性質列表同一個精神。
+
+**這是五個來源裡對覆蓋率貢獻最大的一次追加**：對照 M12 的 29 場覆蓋率樣本，光是加入 Ticket Plus 就多命中 7 場（見 `reports/coverage-sample-2026-09-17.md`），因為它剛好覆蓋了女巫店、Zepp New Taipei、The Wall 這幾個先前完全碰不到的場館——這幾個場館主要就是透過 Ticket Plus 賣票，不在 KKTIX/拓元的售票生態圈裡。
 
 ---
 

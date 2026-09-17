@@ -115,6 +115,23 @@ export function parseIndievoxVenue(venueRaw, venuesYml) {
   return parseTixcraftVenue(venueRaw, venuesYml);
 }
 
+/**
+ * "2027-01-09 ~ 2027-01-09 18:00 ~ 18:00" -> { date: "2027-01-09", time: "18:00" }.
+ * Ticket Plus's sessions.json gives `date`/`time` as separate, already-clean
+ * fields (dash-separated start~end ranges) — the adapter concatenates them
+ * into one string since RawEvent only has a single date_raw slot, this just
+ * pulls the start date/time back out. No freeform-text ambiguity to handle
+ * here, unlike iNDIEVOX/FANSI GO — this is the one source with a real
+ * structured API instead of scraped HTML.
+ */
+export function parseTicketPlusDate(dateRaw) {
+  const dateMatch = dateRaw.match(/(\d{4})-(\d{2})-(\d{2})/);
+  if (!dateMatch) return null;
+  const [, y, mo, d] = dateMatch;
+  const timeMatch = dateRaw.match(/(\d{2}:\d{2})/);
+  return { date: `${y}-${mo}-${d}`, time: timeMatch?.[1] ?? null };
+}
+
 function guessTagsType(titleRaw, headlinerCount) {
   for (const [kw, tag] of TYPE_KEYWORDS) {
     if (titleRaw.includes(kw)) return [tag];
@@ -167,7 +184,16 @@ function statusFromTickets(ticketsRaw, eventDate) {
 // FANSI GO's date_raw ("2026/09/19", no time) and venue_raw (bare name, no
 // address — every event needs the venues.yml fallback) are shaped exactly
 // like tixcraft's, so it reuses those parsers rather than duplicating them.
-const DATE_PARSERS = { "拓元": parseTixcraftDate, "iNDIEVOX": parseIndievoxDate, "FANSI GO": parseTixcraftDate };
+// Ticket Plus's venue_raw ("location / address") is shaped exactly like
+// KKTIX's, so it reuses parseKktixVenue via the same default fallback below
+// rather than needing its own entry — parseKktixVenue is also the map's
+// fallback for any future source_name not listed here.
+const DATE_PARSERS = {
+  "拓元": parseTixcraftDate,
+  "iNDIEVOX": parseIndievoxDate,
+  "FANSI GO": parseTixcraftDate,
+  "Ticket Plus": parseTicketPlusDate,
+};
 const VENUE_PARSERS = { "拓元": parseTixcraftVenue, "iNDIEVOX": parseIndievoxVenue, "FANSI GO": parseTixcraftVenue };
 
 export function normalize(rawEvent, artistsYml, venuesYml = []) {

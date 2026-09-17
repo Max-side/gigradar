@@ -1,12 +1,12 @@
 # 交接文件 — 換電腦/換 session 接續開發前先看這份
 
-寫於 2026-09-15，2026-09-17 更新。M1~M12 全部跑完一輪，覆蓋率抽樣（M12）結果不好，過程中還發現 KKTIX 的搜尋策略被 Cloudflare 擋住。**同一天稍晚，Max 帶了一份參考實作過來（另一個 Claude 對話產出、已經有人實際跑起來的 Python/Flask 版本），示範了用 Playwright 真瀏覽器繞過 Cloudflare、外加 iNDIEVOX/FANSI GO 兩個新來源，因此：(1) 資料抓取改成純手動觸發（決策 S5，取消 GitHub Actions 排程），(2) 新增 iNDIEVOX、FANSI GO 兩個 adapter，(3) 用 Playwright 真的修好了 KKTIX 搜尋策略被 Cloudflare 擋住的問題，覆蓋率抽樣從 3.4% 提升到 27.6%**——只剩 Ticket Plus（寬宏售票）還沒做，是目前唯一剩下的來源，看下方對應章節。這份文件的目的：讓一個完全沒看過這個對話紀錄的人（包含未來的你，或另一台電腦上全新開的 Claude Code session）能在 5 分鐘內知道現在做到哪、能不能信任目前的程式碼、下一步該做什麼。
+寫於 2026-09-15，2026-09-17 更新。M1~M12 全部跑完一輪，覆蓋率抽樣（M12）結果不好，過程中還發現 KKTIX 的搜尋策略被 Cloudflare 擋住。**同一天稍晚，Max 帶了一份參考實作過來（另一個 Claude 對話產出、已經有人實際跑起來的 Python/Flask 版本），示範了用 Playwright 真瀏覽器繞過 Cloudflare、外加幾個新來源的做法，因此：(1) 資料抓取改成純手動觸發（決策 S5，取消 GitHub Actions 排程），(2) 新增 iNDIEVOX、FANSI GO、Ticket Plus 三個 adapter（Max 一開始要求的完整來源清單全部做完了），(3) 用 Playwright 真的修好了 KKTIX 搜尋策略被 Cloudflare 擋住的問題，覆蓋率抽樣從 3.4% 一路推到 51.7%**——看下方各來源對應章節跟 `reports/coverage-sample-2026-09-17.md` 的完整過程。這份文件的目的：讓一個完全沒看過這個對話紀錄的人（包含未來的你，或另一台電腦上全新開的 Claude Code session）能在 5 分鐘內知道現在做到哪、能不能信任目前的程式碼、下一步該做什麼。
 
 ## 這是什麼專案
 
 個人用的獨立/地下音樂演出雷達。**完整需求**看 [`GIGRADAR-SRS.md`](./GIGRADAR-SRS.md)，**技術架構與所有踩過的坑**看 [`GIGRADAR-SPEC.md`](./GIGRADAR-SPEC.md)——這兩份是唯一該信任的來源，這份 HANDOFF 只是導覽，內容有衝突以那兩份為準。
 
-## 現在的狀態：M1~M12 全部完成，都在瀏覽器裡實測過，不是只寫完沒測（一個例外見下方 M9 那一列）；抓取一律手動觸發（決策 S5，沒有自動排程），四個來源（KKTIX/拓元/iNDIEVOX/FANSI GO）都在運作，覆蓋率抽樣 27.6%，離 80% 目標還有距離但持續在拉高
+## 現在的狀態：M1~M12 全部完成，都在瀏覽器裡實測過，不是只寫完沒測（一個例外見下方 M9 那一列）；抓取一律手動觸發（決策 S5，沒有自動排程），五個來源（KKTIX/拓元/iNDIEVOX/FANSI GO/Ticket Plus，Max 要求的完整清單）都在運作，覆蓋率抽樣 51.7%，離 80% 目標更近了但還沒到
 
 | 里程碑 | 內容 | 狀態 |
 |---|---|---|
@@ -167,10 +167,16 @@ Max 帶來一份別人已經實際用起來的參考專案（zip 檔，內容不
 
 **新增相依套件注意**：`npm install` 之後還要跑一次 `npx playwright install chromium`（見上面「你打開這個 repo 應該先做的事」），忘記跑的話 KKTIX/FANSI GO 那兩步會直接報錯說找不到瀏覽器執行檔。
 
+## Ticket Plus 也完成了——五個來源全部做完（同日晚上）
+
+新增 `scripts/adapters/ticketplus.mjs`。**這是五個來源裡資料品質最好的一個**：整個平台是靠一個公開、不需要登入/API key 的 JSON API 運作（`apis.ticketplus.com.tw/config/api/v1/getS3?path=...`），`date`/`time`/`location`/`address` 全部是乾淨的結構化欄位，不用像 iNDIEVOX/FANSI GO 那樣解析自由格式文字，也不用 Playwright。`location`/`address` 兩個欄位組成的字串跟 KKTIX 的 `venue_raw` 格式完全一樣，直接重用 `parseKktixVenue`；日期新寫了 `parseTicketPlusDate`。細節見 `GIGRADAR-SPEC.md` §5.6。
+
+**這次追加對覆蓋率的貢獻最大**：用同一份 29 場樣本再測一次，**15/29 ≈ 51.7%**（原始 3.4% 一路推到現在），單是加入 Ticket Plus 就多命中 7 場（溫室雜草、Mili、呂杰達、RUSH BALL ×2、巴賴、JIAHN），因為它剛好覆蓋了女巫店、Zepp New Taipei、The Wall 這幾個先前五個來源都碰不到的場館——這些場館主要就是透過 Ticket Plus 賣票。完整記錄見 `reports/coverage-sample-2026-09-17.md`「第三次追蹤」段落。
+
+至此 **Max 一開始要求的完整來源清單（KKTIX、拓元、iNDIEVOX、FANSI GO、Ticket Plus）全部做完了**。
+
 ## 建議下一步
 
-**Max 確認要加的來源清單**：KKTIX（已有）、拓元（已有）、**iNDIEVOX（已完成）**、**FANSI GO（已完成，見上）**、**Ticket Plus（寬宏售票，還沒研究過，是唯一剩下的）**。
-
-下一步就是 **Ticket Plus**——完全還沒研究過它的頁面結構、有沒有反爬蟲防護，需要重新走一次 M2 當初對 KKTIX、M3 對拓元做的那種端點實測：先看列表頁能不能 plain fetch 拿到、有沒有 Cloudflare/WAF、場館/日期欄位長什麼樣子，再決定要用哪一種抓取策略。
+52% 左右的覆蓋率可以視為現階段用免費工具能做到的實際天花板——五個計畫中的來源都做完了，再往上大概要考慮：(1) 擴大追蹤場館清單（前面查證過大多數自營小場館要嘛不在這五個平台上、要嘛得逐一人工確認），(2) 接受這就是免費/個人工具的合理範圍，把心力轉向讓 `artists.yml` 認得更多真實藝人名字（目前只有 2 筆示範資料，所有真的抓到的場次都卡在待整理頁）、或做 M8 提到的場館分類。建議先做後者——資料來源已經夠多了，現在的瓶頸是「抓到的資料有沒有被正確辨識並顯示出來」，不是「有沒有抓到」。
 
 架構上已經確定：**抓取一律手動觸發（決策 S5），不做自動排程**，`.github/workflows/daily-update.yml` 的 `schedule` 已經拿掉，只留 `workflow_dispatch`。新增來源時這個決策不變——不管加幾個來源，都是透過設定頁的「重新抓取」按鈕（`scripts/dev-server.mjs`）手動觸發，不會有排程或額外的自動化。

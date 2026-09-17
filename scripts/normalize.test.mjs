@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { normalize, parseIndievoxDate, parseIndievoxVenue } from "./normalize.mjs";
+import { normalize, parseIndievoxDate, parseIndievoxVenue, parseTicketPlusDate } from "./normalize.mjs";
 
 const artistsYml = [{ canonical: "深海系樂團", aliases: [], tags_origin_default: "本地" }];
 
@@ -105,6 +105,28 @@ test("parseIndievoxVenue: a bare venue name with no address falls back to venues
 test("parseIndievoxVenue: an unmapped bare venue name gets city: null, not a thrown error", () => {
   const result = parseIndievoxVenue("某個沒收錄過的展演空間", []);
   assert.deepEqual(result, { venue: "某個沒收錄過的展演空間", city: null });
+});
+
+test("parseTicketPlusDate: extracts the start date/time from concatenated range strings", () => {
+  const result = parseTicketPlusDate("2027-01-09 ~ 2027-01-09 18:00 ~ 18:00");
+  assert.deepEqual(result, { date: "2027-01-09", time: "18:00" });
+});
+
+test("normalize() end-to-end for a Ticket Plus raw event (reuses parseKktixVenue — same 'location / address' shape)", () => {
+  const raw = {
+    raw_id: "abc_session1",
+    title_raw: "深海系樂團 Live",
+    url: "https://ticketplus.com.tw/activity/abc",
+    date_raw: "2026-10-15 ~ 2026-10-15 19:30 ~ 19:30",
+    venue_raw: "漢神洲際 8樓天際營地 / 台中市北屯區仁美里崇德路三段865號8F",
+    tickets_raw: [],
+    source_name: "Ticket Plus",
+  };
+  const { event } = normalize(raw, artistsYml);
+  assert.equal(event.date, "2026-10-15");
+  assert.equal(event.time, "19:30");
+  assert.equal(event.venue, "漢神洲際 8樓天際營地");
+  assert.equal(event.city, "台中");
 });
 
 test("normalize() end-to-end for a FANSI GO raw event (reuses tixcraft's date/venue parsers — same bare-name-no-address shape)", () => {
