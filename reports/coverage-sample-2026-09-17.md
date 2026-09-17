@@ -64,3 +64,20 @@ GigRadar 本地的 `data/needs-review.json`（79 筆，KKTIX／拓元這次執�
 **擴充 KKTIX 追蹤的場館清單，是目前能把覆蓋率拉到 80% 最直接的槓桿**——比起繼續處理 M11 的 IP 封鎖問題，這個影響範圍更大（封鎖只是讓已追蹤的場館資料變舊，場館清單太窄則是連新鮮資料都不會去抓）。具體作法：對照 Artists.tw 側欄「依場館瀏覽」的清單，把女巫店、Zepp New Taipei、Blue Note Taipei、SUB Live House、FINAL、文昌號 WHOA、Legacy TERA、野地方 Wild Lab、凝聚力展演空間等場館逐一判斷屬於 ORG_PAGE_VENUES 或 SEARCH_VENUES 哪一種策略（跟 M2 當初判斷 The Wall vs Legacy 的方法一樣），一次加幾個、每加完就重新抽樣驗證覆蓋率有沒有提升。
 
 這是一次獨立的 adapter 擴充工作，不是修 bug，需要另外排時間逐一測試每個新場館的 KKTIX 頁面結構，不建議现在就順手做——先讓你知道規模跟方向，你決定要不要排進下一步。
+
+## 追蹤更新：加了凝聚力展演空間之後重新比對（同日，2026-09-17 稍晚）
+
+查證候選場館時發現凝聚力展演空間是真的自營場館（見 `HANDOFF.md`），加進 `kktix.mjs` 的 `ORG_PAGE_VENUES` 並修好一個連帶發現的選擇器 bug 後，用**同一份 29 場樣本**重新對照這次真的執行後的 `data/needs-review.json`（91 筆）：
+
+| # | 演出 | 場館 | 這次結果 | 說明 |
+|---|---|---|---|---|
+| 11 | 【西部地區懸賞公告 2.0】 | 凝聚力展演空間 | ✅（KKTIX，新） | 凝聚力加進追蹤清單後的直接成果，穩定可重現 |
+| 23 | Andr [Shedding Skin] 2026 Asia Tour | Legacy Taipei | ✅（KKTIX，新） | 這次執行 Legacy Taipei 的搜尋剛好沒被 Cloudflare 擋下來才抓到——**不是穩定的改善**，`SEARCH_VENUES` 這個機制本身還是壞的（同一次執行 Legacy Taichung、Clapper Studio 就被擋了），明天再跑不保證還在 |
+| 28 | 2026 JIAHN SOLO FANCON | 凝聚力音樂娛樂 Cohesion Space | ❌ 仍未收錄 | 凝聚力自己的 KKTIX 頁面上實際只列出 2 場即將舉行的活動（西部地區懸賞公告、ASIA METAL FESTIVAL），這場沒在上面——大概是還沒公告到 KKTIX、或用别的售票平台 |
+| 其餘 26 場 | — | — | ❌ 不變 | 場館仍不在追蹤清單，或屬於目前技術上抓不到的多主辦類型 |
+
+**新覆蓋率：3 / 29 ≈ 10.3%**（原本 1/29 ≈ 3.4%）。表面上翻了 3 倍，但要老實拆開看：
+- **真正穩定、可歸功於這次工作的改善只有 #11 這一場**（凝聚力）——2/29 ≈ 6.9% 才是可持續依賴的數字。
+- #23（Legacy Taipei 命中）是 `SEARCH_VENUES` 端點被 Cloudflare 間歇性擋住、這次剛好沒被擋到的運氣，不是修好了什麼，隨時可能在下次執行時消失。
+
+距離 80% 的目標還很遠，而且如前面「根因分析」所說，剩下的場館多數需要現在壞掉的搜尋機制才能抓——單靠繼續加 `ORG_PAGE_VENUES` 場館，天花板不高。
