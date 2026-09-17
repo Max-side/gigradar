@@ -2,28 +2,35 @@
   "sources": [
     {
       "name": "KKTIX",
-      "last_success": "2026-09-17T04:51:02.437Z",
+      "last_success": "2026-09-17T06:44:07.788Z",
       "last_error": null,
-      "last_count": 14,
+      "last_count": 25,
       "status": "ok"
     },
     {
       "name": "拓元",
-      "last_success": "2026-09-17T04:51:03.318Z",
+      "last_success": "2026-09-17T06:44:09.239Z",
       "last_error": null,
       "last_count": 78,
       "status": "ok"
     },
     {
       "name": "iNDIEVOX",
-      "last_success": "2026-09-17T04:54:06.818Z",
+      "last_success": "2026-09-17T06:47:14.099Z",
       "last_error": null,
       "last_count": 75,
       "status": "ok"
     },
     {
+      "name": "FANSI GO",
+      "last_success": "2026-09-17T06:47:20.570Z",
+      "last_error": null,
+      "last_count": 26,
+      "status": "ok"
+    },
+    {
       "name": "manual",
-      "last_success": "2026-09-17T04:54:06.820Z",
+      "last_success": "2026-09-17T06:47:20.571Z",
       "last_error": null,
       "last_count": 0,
       "status": "ok"

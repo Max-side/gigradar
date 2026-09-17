@@ -63,10 +63,12 @@ gigradar/
 ├── scripts/                     # Node.js pipeline，手動觸發執行（決策 S5，不再靠 GitHub Actions 排程）
 │   ├── fetch.mjs                # 入口：逐來源呼叫 adapter
 │   ├── dev-server.mjs           # 本機專用伺服器（決策 S5），npm run serve 用這個，多一個 POST /api/fetch
+│   ├── browser.mjs              # 共用 Playwright 啟動/關閉邏輯（withPage），kktix.mjs/fansi.mjs 共用，見 §5.5
 │   ├── adapters/
-│   │   ├── kktix.mjs
+│   │   ├── kktix.mjs             # SEARCH_VENUES 部分 2026-09-17 起改用 Playwright，見 §5.5
 │   │   ├── tixcraft.mjs
 │   │   ├── indievox.mjs         # M12 追加（2026-09-17），無反爬蟲，見 §5.4
+│   │   ├── fansi.mjs             # M12 追加（2026-09-17），Playwright，見 §5.5
 │   │   └── manual.mjs           # 讀取 data/manual-events.json，直接視為一個「來源」
 │   ├── normalize.mjs             # 日期/場館/價格正規化＋藝人比對 artists.yml
 │   ├── dedup.mjs                  # §4 ID 與去重演算法
@@ -333,6 +335,18 @@ table tbody tr                             -> 每一種票種一列
 **場館格式**：多數有「場館名稱（地址）」可以直接比照 KKTIX 拆出地址判斷城市；少數只寫裸場館名稱（例如「野地方 Wildlab」），這種就退回 `data/venues.yml` 查表（跟拓元共用同一份表），查不到就 `city: null`。個位數活動完全沒填地點（自由格式文字，主辦方就是沒寫），也只能留空，不強求。
 
 **未做（v1 範圍之外）**：票價解析——跟場館一樣是自由格式文字，這次沒有投入時間做，`price_min/price_max` 一律 `null`，跟拓元目前的做法一致（D16 的同樣取捨精神）。
+
+### 5.5 FANSI GO 端點實測結果、以及用 Playwright 解決 Cloudflare 的決定（2026-09-17）
+
+**FANSI GO（go.fansi.me）**：Max 帶來的參考實作示範用 Playwright 繞過反爬蟲，實測後發現：`/allevents` 這個列表頁本身**不是** Cloudflare 擋（plain fetch 拿到 200，沒有 challenge 頁），而是**整頁內容都是 Client-side render（Next.js），伺服器回應的原始 HTML 裡完全沒有場次資料**，一定要真的執行 JS 才會有內容。`/allevents` 列出全站所有還在賣票的活動，沒有分頁（實測滾到底部場次數不變）。
+
+- 沒有任何結構化的場館欄位，連詳情頁都沒有——詳情頁是裝飾性海報風格文字（大量全形特殊字元），沒有像 iNDIEVOX 那種「地點｜」的固定標籤可以 pattern match。**列表卡片上的「organizer」欄位是目前唯一可用的線索**，常常就是真的場館（例如「百樂門酒館」「PIPE Live Music」），但有時候是廠牌/主辦方名稱（例如「Wrong Game Records」）——直接當 `venue` 使用，跟拓元「查不到地址就查 `venues.yml`」同一套取捨精神，不是每次都精準。
+- 因為不需要進詳情頁，`fansi.mjs` 只有一步：載入 `/allevents`、等 JS 渲染完、單次 `$$eval` 抓完所有卡片。比 KKTIX/iNDIEVOX 的兩步驟抓取簡單、也更快。
+- 日期格式（`<time datetime="...">`，例如 `"2026/09/19"`）跟拓元完全一樣，沒有時間資訊，`normalize.mjs` 直接重用 `parseTixcraftDate`/`parseTixcraftVenue`，沒有另外寫 `parseFansiDate`。
+
+**用 Playwright 順便修好 KKTIX 的 `SEARCH_VENUES`**：既然專案已經要為 FANSI GO 加 Playwright 這個相依套件，順便把 `kktix.mjs` 的 `fetchSearchResultUrls`（M11/M12 一路記錄的 Cloudflare 擋爬蟲問題）也改用 Playwright——實測**確認修好了**：同樣的 4 個搜尋關鍵字（Legacy Taipei/Taichung、Revolver、Clapper Studio）這次全部成功，0 個 sub-request 失敗。原理：Cloudflare 的 JS challenge 只擋不會執行 JS 的請求（plain `fetch()`/`curl`），真的瀏覽器引擎會自動跑完那段驗證腳本再送出請求。`fetchOrgListing`／`fetchEventDetail` 兩個既有函式**沒有改**，繼續用 plain fetch——這兩個端點本來就沒有這層防護，沒必要為了不需要的地方多花啟動瀏覽器的成本。
+
+**新增相依套件**：`playwright`（`npm install playwright` + `npx playwright install chromium`，後者會下載約 280MB 的 Chromium/Headless Shell 二進位檔到 `~/Library/Caches/ms-playwright`，不進 git）。共用的瀏覽器啟動/關閉邏輯抽到 `scripts/browser.mjs`（`withPage(fn)`），`kktix.mjs` 和 `fansi.mjs` 都用它，避免重複寫 `chromium.launch()`/`browser.close()` 的樣板程式碼。
 
 ---
 

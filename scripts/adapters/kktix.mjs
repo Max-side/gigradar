@@ -1,5 +1,6 @@
 import * as cheerio from "cheerio";
 import { logProgress } from "../progress-log.mjs";
+import { withPage } from "../browser.mjs";
 
 /**
  * KKTIX adapter (SPEC §5, §5.1, §5.2). Two fetch strategies, decided during
@@ -34,17 +35,15 @@ const REQUEST_TIMEOUT_MS = 30000; // SPEC §4.3 — every adapter request needs 
 // SEARCH_VENUES can't currently reach anyway (see the Cloudflare note below).
 const ORG_PAGE_VENUES = ["thewalllivehouse", "kafka", "pipelivemusic", "emergelivehouse", "emergelivehouse2", "cohesionmusic"];
 
-// 2026-09-17: kktix.com/events?search=... now returns a genuine Cloudflare JS
+// 2026-09-17: kktix.com/events?search=... returns a genuine Cloudflare JS
 // challenge (403, <title>Just a moment...</title>) to plain HTTP clients —
 // confirmed from both GitHub Actions AND a residential IP with a real browser
-// UA, so this is NOT the IP-reputation issue tixcraft has, it's a hard block
-// on this endpoint for any non-browser request. SEARCH_VENUES below is
-// consequently non-functional right now; kept in place (harmless — it just
-// logs a warning and contributes 0 raw events, same as any other adapter
-// failure) rather than removed, since a future Cloudflare change could make
-// it work again without code changes. See GIGRADAR-SPEC.md §5.1 and
-// HANDOFF.md "KKTIX 搜尋策略現況更新" before spending time debugging "why does
-// this return 0 results" — it's not a bug, it's this known block.
+// UA, so this was NOT the IP-reputation issue tixcraft has, it's a hard block
+// on this endpoint for any non-browser request. Fixed the same day by routing
+// just this one endpoint through Playwright (see fetchSearchResultUrls below
+// and scripts/browser.mjs) — a real browser executes the challenge script and
+// gets through. Event detail pages found via search are NOT behind this
+// challenge and still use plain fetch. See GIGRADAR-SPEC.md §5.1.
 
 // Match both the colloquial (台北/台中) and official (臺北/臺中) character
 // variants — real Taiwanese address data uses both, and a silent no-match
@@ -110,17 +109,27 @@ async function fetchOrgListing(org) {
   return urls;
 }
 
+/**
+ * Needs a real browser (Playwright), not plain fetch — see the long comment
+ * near the top of this file. Detail pages found this way are still plain
+ * `fetchEventDetail()` below; only this one listing endpoint is protected.
+ */
 async function fetchSearchResultUrls(keyword) {
-  const html = await fetchHtml(`https://kktix.com/events?search=${encodeURIComponent(keyword)}`);
-  const $ = cheerio.load(html);
-  const urls = new Set();
-  $('a[href*="/events/"]').each((_, el) => {
-    const href = $(el).attr("href");
-    if (href && !href.includes("kktix.com/dashboard") && !href.endsWith(".ics")) {
-      urls.add(href.split("?")[0]);
+  return withPage(async (page) => {
+    await page.goto(`https://kktix.com/events?search=${encodeURIComponent(keyword)}`, {
+      waitUntil: "domcontentloaded",
+      timeout: REQUEST_TIMEOUT_MS,
+    });
+    await page.waitForTimeout(1500); // let Cloudflare's challenge script finish running
+    const hrefs = await page.$$eval("a[href*='/events/']", (els) => els.map((a) => a.href));
+    const urls = new Set();
+    for (const href of hrefs) {
+      if (href && !href.includes("kktix.com/dashboard") && !href.endsWith(".ics")) {
+        urls.add(href.split("?")[0]);
+      }
     }
+    return Array.from(urls);
   });
-  return Array.from(urls);
 }
 
 /** Scrapes one event's own page — this is the only place price/venue/date are complete. */

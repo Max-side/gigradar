@@ -164,8 +164,11 @@ function statusFromTickets(ticketsRaw, eventDate) {
  *   whose listing has no address to derive city from, e.g. tixcraft)
  * @returns {{ event: object }|{ needsReview: object }}
  */
-const DATE_PARSERS = { "拓元": parseTixcraftDate, "iNDIEVOX": parseIndievoxDate };
-const VENUE_PARSERS = { "拓元": parseTixcraftVenue, "iNDIEVOX": parseIndievoxVenue };
+// FANSI GO's date_raw ("2026/09/19", no time) and venue_raw (bare name, no
+// address — every event needs the venues.yml fallback) are shaped exactly
+// like tixcraft's, so it reuses those parsers rather than duplicating them.
+const DATE_PARSERS = { "拓元": parseTixcraftDate, "iNDIEVOX": parseIndievoxDate, "FANSI GO": parseTixcraftDate };
+const VENUE_PARSERS = { "拓元": parseTixcraftVenue, "iNDIEVOX": parseIndievoxVenue, "FANSI GO": parseTixcraftVenue };
 
 export function normalize(rawEvent, artistsYml, venuesYml = []) {
   const parseDate = DATE_PARSERS[rawEvent.source_name] ?? parseKktixDate;

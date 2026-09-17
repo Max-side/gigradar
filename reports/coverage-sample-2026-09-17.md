@@ -81,3 +81,22 @@ GigRadar 本地的 `data/needs-review.json`（79 筆，KKTIX／拓元這次執�
 - #23（Legacy Taipei 命中）是 `SEARCH_VENUES` 端點被 Cloudflare 間歇性擋住、這次剛好沒被擋到的運氣，不是修好了什麼，隨時可能在下次執行時消失。
 
 距離 80% 的目標還很遠，而且如前面「根因分析」所說，剩下的場館多數需要現在壞掉的搜尋機制才能抓——單靠繼續加 `ORG_PAGE_VENUES` 場館，天花板不高。
+
+## 再次追蹤：加 iNDIEVOX + FANSI GO + 修好 KKTIX 搜尋策略之後（同日稍晚）
+
+同一天稍晚做了三件事：(1) 新增 iNDIEVOX adapter（無反爬蟲，全站抓），(2) 新增 FANSI GO adapter（Playwright），(3) 把 KKTIX 的 `SEARCH_VENUES` 搜尋策略從 plain fetch 改成 Playwright，**真的修好了 Cloudflare 擋住的問題**（不是運氣，是這次搜尋 4 個場館全部成功，0 個 sub-request 失敗）。用同一份 29 場樣本再對照一次：
+
+| # | 演出 | 場館 | 這次結果 |
+|---|---|---|---|
+| 8 | Suming 舒米恩金曲慶功演唱會 | SUB Live House | ✅（iNDIEVOX） |
+| 11 | 【西部地區懸賞公告 2.0】 | 凝聚力展演空間 | ✅（KKTIX org 頁） |
+| 21/22 | 2026 LEE YOUNGJI WORLD TOUR | 臺北流行音樂中心 | ✅（拓元） |
+| 23 | 《https://》腦體馬戲團 | 百樂門酒館 | ✅（FANSI GO） |
+| 24 | Andr [Shedding Skin] 2026 Asia Tour | Legacy Taipei | ✅（KKTIX 搜尋，這次是**穩定命中**，不是運氣——4 個搜尋場館這次全部成功） |
+| 25 | P!SCO-16 Family Day（台中場） | Legacy Taichung | ✅（iNDIEVOX） |
+| 26 | 乙水YEE WATER EP Release Concert | LIVE WAREHOUSE | ✅（iNDIEVOX） |
+| 27 | 虎小島《背對光的時候》台北專場 | 野地方 Wild Lab | ✅（iNDIEVOX） |
+
+**新覆蓋率：8 / 29 ≈ 27.6%**，而且這次每一場命中都是可重現的穩定結果，不是碰運氣——跟上一版複查時特別強調「Legacy Taipei 那場是運氣、隨時可能消失」不同，這次 KKTIX 搜尋策略是真的修好了。
+
+還沒收錄的 21 場（女巫店、Zepp、Blue Note、Sappho、The Wall 部分場次、文昌號、FINAL、玉成戲院、Legacy TERA、凝聚力的另一場 JIAHN FANCON、中壢藝術館）大部分是因為：這些平台/場館根本不在四個來源的涵蓋範圍內（女巫店、Zepp、Blue Note 等主要不透過 KKTIX/拓元/iNDIEVOX/FANSI GO 賣票），不是解析失敗——要再往上，得看 Ticket Plus（寬宏售票）能補多少、或真的擴大追蹤場館清單。

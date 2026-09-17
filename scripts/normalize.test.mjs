@@ -107,6 +107,24 @@ test("parseIndievoxVenue: an unmapped bare venue name gets city: null, not a thr
   assert.deepEqual(result, { venue: "某個沒收錄過的展演空間", city: null });
 });
 
+test("normalize() end-to-end for a FANSI GO raw event (reuses tixcraft's date/venue parsers — same bare-name-no-address shape)", () => {
+  const raw = {
+    raw_id: "100130",
+    title_raw: "深海系樂團 Live",
+    url: "https://go.fansi.me/events/100130",
+    date_raw: "2026/09/19",
+    venue_raw: "PIPE Live Music",
+    tickets_raw: [],
+    source_name: "FANSI GO",
+  };
+  const venuesYml = [{ match: "PIPE", city: "台北" }];
+  const { event } = normalize(raw, artistsYml, venuesYml);
+  assert.equal(event.date, "2026-09-19");
+  assert.equal(event.time, null);
+  assert.equal(event.venue, "PIPE Live Music");
+  assert.equal(event.city, "台北");
+});
+
 test("normalize() end-to-end for an iNDIEVOX raw event", () => {
   const raw = {
     raw_id: "26_iv04098fa",

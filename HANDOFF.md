@@ -1,12 +1,12 @@
 # 交接文件 — 換電腦/換 session 接續開發前先看這份
 
-寫於 2026-09-15，2026-09-17 更新。M1~M12 全部跑完一輪，覆蓋率抽樣（M12）結果不好，過程中還發現 KKTIX 的搜尋策略現在整個被 Cloudflare 擋住（不只 GitHub Actions，本機也一樣）。**同一天稍晚，Max 帶了一份參考實作過來（另一個 Claude 對話產出、已經有人實際跑起來的 Python/Flask 版本），示範了用 Playwright 真瀏覽器繞過 Cloudflare、外加 iNDIEVOX/FANSI GO 兩個新來源，因此決定：(1) 資料抓取改成純手動觸發（決策 S5，取消 GitHub Actions 排程），(2) 準備擴充 Ticket Plus/iNDIEVOX/FANSI GO 三個新來源**——這是目前最新的方向，看下方「S5」「參考實作」兩段。這份文件的目的：讓一個完全沒看過這個對話紀錄的人（包含未來的你，或另一台電腦上全新開的 Claude Code session）能在 5 分鐘內知道現在做到哪、能不能信任目前的程式碼、下一步該做什麼。
+寫於 2026-09-15，2026-09-17 更新。M1~M12 全部跑完一輪，覆蓋率抽樣（M12）結果不好，過程中還發現 KKTIX 的搜尋策略被 Cloudflare 擋住。**同一天稍晚，Max 帶了一份參考實作過來（另一個 Claude 對話產出、已經有人實際跑起來的 Python/Flask 版本），示範了用 Playwright 真瀏覽器繞過 Cloudflare、外加 iNDIEVOX/FANSI GO 兩個新來源，因此：(1) 資料抓取改成純手動觸發（決策 S5，取消 GitHub Actions 排程），(2) 新增 iNDIEVOX、FANSI GO 兩個 adapter，(3) 用 Playwright 真的修好了 KKTIX 搜尋策略被 Cloudflare 擋住的問題，覆蓋率抽樣從 3.4% 提升到 27.6%**——只剩 Ticket Plus（寬宏售票）還沒做，是目前唯一剩下的來源，看下方對應章節。這份文件的目的：讓一個完全沒看過這個對話紀錄的人（包含未來的你，或另一台電腦上全新開的 Claude Code session）能在 5 分鐘內知道現在做到哪、能不能信任目前的程式碼、下一步該做什麼。
 
 ## 這是什麼專案
 
 個人用的獨立/地下音樂演出雷達。**完整需求**看 [`GIGRADAR-SRS.md`](./GIGRADAR-SRS.md)，**技術架構與所有踩過的坑**看 [`GIGRADAR-SPEC.md`](./GIGRADAR-SPEC.md)——這兩份是唯一該信任的來源，這份 HANDOFF 只是導覽，內容有衝突以那兩份為準。
 
-## 現在的狀態：M1~M12 全部完成，都在瀏覽器裡實測過，不是只寫完沒測（一個例外見下方 M9 那一列）；排程已重新打開並在真實 GitHub Actions 環境驗證過，但覆蓋率離目標還很遠
+## 現在的狀態：M1~M12 全部完成，都在瀏覽器裡實測過，不是只寫完沒測（一個例外見下方 M9 那一列）；抓取一律手動觸發（決策 S5，沒有自動排程），四個來源（KKTIX/拓元/iNDIEVOX/FANSI GO）都在運作，覆蓋率抽樣 27.6%，離 80% 目標還有距離但持續在拉高
 
 | 里程碑 | 內容 | 狀態 |
 |---|---|---|
@@ -28,10 +28,13 @@
 ## 你打開這個 repo 應該先做的事
 
 ```bash
-npm install          # cheerio, js-yaml 這些相依套件不會進 git
-npm run serve         # 開本機伺服器（scripts/dev-server.mjs，2026-09-17 起不是 python http.server 了）
+npm install                       # cheerio, js-yaml, playwright 這些相依套件不會進 git
+npx playwright install chromium    # 只需要跑一次；下載約 280MB 到 ~/Library/Caches/ms-playwright，也不進 git
+npm run serve                      # 開本機伺服器（scripts/dev-server.mjs，2026-09-17 起不是 python http.server 了）
 # 瀏覽器開 http://localhost:8000
 ```
+
+⚠️ 忘記跑 `npx playwright install chromium` 的話，`npm run fetch`／設定頁的「重新抓取」按鈕會在 KKTIX 或 FANSI GO 那步直接噴錯（`browserType.launch: Executable doesn't exist...`）——這不是程式碼的 bug，是瀏覽器引擎沒下載，照錯誤訊息裡的指令跑一次就好。
 
 `npm run serve` 現在是一個小型 Node 伺服器（決策 S5），不只是靜態檔案伺服器——設定頁的「🔄 重新抓取最新演出」按鈕只有透過它才會動作（呼叫 `POST /api/fetch` 執行 `fetch.mjs`）。**這個按鈕只在本機用 `npm run serve` 開的時候有效**，部署在 GitHub Pages 上的正式網站沒有後端，按了會顯示「無法連線到本機伺服器」的提示，這是預期行為不是 bug。
 
@@ -154,10 +157,20 @@ Max 帶來一份別人已經實際用起來的參考專案（zip 檔，內容不
 
 場館/城市：多數活動有「場館名稱（地址）」可以直接判斷城市；少數只寫裸名稱的（例如「野地方 Wildlab」）退回 `data/venues.yml` 查表；個位數活動完全沒填地點，只能留空，不強求。價格解析沒做（跟拓元一樣的取捨，D16 精神），`price_min/max` 一律 `null`。
 
+## FANSI GO 完成了，KKTIX 搜尋策略也真的修好了（同日稍晚）
+
+新增 `scripts/adapters/fansi.mjs` + 共用的 `scripts/browser.mjs`（Playwright 啟動/關閉邏輯，`kktix.mjs` 也在用）。FANSI GO 是純 client-side render（Next.js），伺服器回應的 HTML 完全沒有場次資料，跟 Cloudflare 無關，一定要真的執行 JS——這跟 KKTIX 的情況不一樣，但解法一樣（真瀏覽器）。沒有任何結構化場館欄位，用列表卡片的「organizer」欄位頂替 venue（常常是真的場館，但有時是廠牌/主辦方名稱），跟拓元共用同一套 `parseTixcraftDate`/`parseTixcraftVenue`（格式剛好一樣：`YYYY/MM/DD` 無時間、裸場館名稱查 `venues.yml`）。
+
+**順便把 KKTIX 的 `SEARCH_VENUES`（M11/M12 記錄的 Cloudflare 擋爬蟲問題）也改用 Playwright 修好了**——`fetchSearchResultUrls` 現在透過 `scripts/browser.mjs` 的 `withPage()` 執行，實測 4 個搜尋場館（Legacy Taipei/Taichung、Revolver、Clapper Studio）**這次全部成功，0 個失敗**，不是像之前複查覆蓋率時那樣「這次剛好沒被擋」的運氣。`fetchOrgListing`／`fetchEventDetail` 沒有改，這兩個端點本來就沒被擋，維持 plain fetch。
+
+用同一份 M12 的 29 場覆蓋率樣本再測一次：**8/29 ≈ 27.6%**，而且這次每一場都是穩定可重現的結果。完整記錄見 `reports/coverage-sample-2026-09-17.md` 的「再次追蹤」段落。
+
+**新增相依套件注意**：`npm install` 之後還要跑一次 `npx playwright install chromium`（見上面「你打開這個 repo 應該先做的事」），忘記跑的話 KKTIX/FANSI GO 那兩步會直接報錯說找不到瀏覽器執行檔。
+
 ## 建議下一步
 
-**Max 確認要加的來源清單**：KKTIX（已有）、拓元（已有）、**iNDIEVOX（已完成，見上）**、**Ticket Plus（寬宏售票，還沒研究過）**、**FANSI GO（還沒做）**。優先順序建議：
-1. **FANSI GO** 和 **把 KKTIX 搜尋策略換成 Playwright**——兩個都需要幫專案加 Playwright 這個新相依套件（`npm install playwright` + `playwright install chromium`），是比較大的改動，且要注意 Playwright 的瀏覽器引擎不小，本機資料抓取時間會變長。
-2. **Ticket Plus（寬宏售票）**——完全還沒研究過它的頁面結構、有沒有 Cloudflare，需要重新走一次 M2 當初對 KKTIX 做的那種端點實測。
+**Max 確認要加的來源清單**：KKTIX（已有）、拓元（已有）、**iNDIEVOX（已完成）**、**FANSI GO（已完成，見上）**、**Ticket Plus（寬宏售票，還沒研究過，是唯一剩下的）**。
+
+下一步就是 **Ticket Plus**——完全還沒研究過它的頁面結構、有沒有反爬蟲防護，需要重新走一次 M2 當初對 KKTIX、M3 對拓元做的那種端點實測：先看列表頁能不能 plain fetch 拿到、有沒有 Cloudflare/WAF、場館/日期欄位長什麼樣子，再決定要用哪一種抓取策略。
 
 架構上已經確定：**抓取一律手動觸發（決策 S5），不做自動排程**，`.github/workflows/daily-update.yml` 的 `schedule` 已經拿掉，只留 `workflow_dispatch`。新增來源時這個決策不變——不管加幾個來源，都是透過設定頁的「重新抓取」按鈕（`scripts/dev-server.mjs`）手動觸發，不會有排程或額外的自動化。

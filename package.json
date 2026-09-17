@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "description": "Personal live-music event radar. Static frontend + GitHub Actions scraper pipeline, no build step (SPEC D14).",
+  "description": "Personal live-music event radar. Static frontend + manually-triggered Node scraper pipeline, no build step (SPEC D14).",
   "scripts": {
     "fetch": "node scripts/fetch.mjs",
     "serve": "node scripts/dev-server.mjs",
@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "cheerio": "^1.2.0",
-    "js-yaml": "^5.4.2"
+    "js-yaml": "^5.4.2",
+    "playwright": "^1.63.0"
   }
 }
