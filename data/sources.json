@@ -2,21 +2,21 @@
   "sources": [
     {
       "name": "KKTIX",
-      "last_success": "2026-09-17T02:52:20.990Z",
+      "last_success": "2026-09-17T03:48:33.218Z",
       "last_error": null,
-      "last_count": 14,
+      "last_count": 5,
       "status": "ok"
     },
     {
       "name": "拓元",
       "last_success": "2026-09-17T02:52:21.899Z",
-      "last_error": null,
+      "last_error": "GET https://tixcraft.com/activity -> 403",
       "last_count": 77,
-      "status": "ok"
+      "status": "error"
     },
     {
       "name": "manual",
-      "last_success": "2026-09-17T02:52:21.899Z",
+      "last_success": "2026-09-17T03:48:34.007Z",
       "last_error": null,
       "last_count": 0,
       "status": "ok"
