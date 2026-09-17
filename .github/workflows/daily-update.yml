@@ -1,16 +1,14 @@
 name: Daily Update
 
 on:
-  # Re-enabled 2026-09-16 after adding the source-fallback safety net
-  # (scripts/source-fallback.mjs): a run from GitHub Actions still gets 403'd
-  # by tixcraft (拓元) and KKTIX's search strategy (see issue #1), but fetch.mjs
-  # now reuses each blocked source's previous data instead of wiping it —
-  # verified against a real run (commit f6f39d3 only touched 6 metadata
-  # lines, not the 600-line data loss from before this fix). See
-  # GIGRADAR-SPEC.md §4.2 and HANDOFF.md's "M11 的重大發現" for the full story.
-  schedule:
-    - cron: "0 0 * * *" # 08:00 CST = 00:00 UTC (SRS D1)
-  workflow_dispatch: {} # manual trigger for debugging
+  # Schedule removed by product decision (S5, 2026-09-17): Max decided fetching
+  # should be manual-only (a real button in settings.html, served by
+  # scripts/dev-server.mjs — see GIGRADAR-SPEC.md §12 S5), not an unattended
+  # daily cron. This also sidesteps M11's GitHub Actions IP-blocking problem
+  # entirely, since fetches now only ever run from Max's own machine. This
+  # workflow is kept only as a manually-triggerable fallback (workflow_dispatch)
+  # in case you ever want to fetch from CI instead of locally.
+  workflow_dispatch: {}
 
 jobs:
   update:

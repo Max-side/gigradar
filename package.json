@@ -6,7 +6,7 @@
   "description": "Personal live-music event radar. Static frontend + GitHub Actions scraper pipeline, no build step (SPEC D14).",
   "scripts": {
     "fetch": "node scripts/fetch.mjs",
-    "serve": "python3 -m http.server 8000",
+    "serve": "node scripts/dev-server.mjs",
     "test": "node --test scripts/*.test.mjs src/*.test.js"
   },
   "dependencies": {

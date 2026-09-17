@@ -1,6 +1,6 @@
 # 交接文件 — 換電腦/換 session 接續開發前先看這份
 
-寫於 2026-09-15，2026-09-17 更新。M1~M12 全部跑完一輪，但覆蓋率抽樣（M12）結果不好，而且過程中發現 KKTIX 的搜尋策略現在其實整個被 Cloudflare 擋住（不只 GitHub Actions，本機也一樣）——這比 M11 當時記錄的還嚴重，先看下方「M12」跟「KKTIX 搜尋策略現況更新」這兩段。這份文件的目的：讓一個完全沒看過這個對話紀錄的人（包含未來的你，或另一台電腦上全新開的 Claude Code session）能在 5 分鐘內知道現在做到哪、能不能信任目前的程式碼、下一步該做什麼。
+寫於 2026-09-15，2026-09-17 更新。M1~M12 全部跑完一輪，覆蓋率抽樣（M12）結果不好，過程中還發現 KKTIX 的搜尋策略現在整個被 Cloudflare 擋住（不只 GitHub Actions，本機也一樣）。**同一天稍晚，Max 帶了一份參考實作過來（另一個 Claude 對話產出、已經有人實際跑起來的 Python/Flask 版本），示範了用 Playwright 真瀏覽器繞過 Cloudflare、外加 iNDIEVOX/FANSI GO 兩個新來源，因此決定：(1) 資料抓取改成純手動觸發（決策 S5，取消 GitHub Actions 排程），(2) 準備擴充 Ticket Plus/iNDIEVOX/FANSI GO 三個新來源**——這是目前最新的方向，看下方「S5」「參考實作」兩段。這份文件的目的：讓一個完全沒看過這個對話紀錄的人（包含未來的你，或另一台電腦上全新開的 Claude Code session）能在 5 分鐘內知道現在做到哪、能不能信任目前的程式碼、下一步該做什麼。
 
 ## 這是什麼專案
 
@@ -29,9 +29,11 @@
 
 ```bash
 npm install          # cheerio, js-yaml 這些相依套件不會進 git
-npm run serve         # 開本機伺服器
+npm run serve         # 開本機伺服器（scripts/dev-server.mjs，2026-09-17 起不是 python http.server 了）
 # 瀏覽器開 http://localhost:8000
 ```
+
+`npm run serve` 現在是一個小型 Node 伺服器（決策 S5），不只是靜態檔案伺服器——設定頁的「🔄 重新抓取最新演出」按鈕只有透過它才會動作（呼叫 `POST /api/fetch` 執行 `fetch.mjs`）。**這個按鈕只在本機用 `npm run serve` 開的時候有效**，部署在 GitHub Pages 上的正式網站沒有後端，按了會顯示「無法連線到本機伺服器」的提示，這是預期行為不是 bug。
 
 想看爬蟲 pipeline 真的動起來：
 
@@ -54,7 +56,9 @@ npm test                # 跑全部單元測試（見下方「測試怎麼跑」
 6. **日期比較不要用 `new Date(dateStr) > new Date()`**——`new Date("2026-10-15")` 會被當成 UTC 午夜，跟本地/台灣時間的「現在」比較時，同一天的場次在某些時段會被誤判成「已過期」。`scripts/normalize.mjs` 的 `statusFromTickets` 和 `src/filter.js` 的 `isPast()` 都踩過這個坑，兩處都已經改成用日期字串（`YYYY-MM-DD`）直接比較，不要再改回 Date 物件比較。
 7. **`normalize()`（或任何 per-item 的 pipeline 處理函式）處理陣列時一定要包 try/catch**——單一筆原始資料格式異常就丟例外的話，會讓整個 pipeline run 中斷，當天完全不會更新，而不是只把那一筆丟進待整理。`scripts/fetch.mjs` 已經修好，之後新增 per-item 處理邏輯要延續這個模式。
 
-## M11 的重大發現：GitHub Actions 的 IP 會被來源網站部分擋掉（已修好）
+## M11 的重大發現：GitHub Actions 的 IP 會被來源網站部分擋掉（已修好，且 2026-09-17 起這個問題本身不再相關）
+
+⚠️ **2026-09-17 更新**：決策 S5 把資料抓取改成手動觸發（設定頁按鈕，見上面「你打開這個 repo 應該先做的事」），不再依賴 GitHub Actions 排程，所以下面這個「GitHub Actions IP 被擋」的問題已經**不會再發生**（因為根本不會再從 GitHub Actions 的 IP 發出抓取請求）。保留這段記錄是因為：(1) `scripts/source-fallback.mjs` 這個資料安全網仍然有用，本機手動抓取一樣可能遇到 KKTIX 搜尋被 Cloudflare 擋（見下面 KKTIX 搜尋策略那段），一樣需要它防止資料被洗掉；(2) 了解這段歷史有助於理解為什麼會有 S5 這個決策。
 
 2026-09-16 手動觸發了一次 `workflow_dispatch`（在真的 GitHub Actions 環境跑，不是本機），結果：
 - **拓元直接 403**（`GET https://tixcraft.com/activity -> 403`）——`notify.mjs` 正確地自動開了 [issue #1](https://github.com/Max-side/gigradar/issues/1)，這不是誤判，是真的被擋。
@@ -131,8 +135,22 @@ npm test    # 等同 node --test scripts/*.test.mjs src/*.test.js
 
 這個模式完全免費（用你既有的 Claude 方案，不需要另外申請 API key），但代價是**不會自動發生**——沒有排程會自己每天幫你查，你要記得主動開口。跟 FR-19 原本設計的「每週自動巡檢」不同，是刻意的取捨：自動化那個版本需要串一個會計費的 AI API，這個手動版本不用，細節見這次對話紀錄裡跟 Max 討論的權衡（GitHub Actions 排程 vs 自己常駐機器 vs 手動觸發，三種都不能讓 AI 搜尋本身免費，只有「你在對話裡主動問」才不用另外付費）。
 
+## 參考實作：另一個 Claude 對話產出的 Python/Flask 版本（2026-09-17）
+
+Max 帶來一份別人已經實際用起來的參考專案（zip 檔，內容不在這個 repo 裡，只用來借鏡技巧）。跟現在的 GigRadar 比，功能簡單很多（沒有 PWA、沒有跨裝置同步、沒有 artist 正規化/去重、單機 Flask app），但解決了兩個關鍵技術問題：
+
+1. **用 Playwright（真的 Chromium 引擎）繞過 Cloudflare**——對 KKTIX、FANSI GO 用真瀏覽器載入頁面，讓 Cloudflare 的驗證正常跑完，跟 `fetch()`/`curl` 完全不同層級。理論上可以拿來修好現在壞掉的 `SEARCH_VENUES`。
+2. **多兩個沒有 Cloudflare、覆蓋率很高的來源**：
+   - **iNDIEVOX**——伺服器端直接渲染，plain fetch 就能抓，不需要 Playwright，全站抓不用像 KKTIX 一樣一個場館一個場館試。
+   - **FANSI GO**（go.fansi.me）——需要 Playwright（Cloudflare + 前端渲染），但涵蓋不少 GigRadar現在碰不到的場館。
+
+實測：拿它跑出來的 98 筆資料對照 M12 的 29 場覆蓋率樣本，**直接多中 5 場**（Suming@SUB Live House、P!SCO-16@Legacy Taichung、乙水@LIVE WAREHOUSE、虎小島@野地方、《https://》@百樂門酒館），覆蓋率估計可以從 10.3% 推到 27.6%——比繼續一個一個查證 KKTIX 自營場館的投報率高很多。
+
 ## 建議下一步
 
-原本以為「擴充 KKTIX 追蹤場館清單」是拉高覆蓋率最直接的路，但查證後發現大多數候選場館（Zepp、Blue Note 等）本來就得靠現在壞掉的 `SEARCH_VENUES` 機制才能抓，這條路目前技術上卡住了（見上面「KKTIX 搜尋策略現況更新」）。還沒查完的候選：文昌號 WHOA、SUB Live House、FINAL、野地方 Wild Lab、凝聚力展演空間——這幾個是有機會走 `ORG_PAGE_VENUES`（自營帳號）這條路的，但要逐一確認它們是不是真的自己開帳號辦自己所有場次（比照女巫店那樣，帳號存在但沒在用的情況要先排除）。
+**Max 確認要加的來源清單**：KKTIX（已有）、拓元（已有）、**Ticket Plus（寬宏售票，還沒研究過）**、**iNDIEVOX（還沒做）**、**FANSI GO（還沒做）**。優先順序建議：
+1. **iNDIEVOX** 先做——沒有 Cloudflare，架構跟現有 `tixcraft.mjs` 類似，風險最低、效益最大。
+2. **FANSI GO** 和 **把 KKTIX 搜尋策略換成 Playwright**——兩個都需要幫專案加 Playwright 這個新相依套件（`npm install playwright` + `playwright install chromium`），是比較大的改動，且要注意 Playwright 的瀏覽器引擎不小，本機資料抓取時間會變長。
+3. **Ticket Plus（寬宏售票）**——完全還沒研究過它的頁面結構、有沒有 Cloudflare，需要重新走一次 M2 當初對 KKTIX 做的那種端點實測。
 
-跟 Max 討論後決定的方向：**先靠 `data/watchlist.yml` 手動追蹤名單機制補位**（見上面說明），不追加自動化的 adapter 擴充或付費 AI API，避免在搜尋機制本身就不穩定的情況下投入更多工程。如果之後想再往自動化推進，是一次獨立的產品決定（要接受多少費用、要不要處理 Cloudflare），不是現在就要做的事。
+架構上已經確定：**抓取一律手動觸發（決策 S5），不做自動排程**，`.github/workflows/daily-update.yml` 的 `schedule` 已經拿掉，只留 `workflow_dispatch`。新增來源時這個決策不變——不管加幾個來源，都是透過設定頁的「重新抓取」按鈕（`scripts/dev-server.mjs`）手動觸發，不會有排程或額外的自動化。

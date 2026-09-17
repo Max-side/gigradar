@@ -23,7 +23,8 @@ flowchart LR
 ```
 
 - **前端**：純靜態網站，原生 ES Modules + 原生 CSS，無框架、無打包工具（D14）。部署於 GitHub Pages。
-- **資料層**：不用資料庫。所有場次資料是 repo 裡的 JSON 檔（`data/events.json` 等），由 GitHub Actions 每日重新產生並 commit。
+- **資料層**：不用資料庫。所有場次資料是 repo 裡的 JSON 檔（`data/events.json` 等）。
+  **更新（決策 S5，2026-09-17）**：改成人工手動觸發抓取，不是 GitHub Actions 每日自動 commit——`scripts/dev-server.mjs`（`npm run serve` 啟動）是本機專用的小型 Node 伺服器，設定頁的「🔄 重新抓取最新演出」按鈕只有透過它才會動作，部署在 GitHub Pages 上的正式版沒有這個功能（GitHub Pages 是純靜態主機，沒有後端可以跑 `fetch.mjs`）。這不算違反 D14——**部署出去的正式網站**仍然是零框架、零打包工具的純靜態頁面，只是多了一個「本機開發用」的小伺服器，用途類似 `python3 -m http.server` 曾經扮演的角色，只是多了一個 API 端點。細節見 §12 S5。
 - **偏好層**：收藏、排除規則、設定存在瀏覽器 `localStorage`，並透過使用者自己的 GitHub 帳號授權寫入一個 **private Gist** 做跨裝置同步（FR-65）。
 - **運算全部在前端**：過濾、排序、分組、統計皆是瀏覽器端 JS 運算（NFR-02 <100ms），後端只負責「產生今天的資料快照」。
 - **沒有伺服器、沒有帳號系統**：符合 N2、NFR-06。Gist 同步用的是使用者自己對 GitHub 的 OAuth device flow 或 Personal Access Token，GigRadar 本身不持有任何使用者密碼。
@@ -440,5 +441,6 @@ jobs:
 | S2 | Gist 認證方式 | **Personal Access Token**（僅 `gist` 權限），使用者自行在 GitHub 產生後貼到設定頁，不自架 OAuth server |
 | S3 | GitHub repo 持有者 | 使用者現有 GitHub 帳號；repo 建立與推送在 M11（上線）階段執行，M1~M10 先在本機開發與驗證 ~~**變更（2026-09-16）**：repo（https://github.com/Max-side/gigradar）實際上從 M1 就建立並每個里程碑都推送了，不是等到 M11 才推。原因：多台電腦開發（公司/家裡）需要 git 隨時同步，等到 M11 才建 repo 反而不可行。M11 真正剩下的工作只有「讓 `.github/workflows/daily-update.yml` 真的在 GitHub Actions 上跑過」，不是建 repo 本身。~~ |
 | S4 | FR-19 追蹤名單巡檢的實作方式（2026-09-17） | **手動/對話觸發，不做成自動排程**。原設計是「每週 AI 網路搜尋自動巡檢」，但排程本身免費、AI 搜尋本身要付費，兩者是分開的成本，不管排程放在 GitHub Actions 還是自己的機器上都一樣要付 AI API 的錢。改成使用者在 Claude Code 對話裡主動說「照追蹤名單查一次」，由 AI 用既有對話工具（瀏覽器/搜尋）即時查詢——這個用法算在使用者本來就有的 Claude 方案裡，不需要另外申請/支付 API。代價是不會自動發生，需要使用者記得主動觸發。追蹤名單存在 `data/watchlist.yml`，純粹是人類/AI 對話用的參考清單，不被任何程式讀取。 |
+| S5 | 資料抓取觸發方式（2026-09-17） | **手動觸發，取消 GitHub Actions 每日排程**。原本 M11 花了不少力氣讓 daily cron 在 GitHub Actions 上穩定運作，但使用者決定改成人工在設定頁按「🔄 重新抓取最新演出」按鈕觸發，理由：(1) 順便解決 M11 的 GitHub Actions IP 被拓元/KKTIX 擋的問題——手動觸發时都是從使用者自己的機器發出請求，不會再遇到機房 IP 被封鎖；(2) 使用頻率本來就不需要「每天全自動」，符合已經決定的 FR-19 手動查詢精神（S4）。技術上新增 `scripts/dev-server.mjs`（本機專用小型 Node 伺服器，取代原本 `python3 -m http.server`），設定頁按鈕呼叫它的 `POST /api/fetch` 執行 `fetch.mjs`。GitHub Actions 的 `daily-update.yml` 保留 `workflow_dispatch`（供需要時手動從 CI 觸發），移除 `schedule` 觸發器。 |
 
 日後若要變更，請在此表加註變更日期與理由。

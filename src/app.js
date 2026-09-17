@@ -514,6 +514,8 @@ function initSettings() {
   const strictModeToggle = document.getElementById("strict-mode");
   const muteKeywordsContainer = document.getElementById("mute-keywords");
   const muteKeywordInput = document.getElementById("mute-keyword-input");
+  const refetchBtn = document.getElementById("refetch-btn");
+  const refetchStatus = document.getElementById("refetch-status");
 
   function renderSyncStatus() {
     const prefs = loadPrefs();
@@ -621,6 +623,30 @@ function initSettings() {
       alert("匯入失敗，請確認檔案格式是否正確。");
     } finally {
       importFileInput.value = "";
+    }
+  });
+
+  // S5 (2026-09-17): only works when this page is served by scripts/dev-server.mjs
+  // (npm run serve) — GitHub Pages is a static host with no /api/fetch to call.
+  refetchBtn.addEventListener("click", async () => {
+    refetchBtn.disabled = true;
+    refetchBtn.textContent = "抓取中…（可能要幾分鐘）";
+    refetchStatus.textContent = "";
+    try {
+      const res = await fetch("/api/fetch", { method: "POST" });
+      const result = await res.json();
+      if (result.ok) {
+        refetchStatus.textContent = "抓取完成，資料已更新。";
+        renderSourceStatus();
+      } else {
+        refetchStatus.textContent = `抓取失敗：${result.error ?? "詳見終端機輸出"}`;
+      }
+    } catch (err) {
+      console.error("Refetch failed:", err);
+      refetchStatus.textContent = "無法連線到本機伺服器——這個按鈕只在用 npm run serve 執行時有效，部署版的 GitHub Pages 沒有後端可以跑爬蟲。";
+    } finally {
+      refetchBtn.disabled = false;
+      refetchBtn.textContent = "🔄 重新抓取最新演出";
     }
   });
 
