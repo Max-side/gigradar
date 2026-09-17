@@ -2,21 +2,28 @@
   "sources": [
     {
       "name": "KKTIX",
-      "last_success": "2026-09-17T04:27:03.100Z",
+      "last_success": "2026-09-17T04:51:02.437Z",
       "last_error": null,
       "last_count": 14,
       "status": "ok"
     },
     {
       "name": "拓元",
-      "last_success": "2026-09-17T04:27:03.989Z",
+      "last_success": "2026-09-17T04:51:03.318Z",
       "last_error": null,
       "last_count": 78,
       "status": "ok"
     },
     {
+      "name": "iNDIEVOX",
+      "last_success": "2026-09-17T04:54:06.818Z",
+      "last_error": null,
+      "last_count": 75,
+      "status": "ok"
+    },
+    {
       "name": "manual",
-      "last_success": "2026-09-17T04:27:03.990Z",
+      "last_success": "2026-09-17T04:54:06.820Z",
       "last_error": null,
       "last_count": 0,
       "status": "ok"

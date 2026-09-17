@@ -75,6 +75,46 @@ export function parseTixcraftVenue(venueRaw, venuesYml) {
   return { venue: venueRaw, city: entry?.city ?? null };
 }
 
+/**
+ * "2026.09.19 (Sat.) 19:30 open / 20:00 start" -> { date, time: "20:00" }
+ * (prefer the show's actual start time over doors-open); falls back to the
+ * listing page's dateless "2026/09/18 (五)" -> { date, time: null } when the
+ * detail page's freeform info block didn't have a date line at all.
+ */
+export function parseIndievoxDate(dateRaw) {
+  // Organizer-authored freeform text uses at least three different date
+  // formats in the wild: "2026.09.19", "2026 / 10 / 2" (spaced slashes), and
+  // "2026年10月3日" (Chinese units, no punctuation) — all three found across
+  // real events. Try Chinese-unit form first since its digits aren't
+  // separated by "." or "/" at all and won't match the other pattern.
+  const m =
+    dateRaw.match(/(\d{4})\s*年\s*(\d{1,2})\s*月\s*(\d{1,2})\s*日/) ??
+    dateRaw.match(/(\d{4})\s*[./]\s*(\d{1,2})\s*[./]\s*(\d{1,2})/);
+  if (!m) return null;
+  const [, y, mo, d] = m;
+  const date = `${y}-${mo.padStart(2, "0")}-${d.padStart(2, "0")}`;
+  const startMatch = dateRaw.match(/(\d{1,2}:\d{2})\s*start/i);
+  const anyTimeMatch = dateRaw.match(/(\d{1,2}:\d{2})/);
+  const time = (startMatch ?? anyTimeMatch)?.[1] ?? null;
+  return { date, time };
+}
+
+/**
+ * "WESTAR（台北市萬華區西門里漢中街116號8樓）" -> { venue: "WESTAR", city: "台北" }.
+ * Organizer-authored freeform text: many events give a bare venue name with
+ * no address at all (e.g. "野地方 Wildlab") — venues.yml (same table
+ * tixcraft's untracked venues use) is the fallback for those.
+ */
+export function parseIndievoxVenue(venueRaw, venuesYml) {
+  const m = venueRaw.match(/^(.*?)[（(]([^）)]+)[）)]/);
+  if (m) {
+    const [, venue, address] = m;
+    const city = CITY_NAMES.find((c) => address.startsWith(c)) ?? null;
+    return { venue: venue.trim(), city };
+  }
+  return parseTixcraftVenue(venueRaw, venuesYml);
+}
+
 function guessTagsType(titleRaw, headlinerCount) {
   for (const [kw, tag] of TYPE_KEYWORDS) {
     if (titleRaw.includes(kw)) return [tag];
@@ -124,9 +164,13 @@ function statusFromTickets(ticketsRaw, eventDate) {
  *   whose listing has no address to derive city from, e.g. tixcraft)
  * @returns {{ event: object }|{ needsReview: object }}
  */
+const DATE_PARSERS = { "拓元": parseTixcraftDate, "iNDIEVOX": parseIndievoxDate };
+const VENUE_PARSERS = { "拓元": parseTixcraftVenue, "iNDIEVOX": parseIndievoxVenue };
+
 export function normalize(rawEvent, artistsYml, venuesYml = []) {
-  const isTixcraft = rawEvent.source_name === "拓元";
-  const dateParsed = isTixcraft ? parseTixcraftDate(rawEvent.date_raw) : parseKktixDate(rawEvent.date_raw);
+  const parseDate = DATE_PARSERS[rawEvent.source_name] ?? parseKktixDate;
+  const parseVenue = VENUE_PARSERS[rawEvent.source_name] ?? parseKktixVenue;
+  const dateParsed = parseDate(rawEvent.date_raw);
   if (!dateParsed) {
     return {
       needsReview: {
@@ -154,9 +198,7 @@ export function normalize(rawEvent, artistsYml, venuesYml = []) {
     };
   }
 
-  const { venue, city } = isTixcraft
-    ? parseTixcraftVenue(rawEvent.venue_raw ?? "", venuesYml)
-    : parseKktixVenue(rawEvent.venue_raw ?? "");
+  const { venue, city } = parseVenue(rawEvent.venue_raw ?? "", venuesYml);
   const { min, max } = priceFromTickets(rawEvent.tickets_raw ?? []);
   const { status, on_sale_at } = statusFromTickets(rawEvent.tickets_raw ?? [], dateParsed.date);
   const originDefault = artistsYml.find((a) => a.canonical === headliners[0])?.tags_origin_default;

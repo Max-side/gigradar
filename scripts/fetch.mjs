@@ -4,6 +4,7 @@ import { fileURLToPath } from "node:url";
 
 import * as kktix from "./adapters/kktix.mjs";
 import * as tixcraft from "./adapters/tixcraft.mjs";
+import * as indievox from "./adapters/indievox.mjs";
 import * as manual from "./adapters/manual.mjs";
 import { loadArtists, loadVenues, normalize } from "./normalize.mjs";
 import { dedupe } from "./dedup.mjs";
@@ -16,7 +17,7 @@ import { fallbackEventsForSource, fallbackReviewItemsForSource } from "./source-
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const DATA_DIR = path.join(__dirname, "..", "data");
 
-const adapters = [kktix, tixcraft, manual];
+const adapters = [kktix, tixcraft, indievox, manual];
 
 function loadPreviousEvents() {
   try {

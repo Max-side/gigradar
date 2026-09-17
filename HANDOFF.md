@@ -146,11 +146,18 @@ Max 帶來一份別人已經實際用起來的參考專案（zip 檔，內容不
 
 實測：拿它跑出來的 98 筆資料對照 M12 的 29 場覆蓋率樣本，**直接多中 5 場**（Suming@SUB Live House、P!SCO-16@Legacy Taichung、乙水@LIVE WAREHOUSE、虎小島@野地方、《https://》@百樂門酒館），覆蓋率估計可以從 10.3% 推到 27.6%——比繼續一個一個查證 KKTIX 自營場館的投報率高很多。
 
+## iNDIEVOX 完成了（2026-09-17）
+
+新增 `scripts/adapters/indievox.mjs`，沒有 Cloudflare、plain fetch 直接可用。實測一次真的跑了 75 筆場次進 `needs-review.json`（意料中的事——`artists.yml` 只有 2 筆示範資料，這些都還沒被辨識，等你補 artists.yml 或用待整理頁指派後才會變成正式場次）。
+
+**過程中修的幾個真實 bug（都在 `normalize.mjs` 的 `parseIndievoxDate`）**：iNDIEVOX 的日期是主辦方自己貼的自由格式文字，不是固定欄位，實測到至少三種寫法要分別處理（`2026.09.19`、`2026 / 10 / 2` 帶空白、`2026年10月3日` 純中文單位），還有一個有趣的坑：某些活動頁面除了介紹文字的日期，下面訂購表單還有第二個「日期：9/19」（沒有年份），原本的 regex 會不小心抓到後者，改成「解析結果必須含 4 位數年份才採用，不然退回列表頁的日期」才穩定。細節見 `GIGRADAR-SPEC.md` §5.4，測試在 `scripts/normalize.test.mjs`。
+
+場館/城市：多數活動有「場館名稱（地址）」可以直接判斷城市；少數只寫裸名稱的（例如「野地方 Wildlab」）退回 `data/venues.yml` 查表；個位數活動完全沒填地點，只能留空，不強求。價格解析沒做（跟拓元一樣的取捨，D16 精神），`price_min/max` 一律 `null`。
+
 ## 建議下一步
 
-**Max 確認要加的來源清單**：KKTIX（已有）、拓元（已有）、**Ticket Plus（寬宏售票，還沒研究過）**、**iNDIEVOX（還沒做）**、**FANSI GO（還沒做）**。優先順序建議：
-1. **iNDIEVOX** 先做——沒有 Cloudflare，架構跟現有 `tixcraft.mjs` 類似，風險最低、效益最大。
-2. **FANSI GO** 和 **把 KKTIX 搜尋策略換成 Playwright**——兩個都需要幫專案加 Playwright 這個新相依套件（`npm install playwright` + `playwright install chromium`），是比較大的改動，且要注意 Playwright 的瀏覽器引擎不小，本機資料抓取時間會變長。
-3. **Ticket Plus（寬宏售票）**——完全還沒研究過它的頁面結構、有沒有 Cloudflare，需要重新走一次 M2 當初對 KKTIX 做的那種端點實測。
+**Max 確認要加的來源清單**：KKTIX（已有）、拓元（已有）、**iNDIEVOX（已完成，見上）**、**Ticket Plus（寬宏售票，還沒研究過）**、**FANSI GO（還沒做）**。優先順序建議：
+1. **FANSI GO** 和 **把 KKTIX 搜尋策略換成 Playwright**——兩個都需要幫專案加 Playwright 這個新相依套件（`npm install playwright` + `playwright install chromium`），是比較大的改動，且要注意 Playwright 的瀏覽器引擎不小，本機資料抓取時間會變長。
+2. **Ticket Plus（寬宏售票）**——完全還沒研究過它的頁面結構、有沒有 Cloudflare，需要重新走一次 M2 當初對 KKTIX 做的那種端點實測。
 
 架構上已經確定：**抓取一律手動觸發（決策 S5），不做自動排程**，`.github/workflows/daily-update.yml` 的 `schedule` 已經拿掉，只留 `workflow_dispatch`。新增來源時這個決策不變——不管加幾個來源，都是透過設定頁的「重新抓取」按鈕（`scripts/dev-server.mjs`）手動觸發，不會有排程或額外的自動化。

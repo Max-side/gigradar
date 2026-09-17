@@ -60,11 +60,13 @@ gigradar/
 │   ├── digest.json              # 每日 diff 摘要（新增/更新/移除的場次 id）
 │   └── watchlist.yml            # FR-19 手動版追蹤名單（M12 起）——不被任何程式讀取，
 │                                 # 純粹給人類在對話裡叫 AI「照名單查一次」用，見 HANDOFF.md
-├── scripts/                     # GitHub Actions 執行的 Node.js pipeline
+├── scripts/                     # Node.js pipeline，手動觸發執行（決策 S5，不再靠 GitHub Actions 排程）
 │   ├── fetch.mjs                # 入口：逐來源呼叫 adapter
+│   ├── dev-server.mjs           # 本機專用伺服器（決策 S5），npm run serve 用這個，多一個 POST /api/fetch
 │   ├── adapters/
 │   │   ├── kktix.mjs
 │   │   ├── tixcraft.mjs
+│   │   ├── indievox.mjs         # M12 追加（2026-09-17），無反爬蟲，見 §5.4
 │   │   └── manual.mjs           # 讀取 data/manual-events.json，直接視為一個「來源」
 │   ├── normalize.mjs             # 日期/場館/價格正規化＋藝人比對 artists.yml
 │   ├── dedup.mjs                  # §4 ID 與去重演算法
@@ -316,6 +318,21 @@ table tbody tr                             -> 每一種票種一列
 **城市判定**：列表頁場館欄位沒有地址，無法像 KKTIX 那樣從地址判斷城市，只能比照 `artists.yml` 的精神，維護一份小型場館→城市對照表（`data/venues.yml`），碰到表裡沒有的場館就留 `city: null`，之後人工補。
 
 **robots.txt 確認**：`Disallow` 只列了 `/activity/game/`、`/activity/search-suggest/`、`/ticket/area/`、`/ticket/ticket/`、`/ticket/verify/`，`/activity` 與 `/activity/detail/*` 都不在其中，抓取合規（NFR-04）。
+
+### 5.4 iNDIEVOX 端點實測結果（2026-09-17，M12 覆蓋率追加來源時實測）
+
+跟 KKTIX/拓元都不同：**伺服器端直接渲染，沒有 Cloudflare 也沒有 UA/Referer 檢查**，plain `fetch()` 直接可用，是目前唯一不需要任何反爬蟲對策的來源。代價是資料結構完全不受 CMS 約束——場館/日期資訊是主辦方自己貼的自由格式文字，不是固定欄位，需要盡力而為的解析，parse 不出來就留空/未知，不當成致命錯誤。
+
+**兩步驟抓取**（跟 KKTIX 同樣需要進到詳情頁，因為列表頁只有標題+日期）：
+
+1. 列表頁 `https://www.indievox.com/activity/list?type=card&startDate={YYYY/MM/DD}&endDate=`：一次回傳約 7 天份的卡片（`div.thumbnails.activity a[href*='/activity/detail/']`），用「取這批看到的最晚日期＋1 天」當下一批的 `startDate` 往前翻頁，直到某一批完全沒有新的 `href`（用 Set 去重）為止。
+2. 詳情頁 `https://www.indievox.com/activity/detail/{raw_id}`：從自由格式的「🔻 活動資訊」文字區塊裡，用 `地點[｜:：]` / `日期[｜:：]` 這種「標籤 + 分隔符號」的 pattern 抓對應的值——**同一個標籤在同一頁可能出現不只一次**（例如某些活動除了介紹文字的「演出地點：」，頁面下方訂購表單還有一個不含年份的「日期：9/19」），實測抓到會誤觸後者，所以日期解析結果**必須驗證含有 4 位數年份**才採用，沒有就退回列表頁本來就有、格式穩定的日期字串。
+
+**日期格式踩過的坑**：不同主辦方寫法差異很大，至少實測到三種都要分別处理：`2026.09.19`、`2026 / 10 / 2`（斜線兩邊帶空白）、`2026年10月3日`（純中文單位，沒有標點分隔數字）。`normalize.mjs` 的 `parseIndievoxDate` 依序嘗試中文單位格式、再嘗試斜線/點格式。時間部分優先取「XX:XX start」（演出開始），沒有就取頁面上第一個 `HH:MM`（通常是入場時間，比開演早，只是近似值）。
+
+**場館格式**：多數有「場館名稱（地址）」可以直接比照 KKTIX 拆出地址判斷城市；少數只寫裸場館名稱（例如「野地方 Wildlab」），這種就退回 `data/venues.yml` 查表（跟拓元共用同一份表），查不到就 `city: null`。個位數活動完全沒填地點（自由格式文字，主辦方就是沒寫），也只能留空，不強求。
+
+**未做（v1 範圍之外）**：票價解析——跟場館一樣是自由格式文字，這次沒有投入時間做，`price_min/price_max` 一律 `null`，跟拓元目前的做法一致（D16 的同樣取捨精神）。
 
 ---
 

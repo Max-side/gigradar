@@ -13,7 +13,7 @@ export function computeId(headliner, date, venue) {
   return crypto.createHash("sha1").update(key).digest("hex").slice(0, 16);
 }
 
-const SOURCE_PRIORITY = { KKTIX: 1, "拓元": 2, manual: 3 };
+const SOURCE_PRIORITY = { KKTIX: 1, "拓元": 2, "iNDIEVOX": 3, manual: 4 };
 
 /** Coarse time-of-day bucket, or null when the source didn't report a time at all. */
 function timeBucket(time) {

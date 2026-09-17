@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { normalize } from "./normalize.mjs";
+import { normalize, parseIndievoxDate, parseIndievoxVenue } from "./normalize.mjs";
 
 const artistsYml = [{ canonical: "深海系樂團", aliases: [], tags_origin_default: "本地" }];
 
@@ -64,4 +64,63 @@ test("statusFromTickets: a clearly past date with closed tiers is 'ended'", () =
   });
   const { event } = normalize(raw, artistsYml);
   assert.equal(event.status, "ended");
+});
+
+test("parseIndievoxDate: prefers the 'start' time over the earlier 'open' (doors) time", () => {
+  const result = parseIndievoxDate("2026.09.19 (Sat.) 19:30 open / 20:00 start");
+  assert.deepEqual(result, { date: "2026-09-19", time: "20:00" });
+});
+
+test("parseIndievoxDate: falls back to whatever single time is present when there's no open/start pair", () => {
+  const result = parseIndievoxDate("2026.10.05 (Mon.) 21:00");
+  assert.deepEqual(result, { date: "2026-10-05", time: "21:00" });
+});
+
+test("parseIndievoxDate: falls back to the listing page's dateless format with time: null", () => {
+  const result = parseIndievoxDate("2026/09/18 (五)");
+  assert.deepEqual(result, { date: "2026-09-18", time: null });
+});
+
+test("parseIndievoxDate: handles spaced slashes ('2026 / 10 / 2')", () => {
+  const result = parseIndievoxDate("2026 / 10 / 2（五）");
+  assert.equal(result.date, "2026-10-02");
+});
+
+test("parseIndievoxDate: handles Chinese-unit dates ('2026年10月3日')", () => {
+  const result = parseIndievoxDate("2026年10月3日 (Sat/六)");
+  assert.equal(result.date, "2026-10-03");
+});
+
+test("parseIndievoxVenue: splits 'VENUE（address）' and derives city from the address", () => {
+  const result = parseIndievoxVenue("WESTAR（台北市萬華區西門里漢中街116號8樓）", []);
+  assert.deepEqual(result, { venue: "WESTAR", city: "台北" });
+});
+
+test("parseIndievoxVenue: a bare venue name with no address falls back to venues.yml", () => {
+  const venuesYml = [{ match: "野地方", city: "台北" }];
+  const result = parseIndievoxVenue("野地方 Wildlab", venuesYml);
+  assert.deepEqual(result, { venue: "野地方 Wildlab", city: "台北" });
+});
+
+test("parseIndievoxVenue: an unmapped bare venue name gets city: null, not a thrown error", () => {
+  const result = parseIndievoxVenue("某個沒收錄過的展演空間", []);
+  assert.deepEqual(result, { venue: "某個沒收錄過的展演空間", city: null });
+});
+
+test("normalize() end-to-end for an iNDIEVOX raw event", () => {
+  const raw = {
+    raw_id: "26_iv04098fa",
+    title_raw: "深海系樂團 Live",
+    url: "https://www.indievox.com/activity/detail/26_iv04098fa",
+    date_raw: "2026.09.19 (Sat.) 19:30 open / 20:00 start",
+    venue_raw: "野地方 Wildlab",
+    tickets_raw: [],
+    source_name: "iNDIEVOX",
+  };
+  const venuesYml = [{ match: "野地方", city: "台北" }];
+  const { event } = normalize(raw, artistsYml, venuesYml);
+  assert.equal(event.date, "2026-09-19");
+  assert.equal(event.time, "20:00");
+  assert.equal(event.venue, "野地方 Wildlab");
+  assert.equal(event.city, "台北");
 });
