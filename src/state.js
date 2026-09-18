@@ -268,6 +268,35 @@ export function saveFavView(view) {
   localStorage.setItem(FAV_VIEW_KEY, view);
 }
 
+// --- Light/dark theme override (FR-27, 2026-09-18) ----------------------
+// Dark mode was purely automatic (prefers-color-scheme) until it turned out
+// to strain Max's eyes with no way to force light regardless of the OS
+// setting. "system" (the default, no override) isn't stored as a literal
+// value — an absent/invalid key means "follow the OS", matching how
+// tokens.css's :not([data-theme="light"]) guard works. Never synced via
+// Gist — a display preference tied to one screen/eyes, not a rule.
+const THEME_KEY = "gigradar:theme";
+
+export function loadTheme() {
+  try {
+    const raw = localStorage.getItem(THEME_KEY);
+    return raw === "light" || raw === "dark" ? raw : "system";
+  } catch {
+    return "system";
+  }
+}
+
+/** @param {"system"|"light"|"dark"} theme */
+export function saveTheme(theme) {
+  if (theme === "system") {
+    localStorage.removeItem(THEME_KEY);
+    delete document.documentElement.dataset.theme;
+  } else {
+    localStorage.setItem(THEME_KEY, theme);
+    document.documentElement.dataset.theme = theme;
+  }
+}
+
 // --- Gist sync (M9, FR-65, SPEC §8) -------------------------------------
 // The PAT lives in its own localStorage key — never inside `prefs`, so
 // exporting prefs via FR-63 can never leak it, and it's never written into

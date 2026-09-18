@@ -343,6 +343,10 @@ Max 選取「爛泥發芽」這張卡片問說：這是音樂祭，怎麼被標�
 
 時間表頁面原本只有全部城市／全部月份／價格三個篩選 chip，Max 要求再加類型（專場/拼盤/音樂祭/見面會...）跟音樂人地區（本地/日韓/歐美/海外）。做法完全比照既有的三個 chip：`filter.js` 的 `passesViewFilters()` 補上 `type`／`origin` 兩個條件（比對 `event.tags_type`／`event.tags_origin`），`app.js` 新增 `typeFilterOptions()`／`originFilterOptions()`，一樣只列出目前尚未結束的場次裡真的存在的選項，不會出現選了保證空清單的死選項。五個 chip 可以任意疊加（例如「音樂祭」+「本地」同時套用，實測過確認會一起生效，還順便驗證了前面才修好的爛泥發芽/RUSH BALL 音樂祭分類是正確的）。`src/filter.test.js` 新增 3 個測試，`npm test` 72 個測試全過，手機版 5 個 chip 會自動換行，桌機/手機都測過。
 
+## 新增手動深淺色切換開關（2026-09-18，Max 反映深色模式看久眼睛痛）
+
+原本深淺色完全跟系統設定走（`prefers-color-scheme`），沒有手動開關。Max 說「深色看久眼睛有點痛」要求加按鈕，做法：`styles/tokens.css` 改成三層 override（`:root` 淺色預設 → `@media (prefers-color-scheme: dark)` 系統深色，但排除使用者已明確選淺色的情況 → `:root[data-theme]` 使用者明確選的，優先權最高），`data-theme` 屬性由每個頁面 `<head>` 裡一段**同步** inline script（不是 `type="module"`）在最前面設定，避免用 `app.js`（deferred module）設定導致每次換頁閃一下錯誤主題（FOUC）。`state.js` 新增 `loadTheme()`/`saveTheme()`，`settings.html` 新增「顯示模式」三個單選 chip（跟隨系統/淺色/深色），`app.js` 的 `initSettings()` 綁定點擊事件、`aria-pressed` 互斥切換、頁面載入時依當前設定顯示正確的按下狀態。實測過三種狀態切換、跨頁導覽維持設定不跳回、無 FOUC 閃爍，細節見 [GIGRADAR-SPEC.md](GIGRADAR-SPEC.md) §9.4。`npm test` 72 個測試全過。
+
 ## 建議下一步
 
 剩下 67 筆待整理，大多是非音樂雜訊（用「忽略」按鈕清掉即可）或真的看不出主秀的拼盤場次，不需要特別處理。52% 左右的覆蓋率抽樣可以視為現階段用免費工具、五個來源都做完後的實際天花板，再往上要嘛擴大追蹤場館清單（投報率遞減，前面查證過大多數自營小場館很難批次找到），要嘛是接受這個範圍——不建議現在就投入。

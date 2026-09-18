@@ -56,6 +56,8 @@ import {
   saveViewFilters,
   loadFavView,
   saveFavView,
+  loadTheme,
+  saveTheme,
 } from "./state.js";
 import { renderEventList, renderFavoritesList, renderNewArrivalsList, renderEmptyList } from "./render.js";
 import { splitDate, daysSince } from "./format.js";
@@ -835,6 +837,7 @@ function initSettings() {
   const muteKeywordInput = document.getElementById("mute-keyword-input");
   const refetchBtn = document.getElementById("refetch-btn");
   const refetchStatus = document.getElementById("refetch-status");
+  const themeButtons = document.querySelectorAll("[data-theme-value]");
 
   function renderSyncStatus() {
     const prefs = loadPrefs();
@@ -969,6 +972,21 @@ function initSettings() {
     }
   });
 
+  function renderThemeButtons() {
+    const current = loadTheme();
+    themeButtons.forEach((btn) => {
+      btn.setAttribute("aria-pressed", String(btn.dataset.themeValue === current));
+    });
+  }
+
+  themeButtons.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      saveTheme(btn.dataset.themeValue);
+      renderThemeButtons();
+    });
+  });
+
+  renderThemeButtons();
   renderSyncStatus();
   renderMuteKeywords();
   renderSourceStatus();

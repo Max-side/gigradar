@@ -3,6 +3,21 @@
   Source of truth: design-comp ComponentSpec artboard (Phase 3).
   Every color in the app must reference one of these variables — never a literal
   hex/oklch value in component CSS — so dark mode (FR-27) stays automatic.
+
+  2026-09-18: dark mode was purely automatic (`prefers-color-scheme`, no manual
+  override) until Max asked for a toggle — dark mode was straining his eyes and
+  there was no way to force light regardless of the OS/browser setting. Three
+  tiers now, most specific wins:
+    1. :root                              -> light (the default, unchanged)
+    2. @media (prefers-color-scheme: dark) -> dark, but only when the user
+       hasn't explicitly picked a theme (:not([data-theme="light"]) guards
+       against a forced-light choice being overridden by a dark OS)
+    3. :root[data-theme="dark"|"light"]    -> whatever the user explicitly
+       picked in settings.html, regardless of the OS setting
+  `data-theme` is set on <html> by a small inline script in every page's
+  <head> (see index.html etc.) — inline and synchronous specifically so it
+  runs before first paint; a deferred/module script would flash the wrong
+  theme for a moment on every load.
 */
 
 :root {
@@ -39,7 +54,7 @@
 }
 
 @media (prefers-color-scheme: dark) {
-  :root {
+  :root:not([data-theme="light"]) {
     --bg: oklch(17% 0.014 55);
     --surface: oklch(23% 0.016 55);
     --surface-2: oklch(28% 0.018 55);
@@ -66,4 +81,32 @@
     --shadow-card: none;
     --shadow-nav: none;
   }
+}
+
+:root[data-theme="dark"] {
+  --bg: oklch(17% 0.014 55);
+  --surface: oklch(23% 0.016 55);
+  --surface-2: oklch(28% 0.018 55);
+  --border: oklch(33% 0.02 55);
+  --border-strong: oklch(42% 0.02 55);
+
+  --ink: oklch(95% 0.01 60);
+  --text: oklch(95% 0.01 60);
+  --muted: oklch(66% 0.02 60);
+
+  --coral: oklch(70% 0.18 25);
+  --coral-ink: oklch(78% 0.15 30);
+  --coral-bg: oklch(32% 0.08 20);
+
+  --yellow: oklch(80% 0.14 90);
+  --yellow-ink: oklch(28% 0.06 80);
+
+  --lime: oklch(78% 0.14 130);
+  --lime-ink: oklch(26% 0.07 130);
+
+  --warn: oklch(72% 0.16 35);
+  --warn-bg: oklch(30% 0.07 35);
+
+  --shadow-card: none;
+  --shadow-nav: none;
 }

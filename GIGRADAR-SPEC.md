@@ -462,7 +462,7 @@ export function resolveVisibility(event, prefs, viewFilters) {
 
 ## 9. 深淺色模式（FR-27）
 
-`styles/tokens.css` 定義一份 CSS variables（對應設計稿 ComponentSpec 畫板的兩組 token），淺色寫在 `:root`，深色寫在 `@media (prefers-color-scheme: dark)`，不做手動切換開關（跟隨系統即可，符合 SRS 範圍）。所有畫面樣式一律用 `var(--xxx)`，不得寫死色碼，這樣新增畫面時深色模式是自動生效的，不需要每頁另外處理。
+`styles/tokens.css` 定義一份 CSS variables（對應設計稿 ComponentSpec 畫板的兩組 token），淺色寫在 `:root`，深色寫在 `@media (prefers-color-scheme: dark)`。所有畫面樣式一律用 `var(--xxx)`，不得寫死色碼，這樣新增畫面時深色模式是自動生效的，不需要每頁另外處理。2026-09-18 起加上手動切換開關，見 §9.4。
 
 ### 9.1 響應式縮放（RWD，2026-09-18）
 
@@ -493,6 +493,26 @@ Max 看過 9.1 的成果後自己提出四個進一步調整，這次全部做�
 - 新增 `src/calendar.js`：純函式 `buildMonthGrid(year, month)`／`addMonths(year, month, delta)`，不碰 DOM，照專案慣例獨立成好測試的邏輯檔（同 `format.js`／`filter.js` 的模式）。
 - 月曆格子有收藏場次的日期標示圓點，點下去在下方顯示當天場次；預設開啟會自動跳到最近一場收藏所在的月份並選好那一天。
 - **實作時抓到兩個真實的選取狀態卡住的 bug**：（1）翻月份後，畫面選取的日期沒有跟著清掉，導致月曆換了月份、下方卻還顯示上個月的場次；（2）在日曆檢視裡把當前選取那天的場次取消收藏後，選取狀態沒有跟著失效，一樣會顯示已經不存在的資料。兩處都補上「重新驗證選取日期是否還有對應場次，沒有就清空並改顯示『這個月沒有收藏的場次』」的邏輯。
+
+### 9.4 手動深淺色切換開關（2026-09-18）
+
+Max 反映「深色看久眼睛有點痛」，要求加一個手動切換按鈕，不要完全只跟系統走。原本 §9 開頭講的「跟隨系統、不做手動開關」在這裡被推翻，改成三層 CSS override，越後面優先權越高：
+
+1. `:root`（淺色，預設不變）
+2. `@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {...} }`（系統深色，但如果使用者已經明確選了淺色就不覆蓋——`:not([data-theme="light"])` 是關鍵，避免「使用者手動選淺色、但系統是深色」被系統設定蓋回去）
+3. `:root[data-theme="dark"]` / `:root[data-theme="light"]`（使用者在設定頁明確選的，蓋過系統設定）
+
+`data-theme` 屬性設在 `<html>` 上，由每個頁面 `<head>` 裡的一小段**同步**（非 `type="module"`）inline script 負責，在 `<title>`／CSS 之前執行：
+
+```html
+<script>(function(){try{var t=localStorage.getItem("gigradar:theme");if(t==="light"||t==="dark")document.documentElement.dataset.theme=t;}catch(e){}})();</script>
+```
+
+一定要是同步 inline script、而且要放在最前面——`app.js` 是 `type="module"`，瀏覽器會延後執行到 DOM 解析完，如果靠它來設定 `data-theme` 會在每次換頁時先閃一下錯誤的主題（FOUC）才跳到正確主題。八個頁面（`index/new/favorites/search/add/review/hidden/settings.html`）都加了這段。
+
+`src/state.js` 新增 `loadTheme()`（回傳 `"system"|"light"|"dark"`，key 不存在時視為 `"system"`）／`saveTheme(theme)`（`"system"` 時移除 key 並清掉 `data-theme`，否則寫入並設定）。`settings.html` 新增「顯示模式」區塊（三個 `chip-selectable` 按鈕，`data-theme-value="system"/"light"/"dark"`），`app.js`／`initSettings()` 監聽點擊、呼叫 `saveTheme()`、用 `aria-pressed` 做互斥的單選視覺回饋，頁面載入時依 `loadTheme()` 設定初始按下狀態。
+
+實測過三種狀態切換（系統深色下強制淺色、系統淺色下強制深色、切回跟隨系統後 `data-theme` 正確清除）以及跨頁導覽（設定頁選深色 → 導覽到時間表頁 → 深色設定有維持，沒有 FOUC 閃爍）。`npm test` 72 個測試全過（純 CSS/HTML/少量 JS 加法，不影響既有邏輯）。
 
 ---
 
