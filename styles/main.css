@@ -823,8 +823,15 @@ textarea.field-input {
   .day-group {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
-    align-items: start;
+    align-items: stretch;
     gap: 16px 14px;
+  }
+  /* Grid only stretches the .event-card box itself — without this, a card
+     with a shorter title/no badges would stay its own natural (shorter)
+     height while sitting in a row next to a taller one, which is exactly
+     the uneven-row look stretch is meant to fix. */
+  .event-card {
+    height: 100%;
   }
   /* .day-group's own label needs to sit above the grid as a full-width
      heading, not become just another grid cell next to the first card. */

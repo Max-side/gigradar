@@ -466,6 +466,8 @@ GigRadar 原本完全 mobile-first（`.app{max-width:480px}`，SPEC 一開始就
 
 - **兩個新斷點**：`min-width:800px`（平板）與 `min-width:1200px`（桌機），`.app` 分別放寬到 820px／1180px。
 - **場次列表改用 CSS Grid，其他內容維持單欄**：這是這次改動的核心判斷——「哪裡值得變寬」跟「哪裡該維持窄欄」不一樣。`.event-list`（有 `.event-card` 直屬子元素的頁面，如收藏頁／搜尋結果的空狀態）跟 `.day-group`（時間表／新上架這種按日期分組的頁面）在寬螢幕下改成 `display:grid; grid-template-columns:repeat(auto-fit, minmax(340px,1fr))`，讓場次卡片並排顯示，而不是被迫排成一條長長的單欄。用 `:has(> .event-card)` 選擇器分辨「這個 `.event-list` 底下是不是直接放卡片」，因為同一個 class 在不同頁面的巢狀結構不一樣（時間表是 `.event-list > .day-group > .event-card`，收藏頁是 `.event-list > .event-card` 沒有 `.day-group` 這層）。`auto-fit`（不是 `auto-fill`）確保當某一天只有 1-2 場時，卡片會撐開填滿那一列，不會留下奇怪的空白欄位。
+
+**2026-09-18 補上 `align-items:stretch`**：Max 打開實際畫面發現同一列裡標題長度、有沒有徽章（例如「已收藏，忽略排除規則」）不一樣的卡片，高度長短不一，同一列參差不齊很醜。原本用 `align-items:start` 讓每張卡片維持自己的自然高度，改成 `align-items:stretch`（grid 預設值）並讓 `.event-card{height:100%}` 撐滿格子高度，同一列的卡片就會統一成那一列最高卡片的高度——較短的卡片下方會多一點留白，但整列看起來整齊，比高低不一好看。只在 `min-width:800px` 斷點生效，手機版單欄排列本來就不會有這個問題。
 - **新增 `.page-content` class**：表單、設定頁、待整理／已隱藏管理這種「本來就該維持單欄閱讀寬度」的內容，即使 `.app` 變寬了也不該跟著被拉伸成又寬又扁的輸入框——`.page-content{max-width:560px;margin:0 auto}` 蓋在這些頁面的內容容器上（`add.html` 的表單、`settings.html`／`review.html`／`hidden.html`／`search.html` 的內容區與標題列），讓它們在寬螢幕下維持置中、舒適的閱讀寬度，跟旁邊留白，而場次列表頁（時間表／新上架／收藏）的標題列刻意不套用這個 class，讓標題跟下面變寬的格線對齊。
 - **底部導覽列／彈出選單同步加寬**：`.bottom-nav`／`.sheet` 的 `max-width` 跟著 `.app` 的兩個斷點一起放寬，維持視覺上跟內容區同寬，不會變成寬螢幕裡一條突兀的窄導覽列。
 - 手機尺寸（<800px）完全不受影響，沒有新增任何 media query 影響到既有行為；800px 以下的邏輯就是原本的樣子。
