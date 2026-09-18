@@ -183,10 +183,10 @@ id      = sha1( normalize(headliner) + "|" + date + "|" + venue_normalized )
 
 ### 4.2 每日更新流程（實作對應 SRS §6.1 flowchart）
 
-`scripts/fetch.mjs` 依序執行：
+`scripts/fetch.mjs` 執行：
 
 1. 讀取 `data/sources.json` 取得每個來源上次的成功筆數。
-2. 對每個 adapter 執行 `fetch()`（見 §5 介面），有 timeout（30s）與重試（1 次）。
+2. 對每個 adapter 執行 `fetch()`（見 §5 介面），有 timeout（30s）與重試（1 次）。**2026-09-18 起五個 adapter 平行執行**（`Promise.allSettled`），不再依序排隊——它們打的是完全不同的外部網站，彼此沒有共用的禮貌性流量限制（§4.3 的間隔只約束「同一 adapter 對同一網域」的請求），排隊等待純粹是浪費時間。細節與實測數字見下方「實作備註」。
 3. 失敗 → 記錄 `sources.json` 該來源 `last_error`，`last_success` 維持不變，該來源本次沿用 `events.json` 中屬於它的舊資料（AC-11 負向情境）。
 4. 成功但筆數為 0 且上次 > 0 → 呼叫 `notify.mjs` 開 GitHub issue（AC-14），同時前端從 `sources.json` 的 `status` 欄位讀出異常標示（ErrorState 畫面）。
 5. `normalize.mjs`：日期／時間／價格字串轉換為 §3.1 型別；標題丟進簡單的正則＋`artists.yml` 比對抽取 `headliners`/`lineup`；抽不出來的進 `needs-review.json`（FR-16）。
@@ -201,6 +201,7 @@ id      = sha1( normalize(headliner) + "|" + date + "|" + venue_normalized )
 - `notify.mjs` 開 issue 前會先查有沒有同標題、帶 `source-anomaly` label 的 open issue，避免同一個來源連續故障時每天洗一個新 issue（呼應 SRS 的「每週維護時間 < 15 分鐘」）。
 - 步驟 3「該來源本次沿用 events.json 中屬於它的舊資料」**已實作**（`scripts/source-fallback.mjs`，M11，2026-09-16）：`fallbackEventsForSource()` 從上一輪 `events.json` 抽出屬於該來源的貢獻（只留該來源自己的 `sources[]` 項目，拿掉 `id`/`merged_ids`），重新丟回這輪的 pipeline，讓 `dedupe()` 用同一套邏輯跟其他來源這輪抓到的新資料自然合併；`fallbackReviewItemsForSource()` 對 `needs-review.json` 做一樣的事。
   **緣起（M11 實測證實這不只是理論風險）**：2026-09-16 從 GitHub Actions 手動觸發一次真的執行，拓元回 403、KKTIX 的搜尋策略也全部 403（GH Actions 的 IP 疑似被這兩個網站的反爬蟲當成機房 IP 擋掉，本機測試因為是家用/公司 IP 所以一直正常），當時還沒有這個 fallback，直接把 `needs-review.json` 的 79 筆真實資料洗成 4 筆並自動 commit 上去，已用 `git revert` 復原。補上 fallback 後在真實 GitHub Actions 環境重跑一次驗證：同樣的 403 又發生，但這次資料維持在 79 筆，只有 metadata 變動，`daily-update.yml` 的排程已重新打開。**注意**：這個 fallback 只防止資料被洗掉，不解決封鎖本身——只要拓元/KKTIX 搜尋持續被擋，這兩個來源就不會有新資料流入，等同實質停止更新，是否要解決封鎖是另一個獨立的決定。細節見 `HANDOFF.md`「M11 的重大發現」。
+- **五個 adapter 改平行執行（2026-09-18）**：抽出 `runAdapter()` 函式包住單一來源「抓取→分類狀態→異常時取用上次資料→逐筆 normalize」的完整流程，讓 `main()` 可以用 `Promise.allSettled(adapters.map(runAdapter))` 一次全部送出去，而不是 `for...of` 依序 `await`。刻意用 `allSettled` 不是 `all`：`runAdapter()` 內部已經把每一種已知的失敗模式都包起來（`adapter.fetch()` 拋錯、`notifySourceAnomaly` 失敗、單筆 `normalize()` 出錯），理論上不會真的 reject，但如果 `classifySourceRun()` 這類輔助函式本身出現未預期的錯誤，用 `allSettled` 才能保證不會因為一個來源的意外狀況，把其他四個來源已經抓好的成果也一起賠掉。實測：一次完整跑從依序版本的 19 分半降到平行版本的 8 分 52 秒，`data/sources.json` 五個來源都是 `status: "ok"`，筆數與平行化前一致，`npm test` 全過，沒有資料混雜或遺漏的跡象。
 
 ### 4.3 爬取禮儀（NFR-04）
 

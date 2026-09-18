@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-18T03:47:00.082Z",
+  "generated_at": "2026-09-18T04:01:08.695Z",
   "events": [
     {
       "title_raw": "「跨校聯誼Vol.2」九月高校 / 午後幽靈 / Sunday Something",
@@ -196,44 +196,41 @@
       ]
     },
     {
-      "title_raw": "【9/25特典加購】THE RAMPAGE PREMIUM LIVE EVENT 2026 in TAIPEI",
+      "title_raw": "【午場】HANAZAWA KANA LIVE 2026 KANAMEGURI in TAIPEI",
       "headliners": [
-        "THE RAMPAGE"
+        "HANAZAWA KANA"
       ],
       "lineup": [
-        "THE RAMPAGE"
+        "HANAZAWA KANA"
       ],
       "is_festival": false,
-      "venue": "Legacy TERA",
+      "venue": "Legacy TAIPEI",
       "city": "台北",
-      "date": "2026-09-25",
-      "time": "18:00",
+      "date": "2026-09-26",
+      "time": "14:30",
       "on_sale_at": null,
-      "price_min": 2000,
-      "price_max": 2000,
-      "status": "sold_out",
+      "price_min": 1490,
+      "price_max": 3600,
+      "status": "on_sale",
       "tags_type": [
         "專場"
       ],
       "tags_origin": [
         "日韓"
       ],
-      "ticket_url": "https://ldh.kktix.cc/events/therampage-live-2026-3",
+      "ticket_url": "https://welcome-music.kktix.cc/events/0bc26b19",
       "sources": [
         {
           "name": "KKTIX",
-          "url": "https://ldh.kktix.cc/events/therampage-live-2026-3",
-          "raw_id": "therampage-live-2026-3"
+          "url": "https://welcome-music.kktix.cc/events/0bc26b19",
+          "raw_id": "0bc26b19"
         }
       ],
-      "first_seen_at": "2026-09-17T07:41:11.996Z",
-      "updated_at": "2026-09-18T03:47:00.081Z",
-      "id": "9bef0b055525cadf",
+      "first_seen_at": "2026-09-18T03:54:03.616Z",
+      "updated_at": "2026-09-18T03:54:03.616Z",
+      "id": "71810cf9bd0d2d17",
       "merged_ids": [
-        "9bef0b055525cadf"
-      ],
-      "updated_fields": [
-        "price_max"
+        "71810cf9bd0d2d17"
       ]
     },
     {
@@ -275,21 +272,21 @@
       ]
     },
     {
-      "title_raw": "【晚場】HANAZAWA KANA LIVE 2026 KANAMEGURI in TAIPEI",
+      "title_raw": "【9/25售票頁】THE RAMPAGE PREMIUM LIVE EVENT 2026 in TAIPEI",
       "headliners": [
-        "HANAZAWA KANA"
+        "THE RAMPAGE"
       ],
       "lineup": [
-        "HANAZAWA KANA"
+        "THE RAMPAGE"
       ],
       "is_festival": false,
-      "venue": "Legacy TAIPEI",
+      "venue": "Legacy TERA",
       "city": "台北",
-      "date": "2026-09-26",
-      "time": "18:30",
+      "date": "2026-09-25",
+      "time": "18:00",
       "on_sale_at": null,
-      "price_min": 1490,
-      "price_max": 2980,
+      "price_min": 2000,
+      "price_max": 3480,
       "status": "on_sale",
       "tags_type": [
         "專場"
@@ -297,57 +294,28 @@
       "tags_origin": [
         "日韓"
       ],
-      "ticket_url": "https://welcome-music.kktix.cc/events/11da7a3a",
+      "ticket_url": "https://ldh.kktix.cc/events/therampage-live-2026-1",
       "sources": [
         {
           "name": "KKTIX",
-          "url": "https://welcome-music.kktix.cc/events/11da7a3a",
-          "raw_id": "11da7a3a"
-        }
-      ],
-      "first_seen_at": "2026-09-18T03:11:34.673Z",
-      "updated_at": "2026-09-18T03:11:34.673Z",
-      "id": "71810cf9bd0d2d17-evening",
-      "merged_ids": [
-        "71810cf9bd0d2d17-evening"
-      ]
-    },
-    {
-      "title_raw": "【午場】HANAZAWA KANA LIVE 2026 KANAMEGURI in TAIPEI",
-      "headliners": [
-        "HANAZAWA KANA"
-      ],
-      "lineup": [
-        "HANAZAWA KANA"
-      ],
-      "is_festival": false,
-      "venue": "Legacy TAIPEI",
-      "city": "台北",
-      "date": "2026-09-26",
-      "time": "14:30",
-      "on_sale_at": null,
-      "price_min": 1490,
-      "price_max": 3600,
-      "status": "on_sale",
-      "tags_type": [
-        "專場"
-      ],
-      "tags_origin": [
-        "日韓"
-      ],
-      "ticket_url": "https://welcome-music.kktix.cc/events/0bc26b19",
-      "sources": [
+          "url": "https://ldh.kktix.cc/events/therampage-live-2026-1",
+          "raw_id": "therampage-live-2026-1"
+        },
         {
           "name": "KKTIX",
-          "url": "https://welcome-music.kktix.cc/events/0bc26b19",
-          "raw_id": "0bc26b19"
+          "url": "https://ldh.kktix.cc/events/therampage-live-2026-3",
+          "raw_id": "therampage-live-2026-3"
         }
       ],
-      "first_seen_at": "2026-09-18T03:11:34.672Z",
-      "updated_at": "2026-09-18T03:11:34.672Z",
-      "id": "71810cf9bd0d2d17-day",
+      "first_seen_at": "2026-09-17T07:41:11.996Z",
+      "updated_at": "2026-09-18T04:01:08.695Z",
+      "id": "9bef0b055525cadf",
       "merged_ids": [
-        "71810cf9bd0d2d17-day"
+        "9bef0b055525cadf"
+      ],
+      "updated_fields": [
+        "status",
+        "price_max"
       ]
     },
     {
@@ -462,6 +430,44 @@
       "id": "e63300986c817b29",
       "merged_ids": [
         "e63300986c817b29"
+      ]
+    },
+    {
+      "title_raw": "【第一場】伊波杏樹 ASIA FAN MEETING TOUR 台北站",
+      "headliners": [
+        "伊波杏樹"
+      ],
+      "lineup": [
+        "伊波杏樹"
+      ],
+      "is_festival": false,
+      "venue": "Clapper Studio",
+      "city": "台北",
+      "date": "2026-11-21",
+      "time": "14:00",
+      "on_sale_at": null,
+      "price_min": 2780,
+      "price_max": 2780,
+      "status": "on_sale",
+      "tags_type": [
+        "專場"
+      ],
+      "tags_origin": [
+        "日韓"
+      ],
+      "ticket_url": "https://atc-twn.kktix.cc/events/427dbf2a",
+      "sources": [
+        {
+          "name": "KKTIX",
+          "url": "https://atc-twn.kktix.cc/events/427dbf2a",
+          "raw_id": "427dbf2a"
+        }
+      ],
+      "first_seen_at": "2026-09-17T07:41:11.998Z",
+      "updated_at": "2026-09-17T07:41:11.998Z",
+      "id": "1097cd8282efa3c0",
+      "merged_ids": [
+        "1097cd8282efa3c0"
       ]
     },
     {
@@ -581,44 +587,6 @@
       "id": "8bc06b8977845e38",
       "merged_ids": [
         "8bc06b8977845e38"
-      ]
-    },
-    {
-      "title_raw": "【第一場】伊波杏樹 ASIA FAN MEETING TOUR 台北站",
-      "headliners": [
-        "伊波杏樹"
-      ],
-      "lineup": [
-        "伊波杏樹"
-      ],
-      "is_festival": false,
-      "venue": "Clapper Studio",
-      "city": "台北",
-      "date": "2026-11-21",
-      "time": "14:00",
-      "on_sale_at": null,
-      "price_min": 2780,
-      "price_max": 2780,
-      "status": "on_sale",
-      "tags_type": [
-        "專場"
-      ],
-      "tags_origin": [
-        "日韓"
-      ],
-      "ticket_url": "https://atc-twn.kktix.cc/events/427dbf2a",
-      "sources": [
-        {
-          "name": "KKTIX",
-          "url": "https://atc-twn.kktix.cc/events/427dbf2a",
-          "raw_id": "427dbf2a"
-        }
-      ],
-      "first_seen_at": "2026-09-17T07:41:11.998Z",
-      "updated_at": "2026-09-17T07:41:11.998Z",
-      "id": "1097cd8282efa3c0",
-      "merged_ids": [
-        "1097cd8282efa3c0"
       ]
     },
     {
@@ -809,10 +777,6 @@
       "id": "c9185f36263f1745",
       "merged_ids": [
         "c9185f36263f1745"
-      ],
-      "updated_fields": [
-        "price_min",
-        "price_max"
       ]
     },
     {
@@ -851,10 +815,6 @@
       "id": "cd10c9ad1b08aca0",
       "merged_ids": [
         "cd10c9ad1b08aca0"
-      ],
-      "updated_fields": [
-        "price_min",
-        "price_max"
       ]
     },
     {
@@ -893,10 +853,6 @@
       "id": "0763a0a016c36a0b",
       "merged_ids": [
         "0763a0a016c36a0b"
-      ],
-      "updated_fields": [
-        "price_min",
-        "price_max"
       ]
     },
     {
@@ -935,10 +891,6 @@
       "id": "68450ba9999de032",
       "merged_ids": [
         "68450ba9999de032"
-      ],
-      "updated_fields": [
-        "price_min",
-        "price_max"
       ]
     },
     {
@@ -977,10 +929,6 @@
       "id": "d453cdb6cc53e4e9",
       "merged_ids": [
         "d453cdb6cc53e4e9"
-      ],
-      "updated_fields": [
-        "price_min",
-        "price_max"
       ]
     },
     {
@@ -1021,10 +969,6 @@
       "id": "016f56da2cbf9f15",
       "merged_ids": [
         "016f56da2cbf9f15"
-      ],
-      "updated_fields": [
-        "price_min",
-        "price_max"
       ]
     },
     {
@@ -1063,10 +1007,6 @@
       "id": "05ec5fee324ec4c9",
       "merged_ids": [
         "05ec5fee324ec4c9"
-      ],
-      "updated_fields": [
-        "price_min",
-        "price_max"
       ]
     },
     {
@@ -1143,10 +1083,6 @@
       "id": "be4d963e84e597c3",
       "merged_ids": [
         "be4d963e84e597c3"
-      ],
-      "updated_fields": [
-        "price_min",
-        "price_max"
       ]
     },
     {
@@ -1185,10 +1121,6 @@
       "id": "5ea63dd133f8446a",
       "merged_ids": [
         "5ea63dd133f8446a"
-      ],
-      "updated_fields": [
-        "price_min",
-        "price_max"
       ]
     },
     {
@@ -1227,10 +1159,6 @@
       "id": "83781779ceaa721c",
       "merged_ids": [
         "83781779ceaa721c"
-      ],
-      "updated_fields": [
-        "price_min",
-        "price_max"
       ]
     },
     {
@@ -1269,10 +1197,6 @@
       "id": "04da383697ab5642",
       "merged_ids": [
         "04da383697ab5642"
-      ],
-      "updated_fields": [
-        "price_min",
-        "price_max"
       ]
     },
     {
@@ -1349,10 +1273,6 @@
       "id": "0845cd16ce4739a1",
       "merged_ids": [
         "0845cd16ce4739a1"
-      ],
-      "updated_fields": [
-        "price_min",
-        "price_max"
       ]
     },
     {
@@ -1371,8 +1291,8 @@
       "date": "2026-12-04",
       "time": null,
       "on_sale_at": null,
-      "price_min": 1980,
-      "price_max": 1980,
+      "price_min": null,
+      "price_max": null,
       "status": "announced",
       "tags_type": [
         "巡迴"
@@ -1389,7 +1309,7 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:41:12.884Z",
-      "updated_at": "2026-09-18T03:47:00.081Z",
+      "updated_at": "2026-09-18T04:01:08.695Z",
       "id": "e651d8009433e36b",
       "merged_ids": [
         "e651d8009433e36b"
@@ -1435,10 +1355,6 @@
       "id": "6fccb15f505f7437",
       "merged_ids": [
         "6fccb15f505f7437"
-      ],
-      "updated_fields": [
-        "price_min",
-        "price_max"
       ]
     },
     {
@@ -1482,10 +1398,6 @@
       "id": "d6d6df06cec0348f",
       "merged_ids": [
         "d6d6df06cec0348f"
-      ],
-      "updated_fields": [
-        "price_min",
-        "price_max"
       ]
     },
     {
@@ -1529,10 +1441,6 @@
       "id": "fa77bc12d592c9b8",
       "merged_ids": [
         "fa77bc12d592c9b8"
-      ],
-      "updated_fields": [
-        "price_min",
-        "price_max"
       ]
     },
     {
@@ -1576,10 +1484,6 @@
       "id": "fa004027fb7565ae",
       "merged_ids": [
         "fa004027fb7565ae"
-      ],
-      "updated_fields": [
-        "price_min",
-        "price_max"
       ]
     },
     {
@@ -1618,10 +1522,6 @@
       "id": "d2f719a9dd4b0d7f",
       "merged_ids": [
         "d2f719a9dd4b0d7f"
-      ],
-      "updated_fields": [
-        "price_min",
-        "price_max"
       ]
     },
     {
@@ -1660,10 +1560,6 @@
       "id": "836076fe0659f86f",
       "merged_ids": [
         "836076fe0659f86f"
-      ],
-      "updated_fields": [
-        "price_min",
-        "price_max"
       ]
     },
     {
@@ -1745,10 +1641,6 @@
       "id": "7bdb29cc34c278be",
       "merged_ids": [
         "7bdb29cc34c278be"
-      ],
-      "updated_fields": [
-        "price_min",
-        "price_max"
       ]
     },
     {
@@ -1787,10 +1679,6 @@
       "id": "90eb9cc2141a641f",
       "merged_ids": [
         "90eb9cc2141a641f"
-      ],
-      "updated_fields": [
-        "price_min",
-        "price_max"
       ]
     },
     {
@@ -1829,10 +1717,6 @@
       "id": "47fba0f5439cf9e0",
       "merged_ids": [
         "47fba0f5439cf9e0"
-      ],
-      "updated_fields": [
-        "price_min",
-        "price_max"
       ]
     },
     {
@@ -1871,10 +1755,6 @@
       "id": "178d60be9e58f876",
       "merged_ids": [
         "178d60be9e58f876"
-      ],
-      "updated_fields": [
-        "price_min",
-        "price_max"
       ]
     },
     {
@@ -1913,10 +1793,6 @@
       "id": "c7384933e688f822",
       "merged_ids": [
         "c7384933e688f822"
-      ],
-      "updated_fields": [
-        "price_min",
-        "price_max"
       ]
     },
     {
@@ -1955,10 +1831,6 @@
       "id": "744fd7d1e770d81b",
       "merged_ids": [
         "744fd7d1e770d81b"
-      ],
-      "updated_fields": [
-        "price_min",
-        "price_max"
       ]
     },
     {
@@ -2002,10 +1874,6 @@
       "id": "afa14a26670acd07",
       "merged_ids": [
         "afa14a26670acd07"
-      ],
-      "updated_fields": [
-        "price_min",
-        "price_max"
       ]
     },
     {
@@ -2044,10 +1912,6 @@
       "id": "f89689d1941c1b42",
       "merged_ids": [
         "f89689d1941c1b42"
-      ],
-      "updated_fields": [
-        "price_min",
-        "price_max"
       ]
     },
     {
@@ -2086,10 +1950,6 @@
       "id": "17540e5ca7860a76",
       "merged_ids": [
         "17540e5ca7860a76"
-      ],
-      "updated_fields": [
-        "price_min",
-        "price_max"
       ]
     },
     {
@@ -2106,8 +1966,8 @@
       "date": "2026-11-01",
       "time": null,
       "on_sale_at": null,
-      "price_min": 3100,
-      "price_max": 3100,
+      "price_min": null,
+      "price_max": null,
       "status": "announced",
       "tags_type": [
         "專場"
@@ -2124,7 +1984,7 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:41:12.885Z",
-      "updated_at": "2026-09-18T03:47:00.081Z",
+      "updated_at": "2026-09-18T04:01:08.695Z",
       "id": "b42542e26828ffb1",
       "merged_ids": [
         "b42542e26828ffb1"
@@ -2170,10 +2030,6 @@
       "id": "80c87fdd574fe852",
       "merged_ids": [
         "80c87fdd574fe852"
-      ],
-      "updated_fields": [
-        "price_min",
-        "price_max"
       ]
     },
     {
@@ -2216,10 +2072,6 @@
       "id": "5d7f1ebdabc7482e",
       "merged_ids": [
         "5d7f1ebdabc7482e"
-      ],
-      "updated_fields": [
-        "price_min",
-        "price_max"
       ]
     },
     {
@@ -2258,10 +2110,6 @@
       "id": "df2a9b875a65c065",
       "merged_ids": [
         "df2a9b875a65c065"
-      ],
-      "updated_fields": [
-        "price_min",
-        "price_max"
       ]
     },
     {
@@ -2300,10 +2148,6 @@
       "id": "682756d6c4fff0a4",
       "merged_ids": [
         "682756d6c4fff0a4"
-      ],
-      "updated_fields": [
-        "price_min",
-        "price_max"
       ]
     },
     {
@@ -2347,10 +2191,6 @@
       "id": "22a822cb1593b3a3",
       "merged_ids": [
         "22a822cb1593b3a3"
-      ],
-      "updated_fields": [
-        "price_min",
-        "price_max"
       ]
     },
     {
@@ -2389,10 +2229,6 @@
       "id": "122cef6395a23d41",
       "merged_ids": [
         "122cef6395a23d41"
-      ],
-      "updated_fields": [
-        "price_min",
-        "price_max"
       ]
     },
     {
@@ -2431,10 +2267,6 @@
       "id": "4fb19beb908b82a8",
       "merged_ids": [
         "4fb19beb908b82a8"
-      ],
-      "updated_fields": [
-        "price_min",
-        "price_max"
       ]
     },
     {
@@ -2473,10 +2305,6 @@
       "id": "2e3f67c9c5db934f",
       "merged_ids": [
         "2e3f67c9c5db934f"
-      ],
-      "updated_fields": [
-        "price_min",
-        "price_max"
       ]
     },
     {
@@ -2515,10 +2343,6 @@
       "id": "53729592a2920e95",
       "merged_ids": [
         "53729592a2920e95"
-      ],
-      "updated_fields": [
-        "price_min",
-        "price_max"
       ]
     },
     {
@@ -2557,10 +2381,6 @@
       "id": "155fabf02494297f",
       "merged_ids": [
         "155fabf02494297f"
-      ],
-      "updated_fields": [
-        "price_min",
-        "price_max"
       ]
     },
     {
@@ -2577,8 +2397,8 @@
       "date": "2026-10-03",
       "time": null,
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 6300,
+      "price_max": 6300,
       "status": "announced",
       "tags_type": [
         "巡迴"
@@ -2595,10 +2415,14 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:41:12.885Z",
-      "updated_at": "2026-09-17T07:41:12.885Z",
+      "updated_at": "2026-09-18T04:01:08.695Z",
       "id": "fb2cff3af241f1fd",
       "merged_ids": [
         "fb2cff3af241f1fd"
+      ],
+      "updated_fields": [
+        "price_min",
+        "price_max"
       ]
     },
     {
@@ -2637,10 +2461,6 @@
       "id": "11766bc4840627e0",
       "merged_ids": [
         "11766bc4840627e0"
-      ],
-      "updated_fields": [
-        "price_min",
-        "price_max"
       ]
     },
     {
@@ -2679,10 +2499,6 @@
       "id": "a39a68642dbd9c71",
       "merged_ids": [
         "a39a68642dbd9c71"
-      ],
-      "updated_fields": [
-        "price_min",
-        "price_max"
       ]
     },
     {
@@ -2721,10 +2537,6 @@
       "id": "1a217cf426b0abb7",
       "merged_ids": [
         "1a217cf426b0abb7"
-      ],
-      "updated_fields": [
-        "price_min",
-        "price_max"
       ]
     },
     {
@@ -2773,10 +2585,6 @@
       "id": "4347b7fe0e4855b3",
       "merged_ids": [
         "4347b7fe0e4855b3"
-      ],
-      "updated_fields": [
-        "price_min",
-        "price_max"
       ]
     },
     {
@@ -2858,10 +2666,6 @@
       "id": "2eb80cb276000cf7",
       "merged_ids": [
         "2eb80cb276000cf7"
-      ],
-      "updated_fields": [
-        "price_min",
-        "price_max"
       ]
     },
     {
@@ -2905,10 +2709,6 @@
       "id": "334bafb8e4e9734a",
       "merged_ids": [
         "334bafb8e4e9734a"
-      ],
-      "updated_fields": [
-        "price_min",
-        "price_max"
       ]
     },
     {
@@ -2947,10 +2747,6 @@
       "id": "1bd42edd429a7615",
       "merged_ids": [
         "1bd42edd429a7615"
-      ],
-      "updated_fields": [
-        "price_min",
-        "price_max"
       ]
     },
     {
@@ -3005,8 +2801,8 @@
       "date": "2026-09-16",
       "time": null,
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 3500,
+      "price_max": 3500,
       "status": "announced",
       "tags_type": [
         "專場"
@@ -3023,10 +2819,14 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:41:12.886Z",
-      "updated_at": "2026-09-17T07:41:12.886Z",
+      "updated_at": "2026-09-18T04:01:08.695Z",
       "id": "f139e3d32f1ffd41",
       "merged_ids": [
         "f139e3d32f1ffd41"
+      ],
+      "updated_fields": [
+        "price_min",
+        "price_max"
       ]
     },
     {
@@ -3065,10 +2865,6 @@
       "id": "6f7f163d771ae88b",
       "merged_ids": [
         "6f7f163d771ae88b"
-      ],
-      "updated_fields": [
-        "price_min",
-        "price_max"
       ]
     },
     {
@@ -3107,10 +2903,6 @@
       "id": "22af730ce6a0d136",
       "merged_ids": [
         "22af730ce6a0d136"
-      ],
-      "updated_fields": [
-        "price_min",
-        "price_max"
       ]
     },
     {
@@ -3149,10 +2941,6 @@
       "id": "d75baac587478ab9",
       "merged_ids": [
         "d75baac587478ab9"
-      ],
-      "updated_fields": [
-        "price_min",
-        "price_max"
       ]
     },
     {
@@ -3229,10 +3017,6 @@
       "id": "17cead68b1b07f1e",
       "merged_ids": [
         "17cead68b1b07f1e"
-      ],
-      "updated_fields": [
-        "price_min",
-        "price_max"
       ]
     },
     {
@@ -3271,10 +3055,6 @@
       "id": "95d1ae4b76c8fc07",
       "merged_ids": [
         "95d1ae4b76c8fc07"
-      ],
-      "updated_fields": [
-        "price_min",
-        "price_max"
       ]
     },
     {
@@ -5539,10 +5319,6 @@
       "id": "12c5b0b5cbd8100e",
       "merged_ids": [
         "12c5b0b5cbd8100e"
-      ],
-      "updated_fields": [
-        "price_min",
-        "price_max"
       ]
     },
     {
@@ -5583,10 +5359,6 @@
       "id": "6c559430ba07516a",
       "merged_ids": [
         "6c559430ba07516a"
-      ],
-      "updated_fields": [
-        "price_min",
-        "price_max"
       ]
     },
     {
@@ -5625,10 +5397,6 @@
       "id": "b96a6952cc2e8b96",
       "merged_ids": [
         "b96a6952cc2e8b96"
-      ],
-      "updated_fields": [
-        "price_min",
-        "price_max"
       ]
     },
     {
@@ -5667,10 +5435,6 @@
       "id": "8bde2e492f61925e",
       "merged_ids": [
         "8bde2e492f61925e"
-      ],
-      "updated_fields": [
-        "price_min",
-        "price_max"
       ]
     },
     {
@@ -5747,10 +5511,6 @@
       "id": "2111d7e0f5a72267",
       "merged_ids": [
         "2111d7e0f5a72267"
-      ],
-      "updated_fields": [
-        "price_min",
-        "price_max"
       ]
     },
     {
@@ -5793,10 +5553,6 @@
       "id": "0b430cbd751fe057",
       "merged_ids": [
         "0b430cbd751fe057"
-      ],
-      "updated_fields": [
-        "price_min",
-        "price_max"
       ]
     },
     {
@@ -5835,10 +5591,6 @@
       "id": "f686c4d6f7dc3c74",
       "merged_ids": [
         "f686c4d6f7dc3c74"
-      ],
-      "updated_fields": [
-        "price_min",
-        "price_max"
       ]
     },
     {
@@ -5877,10 +5629,6 @@
       "id": "a52db3d139bd551c",
       "merged_ids": [
         "a52db3d139bd551c"
-      ],
-      "updated_fields": [
-        "price_min",
-        "price_max"
       ]
     },
     {
@@ -5959,10 +5707,6 @@
       "id": "36b3ae00c89778dd",
       "merged_ids": [
         "36b3ae00c89778dd"
-      ],
-      "updated_fields": [
-        "price_min",
-        "price_max"
       ]
     },
     {
@@ -6001,10 +5745,6 @@
       "id": "cea9e7749a19bdaa",
       "merged_ids": [
         "cea9e7749a19bdaa"
-      ],
-      "updated_fields": [
-        "price_min",
-        "price_max"
       ]
     },
     {
@@ -6043,10 +5783,6 @@
       "id": "ed5b0b28f73e2019",
       "merged_ids": [
         "ed5b0b28f73e2019"
-      ],
-      "updated_fields": [
-        "price_min",
-        "price_max"
       ]
     },
     {
@@ -6123,10 +5859,6 @@
       "id": "49653903dbe2d5e7",
       "merged_ids": [
         "49653903dbe2d5e7"
-      ],
-      "updated_fields": [
-        "price_min",
-        "price_max"
       ]
     },
     {
@@ -6279,10 +6011,6 @@
       "id": "c25c55b3396572cb",
       "merged_ids": [
         "c25c55b3396572cb"
-      ],
-      "updated_fields": [
-        "price_min",
-        "price_max"
       ]
     },
     {

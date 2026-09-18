@@ -48,6 +48,81 @@ function loadPreviousNeedsReview() {
   }
 }
 
+/**
+ * Runs one adapter end-to-end (fetch -> status classification -> fallback on
+ * anomaly -> per-event normalize), fully self-contained so it can run
+ * concurrently with the other adapters below. Never throws — every failure
+ * mode (adapter.fetch() itself, notifySourceAnomaly, a single malformed raw
+ * event) is caught internally, same isolation the old sequential loop had,
+ * just scoped to a function instead of loop iterations.
+ */
+async function runAdapter(adapter, context) {
+  const { artistsYml, venuesYml, previousSources, previousEvents, previousNeedsReview } = context;
+
+  logProgress(`=== starting adapter: ${adapter.name} ===`);
+  let rawEvents = [];
+  let error = null;
+  try {
+    rawEvents = await adapter.fetch();
+  } catch (err) {
+    error = err.message;
+    logProgress(`${adapter.name} fetch() threw: ${err.stack}`);
+  }
+  logProgress(`=== finished adapter: ${adapter.name}, ${rawEvents.length} raw event(s) ===`);
+
+  const previous = previousSources.find((s) => s.name === adapter.name);
+  const { entry, anomaly } = classifySourceRun(adapter.name, { error, rawCount: rawEvents.length }, previous);
+
+  const normalizedEvents = [];
+  const needsReview = [];
+
+  if (anomaly) {
+    // AC-11/SPEC §4.2 step 3: don't let a blocked/broken source erase its
+    // share of real data — reuse what it contributed last run instead.
+    // rawEvents is always [] here (both the "threw" and "0 results" cases
+    // leave it empty), so there's nothing from this run to lose by doing so.
+    const fallbackEvents = fallbackEventsForSource(previousEvents, adapter.name);
+    const fallbackReview = fallbackReviewItemsForSource(previousNeedsReview, adapter.name);
+    logProgress(
+      `${adapter.name}: ${anomaly.reason}, reusing ${fallbackEvents.length} previous event(s) and ${fallbackReview.length} previous needs-review item(s)`
+    );
+    normalizedEvents.push(...fallbackEvents);
+    needsReview.push(...fallbackReview);
+
+    try {
+      await notifySourceAnomaly({ name: adapter.name, ...anomaly });
+    } catch (err) {
+      logProgress(`notifySourceAnomaly failed for ${adapter.name}: ${err.stack}`);
+    }
+  }
+
+  for (const raw of rawEvents) {
+    // A single malformed record must never take down the whole run — every
+    // other successfully-scraped event (and this run's writes) would be
+    // lost with it (found in review: this loop had no isolation at all).
+    try {
+      const result = normalize(raw, artistsYml, venuesYml);
+      if (result.event) {
+        normalizedEvents.push(result.event);
+      } else {
+        needsReview.push(result.needsReview);
+      }
+    } catch (err) {
+      logProgress(`normalize() threw for raw_id=${raw.raw_id}: ${err.stack}`);
+      needsReview.push({
+        raw_id: raw.raw_id,
+        title_raw: raw.title_raw ?? null,
+        url: raw.url ?? null,
+        source: raw.source_name,
+        reason: "normalize_error",
+        detail: err.message,
+      });
+    }
+  }
+
+  return { entry, normalizedEvents, needsReview };
+}
+
 async function main() {
   resetProgressLog();
   const artistsYml = loadArtists();
@@ -55,68 +130,36 @@ async function main() {
   const previousEvents = loadPreviousEvents();
   const previousSources = loadPreviousSources();
   const previousNeedsReview = loadPreviousNeedsReview();
+  const context = { artistsYml, venuesYml, previousSources, previousEvents, previousNeedsReview };
+
+  // Each adapter only paces requests against its OWN source (NFR-04) — there's
+  // no shared rate limit between, say, tixcraft and iNDIEVOX, so there's no
+  // politeness reason to make them wait for each other. Running all 5
+  // concurrently instead of one-after-another was the single biggest lever
+  // for cutting the "重新抓取" button's wall-clock time: it used to be bounded
+  // by the SUM of every adapter's own time, now it's bounded by whichever one
+  // is slowest (2026-09-18, see HANDOFF.md for measured before/after).
+  // allSettled, not all: runAdapter() already catches every failure mode it
+  // knows about and never rethrows, but if something genuinely unexpected
+  // still throws (a bug in classifySourceRun, say), that must not also wipe
+  // out the other four adapters' already-successful results.
+  const settled = await Promise.allSettled(adapters.map((adapter) => runAdapter(adapter, context)));
+
   const sourcesStatus = [];
   const normalizedEvents = [];
   const needsReview = [];
-
-  for (const adapter of adapters) {
-    logProgress(`=== starting adapter: ${adapter.name} ===`);
-    let rawEvents = [];
-    let error = null;
-    try {
-      rawEvents = await adapter.fetch();
-    } catch (err) {
-      error = err.message;
-      logProgress(`${adapter.name} fetch() threw: ${err.stack}`);
-    }
-    logProgress(`=== finished adapter: ${adapter.name}, ${rawEvents.length} raw event(s) ===`);
-
-    const previous = previousSources.find((s) => s.name === adapter.name);
-    const { entry, anomaly } = classifySourceRun(adapter.name, { error, rawCount: rawEvents.length }, previous);
-    sourcesStatus.push(entry);
-
-    if (anomaly) {
-      // AC-11/SPEC §4.2 step 3: don't let a blocked/broken source erase its
-      // share of real data — reuse what it contributed last run instead.
-      // rawEvents is always [] here (both the "threw" and "0 results" cases
-      // leave it empty), so there's nothing from this run to lose by doing so.
-      const fallbackEvents = fallbackEventsForSource(previousEvents, adapter.name);
-      const fallbackReview = fallbackReviewItemsForSource(previousNeedsReview, adapter.name);
-      logProgress(
-        `${adapter.name}: ${anomaly.reason}, reusing ${fallbackEvents.length} previous event(s) and ${fallbackReview.length} previous needs-review item(s)`
-      );
-      normalizedEvents.push(...fallbackEvents);
-      needsReview.push(...fallbackReview);
-
-      try {
-        await notifySourceAnomaly({ name: adapter.name, ...anomaly });
-      } catch (err) {
-        logProgress(`notifySourceAnomaly failed for ${adapter.name}: ${err.stack}`);
-      }
-    }
-
-    for (const raw of rawEvents) {
-      // A single malformed record must never take down the whole run — every
-      // other successfully-scraped event (and this run's writes) would be
-      // lost with it (found in review: this loop had no isolation at all).
-      try {
-        const result = normalize(raw, artistsYml, venuesYml);
-        if (result.event) {
-          normalizedEvents.push(result.event);
-        } else {
-          needsReview.push(result.needsReview);
-        }
-      } catch (err) {
-        logProgress(`normalize() threw for raw_id=${raw.raw_id}: ${err.stack}`);
-        needsReview.push({
-          raw_id: raw.raw_id,
-          title_raw: raw.title_raw ?? null,
-          url: raw.url ?? null,
-          source: raw.source_name,
-          reason: "normalize_error",
-          detail: err.message,
-        });
-      }
+  for (let i = 0; i < adapters.length; i++) {
+    const adapter = adapters[i];
+    const outcome = settled[i];
+    if (outcome.status === "fulfilled") {
+      sourcesStatus.push(outcome.value.entry);
+      normalizedEvents.push(...outcome.value.normalizedEvents);
+      needsReview.push(...outcome.value.needsReview);
+    } else {
+      logProgress(`${adapter.name}: runAdapter() itself threw unexpectedly: ${outcome.reason?.stack ?? outcome.reason}`);
+      const previous = previousSources.find((s) => s.name === adapter.name);
+      const { entry } = classifySourceRun(adapter.name, { error: String(outcome.reason), rawCount: 0 }, previous);
+      sourcesStatus.push(entry);
     }
   }
 
