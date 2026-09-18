@@ -134,6 +134,10 @@ const CITY_DISPLAY_ORDER = [
   "澎湖", "金門", "連江",
 ];
 const PRICE_PRESETS = [500, 1000, 2000, 3000];
+// Fixed display order, same spirit as CITY_DISPLAY_ORDER above — not every
+// value necessarily exists in the current data, filtered down per-call.
+const TYPE_DISPLAY_ORDER = ["專場", "拼盤", "音樂祭", "見面會", "簽唱會", "音樂劇", "巡迴", "古典"];
+const ORIGIN_DISPLAY_ORDER = ["本地", "日韓", "歐美", "海外"];
 
 // Options are built from upcoming events only — an already-ended event's
 // month/city would otherwise show up as a selectable chip option that's
@@ -163,6 +167,20 @@ function priceFilterOptions() {
   ];
 }
 
+function typeFilterOptions(events) {
+  const upcoming = events.filter((e) => !isPast(e.date));
+  const present = new Set(upcoming.flatMap((e) => e.tags_type));
+  const ordered = TYPE_DISPLAY_ORDER.filter((t) => present.has(t));
+  return [{ label: "全部類型", value: null }, ...ordered.map((t) => ({ label: t, value: t }))];
+}
+
+function originFilterOptions(events) {
+  const upcoming = events.filter((e) => !isPast(e.date));
+  const present = new Set(upcoming.flatMap((e) => e.tags_origin));
+  const ordered = ORIGIN_DISPLAY_ORDER.filter((o) => present.has(o));
+  return [{ label: "全部地區", value: null }, ...ordered.map((o) => ({ label: o, value: o }))];
+}
+
 /**
  * Wires the timeline's 全部城市/全部月份/價格 chips (SPEC §6) to
  * openFilterSheet, once — these chips live in the static page-header, not
@@ -173,6 +191,8 @@ function priceFilterOptions() {
 function wireViewFilterChips(events, getFilters, onChange) {
   const cityChip = document.querySelector('[data-filter="city"]');
   const monthChip = document.querySelector('[data-filter="month"]');
+  const typeChip = document.querySelector('[data-filter="type"]');
+  const originChip = document.querySelector('[data-filter="origin"]');
   const priceChip = document.querySelector('[data-filter="price"]');
   if (!cityChip || !monthChip || !priceChip) return;
 
@@ -183,6 +203,14 @@ function wireViewFilterChips(events, getFilters, onChange) {
     const monthOpt = monthFilterOptions(events).find((o) => o.value === (f.month ?? null));
     monthChip.textContent = f.month ? (monthOpt?.label ?? f.month) : "全部月份";
     monthChip.setAttribute("aria-pressed", String(!!f.month));
+    if (typeChip) {
+      typeChip.textContent = f.type ?? "全部類型";
+      typeChip.setAttribute("aria-pressed", String(!!f.type));
+    }
+    if (originChip) {
+      originChip.textContent = f.origin ?? "音樂人地區";
+      originChip.setAttribute("aria-pressed", String(!!f.origin));
+    }
     priceChip.textContent = f.priceMax != null ? `NT$${f.priceMax.toLocaleString()} 以下` : "價格";
     priceChip.setAttribute("aria-pressed", String(f.priceMax != null));
   }
@@ -196,6 +224,18 @@ function wireViewFilterChips(events, getFilters, onChange) {
   monthChip.addEventListener("click", () => {
     openFilterSheet("篩選月份", monthFilterOptions(events), getFilters().month ?? null, (value) => {
       onChange({ ...getFilters(), month: value });
+      refreshLabels();
+    });
+  });
+  typeChip?.addEventListener("click", () => {
+    openFilterSheet("篩選類型", typeFilterOptions(events), getFilters().type ?? null, (value) => {
+      onChange({ ...getFilters(), type: value });
+      refreshLabels();
+    });
+  });
+  originChip?.addEventListener("click", () => {
+    openFilterSheet("篩選音樂人地區", originFilterOptions(events), getFilters().origin ?? null, (value) => {
+      onChange({ ...getFilters(), origin: value });
       refreshLabels();
     });
   });

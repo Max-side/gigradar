@@ -61,6 +61,8 @@ export function isPast(dateStr) {
 function passesViewFilters(event, viewFilters) {
   if (viewFilters.city && event.city !== viewFilters.city) return false;
   if (viewFilters.month && !event.date.startsWith(viewFilters.month)) return false;
+  if (viewFilters.type && !event.tags_type.includes(viewFilters.type)) return false;
+  if (viewFilters.origin && !event.tags_origin.includes(viewFilters.origin)) return false;
   if (viewFilters.favoritesOnly) return false; // handled by caller pre-filtering favorites list
   if (viewFilters.priceMax != null && event.price_min != null && event.price_min > viewFilters.priceMax) {
     return false;

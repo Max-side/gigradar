@@ -419,6 +419,8 @@ export function resolveVisibility(event, prefs, viewFilters) {
 - `src/app.js` 的 `wireViewFilterChips()` 在 `initTimeline()` 裡把三個 chip 接上 `openFilterSheet`，城市/月份選項**從尚未結束的場次動態算出**（不是寫死清單）——刻意排除已結束的場次，否則會出現選了也一定是空清單的死選項（例如今天是 9/18，若選項清單沒濾掉 7 月、8 月，使用者選了只會看到「目前沒有符合條件的演出」）。價格是固定的 4 個級距（NT$500/1000/2000/3000 以下）+「不限價格」。
 - 篩選狀態存在 `localStorage`（`gigradar:view_filters`），**刻意不放進 `UserPrefs`、不走 Gist 同步**——這是「當下正在看什麼」的畫面狀態，不是像 `excluded_artists`那樣要長期生效、跨裝置同步的規則（呼應 §3.3 的既有設計）。
 
+**2026-09-18 再加碼：新增「類型」跟「音樂人地區」兩個篩選 chip**：`passesViewFilters()` 補上 `type`（比對 `event.tags_type`）跟 `origin`（比對 `event.tags_origin`）兩個條件，跟既有的 city/month/priceMax 同一套機制、可以疊加使用。選項一樣動態算自尚未結束的場次（`typeFilterOptions()`/`originFilterOptions()`），只列出目前資料裡真的存在的類型/地區，不會出現選了保證空清單的死選項。`src/filter.test.js` 新增 3 個測試涵蓋單獨篩選跟疊加篩選。
+
 **2026-09-18 同時發現、同時補上：頂部「搜尋」放大鏡按鈕也是同一種沒接邏輯的靜態裝飾**，SPEC 裡本來就沒有這個功能的 FR 編號。補法是新增獨立的 `search.html` 頁面（跟 `review.html`/`add.html` 一樣用 `.app--no-nav` + 返回鍵樣式，不是彈出疊層），`src/app.js` 新增 `initSearch()`：
 - 即時比對輸入框內容跟 `event.title_raw`／`event.lineup`（不分大小寫），輸入時就更新結果，不用按 Enter 或搜尋按鈕。
 - 套用跟其他頁面一樣的 `partitionEvents()` 規則（已收藏優先顯示、已排除的規則一樣生效）——搜尋不是繞過封鎖規則的後門，跟時間表頁行為一致。

@@ -10,6 +10,7 @@ function makeEvent(overrides = {}) {
     date: "2026-10-15",
     time: "19:30",
     tags_type: [],
+    tags_origin: [],
     title_raw: "Test Event",
     ...overrides,
   };
@@ -54,4 +55,31 @@ test("partitionEvents: a today-dated event is not silently bucketed as ended", (
 
   assert.equal(ended.length, 0);
   assert.equal(visible.length, 1);
+});
+
+test("partitionEvents: type view filter only shows events with a matching tags_type", () => {
+  const festival = makeEvent({ id: "f", tags_type: ["音樂祭"] });
+  const solo = makeEvent({ id: "s", tags_type: ["專場"] });
+
+  const { visible } = partitionEvents([festival, solo], defaultPrefs(), { type: "音樂祭" });
+
+  assert.deepEqual(visible.map((v) => v.event.id), ["f"]);
+});
+
+test("partitionEvents: origin view filter only shows events with a matching tags_origin", () => {
+  const local = makeEvent({ id: "l", tags_origin: ["本地"] });
+  const kpop = makeEvent({ id: "k", tags_origin: ["日韓"] });
+
+  const { visible } = partitionEvents([local, kpop], defaultPrefs(), { origin: "日韓" });
+
+  assert.deepEqual(visible.map((v) => v.event.id), ["k"]);
+});
+
+test("partitionEvents: type and origin filters combine (both must match)", () => {
+  const match = makeEvent({ id: "m", tags_type: ["音樂祭"], tags_origin: ["本地"] });
+  const wrongOrigin = makeEvent({ id: "w", tags_type: ["音樂祭"], tags_origin: ["日韓"] });
+
+  const { visible } = partitionEvents([match, wrongOrigin], defaultPrefs(), { type: "音樂祭", origin: "本地" });
+
+  assert.deepEqual(visible.map((v) => v.event.id), ["m"]);
 });
