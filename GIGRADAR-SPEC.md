@@ -401,6 +401,11 @@ export function resolveVisibility(event, prefs, viewFilters) {
 
 順序**不可調換**（SRS §6.3 明文要求）：已結束 → 已收藏（提前短路，永不被排除規則擋下）→ 單場排除 → 藝人 → 類型 → 關鍵字 → 畫面篩選器。`hidden` 各 reason 的計數加總即為頁尾「另有 N 場被規則隱藏」的數字；`filtered`（城市/月份/價格篩選器篩掉的）不計入這個統計。
 
+**2026-09-18 補上首頁的城市/月份/價格 chip UI**：`passesViewFilters()` 這段邏輯其實從一開始就寫好也測過，但首頁 `index.html` 的「全部城市／10月／價格」三個 chip 一直是完全沒接上任何邏輯的靜態裝飾——這次補上：
+- `src/interactions.js` 新增 `openFilterSheet(title, options, currentValue, onSelect)`，跟既有的 `openExcludeMenu()` 共用同一套 bottom sheet 視覺，單選、點了立刻套用並關閉，不需要額外「確定」按鈕。
+- `src/app.js` 的 `wireViewFilterChips()` 在 `initTimeline()` 裡把三個 chip 接上 `openFilterSheet`，城市/月份選項**從尚未結束的場次動態算出**（不是寫死清單）——刻意排除已結束的場次，否則會出現選了也一定是空清單的死選項（例如今天是 9/18，若選項清單沒濾掉 7 月、8 月，使用者選了只會看到「目前沒有符合條件的演出」）。價格是固定的 4 個級距（NT$500/1000/2000/3000 以下）+「不限價格」。
+- 篩選狀態存在 `localStorage`（`gigradar:view_filters`），**刻意不放進 `UserPrefs`、不走 Gist 同步**——這是「當下正在看什麼」的畫面狀態，不是像 `excluded_artists`那樣要長期生效、跨裝置同步的規則（呼應 §3.3 的既有設計）。
+
 ---
 
 ## 7. 手動新增場次（FR-17）的落地方式

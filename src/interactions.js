@@ -23,6 +23,7 @@ const ICON_ARTIST = `<svg viewBox="0 0 24 24" width="18" height="18" fill="none"
 const ICON_TYPE = `<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 7h7l2-3h4l2 3h3v13H3z"/><path d="M12 11v5"/></svg>`;
 const ICON_CHEVRON = `<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="var(--muted)" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg>`;
 const ICON_UNDO = `<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 10a8 8 0 1 1 2 5"/><path d="M4 4v6h6"/></svg>`;
+const ICON_CHECK = `<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="var(--coral-ink)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg>`;
 
 /**
  * @param {object} event
@@ -77,6 +78,47 @@ export function openExcludeMenu(event, handlers) {
   root.querySelector('[data-action="block-type"]')?.addEventListener("click", () => {
     clearOverlay();
     handlers.onBlockType();
+  });
+}
+
+/**
+ * Single-select bottom sheet for the timeline's city/month/price filter
+ * chips (SPEC §6). Picking any option applies it immediately and closes —
+ * no separate "confirm" step, matching openExcludeMenu's one-tap style.
+ * @param {string} title
+ * @param {{label: string, value: string|number|null}[]} options - value: null means "no filter"
+ * @param {string|number|null} currentValue
+ * @param {(value: string|number|null) => void} onSelect
+ */
+export function openFilterSheet(title, options, currentValue, onSelect) {
+  const html = `
+    <div class="overlay-scrim" data-close></div>
+    <div class="sheet" role="dialog" aria-modal="true">
+      <div class="sheet-handle"></div>
+      <div class="sheet-header">
+        <div class="sheet-header__title">${escapeHtml(title)}</div>
+      </div>
+      ${options
+        .map(
+          (opt, i) => `
+        <button class="sheet-option" data-index="${i}">
+          <span class="sheet-option__label">${escapeHtml(opt.label)}</span>
+          ${opt.value === currentValue ? ICON_CHECK : ""}
+        </button>`,
+        )
+        .join("")}
+      <button class="btn-ghost" data-close style="margin:14px 22px 0;width:calc(100% - 44px);">取消</button>
+    </div>
+  `;
+  overlayRoot().innerHTML = html;
+  const root = overlayRoot();
+  root.querySelectorAll("[data-close]").forEach((el) => el.addEventListener("click", clearOverlay));
+  root.querySelectorAll("[data-index]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const opt = options[Number(btn.dataset.index)];
+      clearOverlay();
+      onSelect(opt.value);
+    });
   });
 }
 

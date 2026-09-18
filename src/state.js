@@ -230,6 +230,26 @@ export function dismissReviewItem(rawId) {
   }
 }
 
+// --- Timeline view filters (city/month/priceMax chips, SPEC §6) --------
+// Deliberately NOT part of UserPrefs (§3.3) and never synced via Gist —
+// these are "what am I currently looking at" view state, not a durable
+// rule like excluded_artists, so they stay local to this browser.
+
+const VIEW_FILTERS_KEY = "gigradar:view_filters";
+
+export function loadViewFilters() {
+  try {
+    const raw = localStorage.getItem(VIEW_FILTERS_KEY);
+    return raw ? JSON.parse(raw) : {};
+  } catch {
+    return {};
+  }
+}
+
+export function saveViewFilters(filters) {
+  localStorage.setItem(VIEW_FILTERS_KEY, JSON.stringify(filters));
+}
+
 // --- Gist sync (M9, FR-65, SPEC §8) -------------------------------------
 // The PAT lives in its own localStorage key — never inside `prefs`, so
 // exporting prefs via FR-63 can never leak it, and it's never written into

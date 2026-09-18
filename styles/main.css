@@ -130,6 +130,7 @@ button {
 }
 
 .chip {
+  font-family: inherit;
   font-size: 11px;
   font-weight: 700;
   background: var(--surface);
@@ -137,6 +138,13 @@ button {
   border-radius: var(--radius-pill);
   padding: 5px 12px;
   color: var(--muted);
+  cursor: pointer;
+}
+.chip[aria-pressed="true"] {
+  color: var(--coral-ink);
+  background: var(--coral-bg);
+  border-color: transparent;
+  font-weight: 800;
 }
 
 /* ---------- Cards / list ---------- */
@@ -550,6 +558,8 @@ textarea.field-input {
   box-shadow: 0 -6px 30px rgba(0, 0, 0, 0.2);
   padding: 10px 0 26px;
   z-index: 41;
+  max-height: 80vh;
+  overflow-y: auto;
 }
 
 .sheet-handle {

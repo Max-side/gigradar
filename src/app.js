@@ -28,7 +28,7 @@
  *   顯示出來。
  */
 
-import { partitionEvents } from "./filter.js";
+import { partitionEvents, isPast } from "./filter.js";
 import {
   loadPrefs,
   savePrefs,
@@ -52,6 +52,8 @@ import {
   reconcileGistSync,
   exportPrefsAsJson,
   importPrefsFromJson,
+  loadViewFilters,
+  saveViewFilters,
 } from "./state.js";
 import { renderEventList, renderFavoritesList, renderNewArrivalsList, renderEmptyList } from "./render.js";
 import { splitDate, daysSince } from "./format.js";
@@ -61,6 +63,7 @@ import {
   showUndoToast,
   openAssignArtistDialog,
   showYamlSnippetDialog,
+  openFilterSheet,
 } from "./interactions.js";
 
 function escapeHtml(s) {
@@ -118,6 +121,89 @@ function updateHiddenBar(hiddenByRules) {
   } else {
     bar.hidden = true;
   }
+}
+
+// Canonical order shared with data/venues.yml's coverage — just for a
+// sensible, stable chip order, not a source of truth for which cities exist.
+const CITY_DISPLAY_ORDER = [
+  "台北", "新北", "桃園", "新竹", "苗栗", "台中", "彰化", "南投",
+  "雲林", "嘉義", "台南", "高雄", "屏東", "宜蘭", "花蓮", "台東",
+  "澎湖", "金門", "連江",
+];
+const PRICE_PRESETS = [500, 1000, 2000, 3000];
+
+// Options are built from upcoming events only — an already-ended event's
+// month/city would otherwise show up as a selectable chip option that's
+// guaranteed to render an empty list (isPast() always excludes it downstream
+// in filter.js, regardless of which view filter is chosen).
+function cityFilterOptions(events) {
+  const upcoming = events.filter((e) => !isPast(e.date));
+  const present = new Set(upcoming.map((e) => e.city).filter(Boolean));
+  const ordered = CITY_DISPLAY_ORDER.filter((c) => present.has(c));
+  if (present.has("未知")) ordered.push("未知");
+  return [{ label: "全部城市", value: null }, ...ordered.map((c) => ({ label: c, value: c }))];
+}
+
+function monthFilterOptions(events) {
+  const upcoming = events.filter((e) => !isPast(e.date));
+  const months = Array.from(new Set(upcoming.map((e) => e.date.slice(0, 7)))).sort();
+  return [
+    { label: "全部月份", value: null },
+    ...months.map((m) => ({ label: `${m.slice(0, 4)} 年 ${Number(m.slice(5))}月`, value: m })),
+  ];
+}
+
+function priceFilterOptions() {
+  return [
+    { label: "不限價格", value: null },
+    ...PRICE_PRESETS.map((p) => ({ label: `NT$${p.toLocaleString()} 以下`, value: p })),
+  ];
+}
+
+/**
+ * Wires the timeline's 全部城市/全部月份/價格 chips (SPEC §6) to
+ * openFilterSheet, once — these chips live in the static page-header, not
+ * inside the re-rendered event-list container, so they're wired outside
+ * render() and read the current filters via getFilters() instead of being
+ * recreated each render.
+ */
+function wireViewFilterChips(events, getFilters, onChange) {
+  const cityChip = document.querySelector('[data-filter="city"]');
+  const monthChip = document.querySelector('[data-filter="month"]');
+  const priceChip = document.querySelector('[data-filter="price"]');
+  if (!cityChip || !monthChip || !priceChip) return;
+
+  function refreshLabels() {
+    const f = getFilters();
+    cityChip.textContent = f.city ?? "全部城市";
+    cityChip.setAttribute("aria-pressed", String(!!f.city));
+    const monthOpt = monthFilterOptions(events).find((o) => o.value === (f.month ?? null));
+    monthChip.textContent = f.month ? (monthOpt?.label ?? f.month) : "全部月份";
+    monthChip.setAttribute("aria-pressed", String(!!f.month));
+    priceChip.textContent = f.priceMax != null ? `NT$${f.priceMax.toLocaleString()} 以下` : "價格";
+    priceChip.setAttribute("aria-pressed", String(f.priceMax != null));
+  }
+
+  cityChip.addEventListener("click", () => {
+    openFilterSheet("篩選城市", cityFilterOptions(events), getFilters().city ?? null, (value) => {
+      onChange({ ...getFilters(), city: value });
+      refreshLabels();
+    });
+  });
+  monthChip.addEventListener("click", () => {
+    openFilterSheet("篩選月份", monthFilterOptions(events), getFilters().month ?? null, (value) => {
+      onChange({ ...getFilters(), month: value });
+      refreshLabels();
+    });
+  });
+  priceChip.addEventListener("click", () => {
+    openFilterSheet("篩選價格", priceFilterOptions(), getFilters().priceMax ?? null, (value) => {
+      onChange({ ...getFilters(), priceMax: value });
+      refreshLabels();
+    });
+  });
+
+  refreshLabels();
 }
 
 /** FR-14/62, AC-14: warn on the timeline if any source's last run wasn't clean. Fire-and-forget — shouldn't block the main render. */
@@ -232,9 +318,11 @@ async function initTimeline(container) {
 
   checkSourceWarning();
 
+  let viewFilters = loadViewFilters();
+
   function render() {
     const prefs = loadPrefs();
-    const { visible, hiddenByRules } = partitionEvents(events, prefs, {});
+    const { visible, hiddenByRules } = partitionEvents(events, prefs, viewFilters);
 
     visible.sort((a, b) => {
       if (a.event.date !== b.event.date) return a.event.date < b.event.date ? -1 : 1;
@@ -251,6 +339,16 @@ async function initTimeline(container) {
     wireExcludeMenu(container, events, render);
     updateHiddenBar(hiddenByRules);
   }
+
+  wireViewFilterChips(
+    events,
+    () => viewFilters,
+    (next) => {
+      viewFilters = next;
+      saveViewFilters(viewFilters);
+      render();
+    },
+  );
 
   render();
 }
