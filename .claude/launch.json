@@ -3,8 +3,8 @@
   "configurations": [
     {
       "name": "gigradar-dev",
-      "runtimeExecutable": "python3",
-      "runtimeArgs": ["-m", "http.server", "8000"],
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "serve"],
       "port": 8000
     }
   ]
