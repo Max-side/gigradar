@@ -41,6 +41,7 @@ gigradar/
 ├── hidden.html                 # 已隱藏管理
 ├── review.html                 # 待整理
 ├── add.html                    # 手動新增場次
+├── search.html                 # 搜尋藝人／標題（2026-09-18）
 ├── settings.html               # 設定
 ├── src/
 │   ├── app.js                  # 各頁共用的啟動邏輯（載入資料、套用偏好、渲染）
@@ -405,6 +406,12 @@ export function resolveVisibility(event, prefs, viewFilters) {
 - `src/interactions.js` 新增 `openFilterSheet(title, options, currentValue, onSelect)`，跟既有的 `openExcludeMenu()` 共用同一套 bottom sheet 視覺，單選、點了立刻套用並關閉，不需要額外「確定」按鈕。
 - `src/app.js` 的 `wireViewFilterChips()` 在 `initTimeline()` 裡把三個 chip 接上 `openFilterSheet`，城市/月份選項**從尚未結束的場次動態算出**（不是寫死清單）——刻意排除已結束的場次，否則會出現選了也一定是空清單的死選項（例如今天是 9/18，若選項清單沒濾掉 7 月、8 月，使用者選了只會看到「目前沒有符合條件的演出」）。價格是固定的 4 個級距（NT$500/1000/2000/3000 以下）+「不限價格」。
 - 篩選狀態存在 `localStorage`（`gigradar:view_filters`），**刻意不放進 `UserPrefs`、不走 Gist 同步**——這是「當下正在看什麼」的畫面狀態，不是像 `excluded_artists`那樣要長期生效、跨裝置同步的規則（呼應 §3.3 的既有設計）。
+
+**2026-09-18 同時發現、同時補上：頂部「搜尋」放大鏡按鈕也是同一種沒接邏輯的靜態裝飾**，SPEC 裡本來就沒有這個功能的 FR 編號。補法是新增獨立的 `search.html` 頁面（跟 `review.html`/`add.html` 一樣用 `.app--no-nav` + 返回鍵樣式，不是彈出疊層），`src/app.js` 新增 `initSearch()`：
+- 即時比對輸入框內容跟 `event.title_raw`／`event.lineup`（不分大小寫），輸入時就更新結果，不用按 Enter 或搜尋按鈕。
+- 套用跟其他頁面一樣的 `partitionEvents()` 規則（已收藏優先顯示、已排除的規則一樣生效）——搜尋不是繞過封鎖規則的後門，跟時間表頁行為一致。
+- **不**套用城市/月份/價格 view filters（`partitionEvents(events, prefs, {})`），也**不**搜尋已結束的場次——這是獨立的「找一個東西」功能，跟時間表「現在看哪些」的畫面篩選是兩回事。
+- `index.html`/`new.html`/`favorites.html` 頂部的搜尋按鈕從無動作的 `<button>` 改成 `<a href="./search.html">`，純連結不需要 JS。
 
 ---
 

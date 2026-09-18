@@ -1,29 +1,5 @@
 {
-  "generated_at": "2026-09-18T02:09:24.637Z",
-  "added_ids": [
-    "71810cf9bd0d2d17",
-    "17540e5ca7860a76"
-  ],
-  "updated": [
-    {
-      "id": "f5980594fdd14fda",
-      "fields": [
-        "status",
-        "price_min",
-        "price_max"
-      ]
-    },
-    {
-      "id": "9bef0b055525cadf",
-      "fields": [
-        "status"
-      ]
-    },
-    {
-      "id": "e63300986c817b29",
-      "fields": [
-        "price_max"
-      ]
-    }
-  ]
+  "generated_at": "2026-09-18T02:51:15.622Z",
+  "added_ids": [],
+  "updated": []
 }

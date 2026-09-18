@@ -353,6 +353,48 @@ async function initTimeline(container) {
   render();
 }
 
+/** search.html:搜尋藝人或標題, filtered live as the user types. */
+async function initSearch(container) {
+  const input = document.getElementById("search-input");
+  let events;
+  try {
+    await reconcileGistSync();
+    events = await loadEvents();
+  } catch (err) {
+    console.error("Failed to load events.json:", err);
+    container.innerHTML = renderEmptyList("資料載入失敗，請稍後再試。");
+    return;
+  }
+
+  function render() {
+    const query = input.value.trim();
+    if (!query) {
+      container.innerHTML = renderEmptyList("輸入藝人或標題開始搜尋。");
+      return;
+    }
+
+    const prefs = loadPrefs();
+    const { visible } = partitionEvents(events, prefs, {});
+    const q = query.toLowerCase();
+    const matches = visible.filter(
+      ({ event }) => event.title_raw.toLowerCase().includes(q) || event.lineup.some((a) => a.toLowerCase().includes(q)),
+    );
+    matches.sort((a, b) => (a.event.date < b.event.date ? -1 : a.event.date > b.event.date ? 1 : 0));
+
+    container.innerHTML =
+      matches.length === 0
+        ? renderEmptyList(`沒有符合「${query}」的場次。`)
+        : renderEventList(groupByDate(matches));
+
+    wireTicketButtons(container);
+    wireFavoriteToggle(container, render);
+    wireExcludeMenu(container, events, render);
+  }
+
+  input.addEventListener("input", render);
+  render();
+}
+
 async function initNewArrivals(container) {
   let events;
   try {
@@ -869,6 +911,11 @@ function initManualAdd(form) {
 const timelineContainer = document.querySelector('[data-page="timeline"]');
 if (timelineContainer) {
   initTimeline(timelineContainer);
+}
+
+const searchContainer = document.querySelector('[data-page="search"]');
+if (searchContainer) {
+  initSearch(searchContainer);
 }
 
 const newArrivalsContainer = document.querySelector('[data-page="new-arrivals"]');

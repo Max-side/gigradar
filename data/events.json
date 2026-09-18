@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-18T02:09:24.638Z",
+  "generated_at": "2026-09-18T02:51:15.623Z",
   "events": [
     {
       "title_raw": "「跨校聯誼Vol.2」九月高校 / 午後幽靈 / Sunday Something",
@@ -196,44 +196,6 @@
       ]
     },
     {
-      "title_raw": "【午場】HANAZAWA KANA LIVE 2026 KANAMEGURI in TAIPEI",
-      "headliners": [
-        "HANAZAWA KANA"
-      ],
-      "lineup": [
-        "HANAZAWA KANA"
-      ],
-      "is_festival": false,
-      "venue": "Legacy TAIPEI",
-      "city": "台北",
-      "date": "2026-09-26",
-      "time": "14:30",
-      "on_sale_at": null,
-      "price_min": 1490,
-      "price_max": 3600,
-      "status": "on_sale",
-      "tags_type": [
-        "專場"
-      ],
-      "tags_origin": [
-        "日韓"
-      ],
-      "ticket_url": "https://welcome-music.kktix.cc/events/0bc26b19",
-      "sources": [
-        {
-          "name": "KKTIX",
-          "url": "https://welcome-music.kktix.cc/events/0bc26b19",
-          "raw_id": "0bc26b19"
-        }
-      ],
-      "first_seen_at": "2026-09-18T02:03:01.551Z",
-      "updated_at": "2026-09-18T02:03:01.551Z",
-      "id": "71810cf9bd0d2d17",
-      "merged_ids": [
-        "71810cf9bd0d2d17"
-      ]
-    },
-    {
       "title_raw": "【特典加購】FANTASTICS LIVE 2026 in TAIPEI \"放大絶\"",
       "headliners": [
         "FANTASTICS"
@@ -269,11 +231,44 @@
       "id": "f5980594fdd14fda",
       "merged_ids": [
         "f5980594fdd14fda"
+      ]
+    },
+    {
+      "title_raw": "【午場】HANAZAWA KANA LIVE 2026 KANAMEGURI in TAIPEI",
+      "headliners": [
+        "HANAZAWA KANA"
       ],
-      "updated_fields": [
-        "status",
-        "price_min",
-        "price_max"
+      "lineup": [
+        "HANAZAWA KANA"
+      ],
+      "is_festival": false,
+      "venue": "Legacy TAIPEI",
+      "city": "台北",
+      "date": "2026-09-26",
+      "time": "14:30",
+      "on_sale_at": null,
+      "price_min": 1490,
+      "price_max": 3600,
+      "status": "on_sale",
+      "tags_type": [
+        "專場"
+      ],
+      "tags_origin": [
+        "日韓"
+      ],
+      "ticket_url": "https://welcome-music.kktix.cc/events/0bc26b19",
+      "sources": [
+        {
+          "name": "KKTIX",
+          "url": "https://welcome-music.kktix.cc/events/0bc26b19",
+          "raw_id": "0bc26b19"
+        }
+      ],
+      "first_seen_at": "2026-09-18T02:03:01.551Z",
+      "updated_at": "2026-09-18T02:03:01.551Z",
+      "id": "71810cf9bd0d2d17",
+      "merged_ids": [
+        "71810cf9bd0d2d17"
       ]
     },
     {
@@ -317,9 +312,6 @@
       "id": "9bef0b055525cadf",
       "merged_ids": [
         "9bef0b055525cadf"
-      ],
-      "updated_fields": [
-        "status"
       ]
     },
     {
@@ -434,9 +426,44 @@
       "id": "e63300986c817b29",
       "merged_ids": [
         "e63300986c817b29"
+      ]
+    },
+    {
+      "title_raw": "【第一場】伊波杏樹 ASIA FAN MEETING TOUR 台北站",
+      "headliners": [
+        "伊波杏樹"
       ],
-      "updated_fields": [
-        "price_max"
+      "lineup": [
+        "伊波杏樹"
+      ],
+      "is_festival": false,
+      "venue": "Clapper Studio",
+      "city": "台北",
+      "date": "2026-11-21",
+      "time": "14:00",
+      "on_sale_at": null,
+      "price_min": 2780,
+      "price_max": 2780,
+      "status": "on_sale",
+      "tags_type": [
+        "專場"
+      ],
+      "tags_origin": [
+        "日韓"
+      ],
+      "ticket_url": "https://atc-twn.kktix.cc/events/427dbf2a",
+      "sources": [
+        {
+          "name": "KKTIX",
+          "url": "https://atc-twn.kktix.cc/events/427dbf2a",
+          "raw_id": "427dbf2a"
+        }
+      ],
+      "first_seen_at": "2026-09-17T07:41:11.998Z",
+      "updated_at": "2026-09-17T07:41:11.998Z",
+      "id": "1097cd8282efa3c0",
+      "merged_ids": [
+        "1097cd8282efa3c0"
       ]
     },
     {
@@ -559,41 +586,41 @@
       ]
     },
     {
-      "title_raw": "【第一場】伊波杏樹 ASIA FAN MEETING TOUR 台北站",
+      "title_raw": "【下午場】工藤晴香2026 台北粉絲見面會",
       "headliners": [
-        "伊波杏樹"
+        "工藤晴香"
       ],
       "lineup": [
-        "伊波杏樹"
+        "工藤晴香"
       ],
       "is_festival": false,
       "venue": "Clapper Studio",
       "city": "台北",
-      "date": "2026-11-21",
-      "time": "14:00",
+      "date": "2026-11-07",
+      "time": "18:00",
       "on_sale_at": null,
-      "price_min": 2780,
-      "price_max": 2780,
+      "price_min": 1740,
+      "price_max": 2280,
       "status": "on_sale",
       "tags_type": [
-        "專場"
+        "見面會"
       ],
       "tags_origin": [
         "日韓"
       ],
-      "ticket_url": "https://atc-twn.kktix.cc/events/427dbf2a",
+      "ticket_url": "https://atc-twn.kktix.cc/events/jrsfeb02",
       "sources": [
         {
           "name": "KKTIX",
-          "url": "https://atc-twn.kktix.cc/events/427dbf2a",
-          "raw_id": "427dbf2a"
+          "url": "https://atc-twn.kktix.cc/events/jrsfeb02",
+          "raw_id": "jrsfeb02"
         }
       ],
       "first_seen_at": "2026-09-17T07:41:11.998Z",
       "updated_at": "2026-09-17T07:41:11.998Z",
-      "id": "1097cd8282efa3c0",
+      "id": "616834bfe09e1bd3",
       "merged_ids": [
-        "1097cd8282efa3c0"
+        "616834bfe09e1bd3"
       ]
     },
     {
@@ -632,44 +659,6 @@
       "id": "846d5e65c36f6ad8",
       "merged_ids": [
         "846d5e65c36f6ad8"
-      ]
-    },
-    {
-      "title_raw": "【下午場】工藤晴香2026 台北粉絲見面會",
-      "headliners": [
-        "工藤晴香"
-      ],
-      "lineup": [
-        "工藤晴香"
-      ],
-      "is_festival": false,
-      "venue": "Clapper Studio",
-      "city": "台北",
-      "date": "2026-11-07",
-      "time": "18:00",
-      "on_sale_at": null,
-      "price_min": 1740,
-      "price_max": 2280,
-      "status": "on_sale",
-      "tags_type": [
-        "見面會"
-      ],
-      "tags_origin": [
-        "日韓"
-      ],
-      "ticket_url": "https://atc-twn.kktix.cc/events/jrsfeb02",
-      "sources": [
-        {
-          "name": "KKTIX",
-          "url": "https://atc-twn.kktix.cc/events/jrsfeb02",
-          "raw_id": "jrsfeb02"
-        }
-      ],
-      "first_seen_at": "2026-09-17T07:41:11.998Z",
-      "updated_at": "2026-09-17T07:41:11.998Z",
-      "id": "616834bfe09e1bd3",
-      "merged_ids": [
-        "616834bfe09e1bd3"
       ]
     },
     {
