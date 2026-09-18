@@ -168,9 +168,10 @@ async function fetchEventDetail(url) {
   return { raw_id, url, title_raw, date_raw, venue_raw, tickets_raw, source_name: name };
 }
 
-export async function fetch() {
+export async function fetch(knownRawIds = new Set()) {
   const results = [];
   const warnings = [];
+  let skippedKnown = 0;
 
   // Strategy 1: self-promoting venues, one listing page each.
   for (const org of ORG_PAGE_VENUES) {
@@ -185,6 +186,18 @@ export async function fetch() {
     }
     logProgress(`org ${org}: ${eventUrls.length} upcoming event(s) listed`);
     for (const url of eventUrls) {
+      // 2026-09-18, incremental fetch: KKTIX has no lightweight listing at
+      // all — date/venue/price only ever exist on the detail page — so an
+      // already-known event skips straight past fetchEventDetail entirely,
+      // no delay either since there's no request being made. fetch.mjs
+      // reuses its previous normalized data (see reuse_previous).
+      const raw_id = url.split("/").filter(Boolean).pop();
+      if (knownRawIds.has(raw_id)) {
+        skippedKnown += 1;
+        results.push({ raw_id, url, title_raw: null, source_name: name, reuse_previous: true });
+        continue;
+      }
+
       await sleep(REQUEST_DELAY_MS);
       logProgress(`fetching detail: ${url}`);
       try {
@@ -210,6 +223,16 @@ export async function fetch() {
     }
     logProgress(`search "${keyword}": ${eventUrls.length} result(s) to check`);
     for (const url of eventUrls) {
+      // Same skip as Strategy 1 — an already-known result already passed the
+      // venue-match filter below on a previous run (a venue doesn't change),
+      // so re-verifying it here would just burn a request for the same answer.
+      const raw_id = url.split("/").filter(Boolean).pop();
+      if (knownRawIds.has(raw_id)) {
+        skippedKnown += 1;
+        results.push({ raw_id, url, title_raw: null, source_name: name, reuse_previous: true });
+        continue;
+      }
+
       await sleep(REQUEST_DELAY_MS);
       logProgress(`fetching detail: ${url}`);
       let detail;
@@ -228,6 +251,9 @@ export async function fetch() {
     }
   }
 
+  if (skippedKnown > 0) {
+    logProgress(`KKTIX: ${skippedKnown} event(s) already known, skipping detail fetch`);
+  }
   if (warnings.length) {
     console.warn(`[kktix] ${warnings.length} sub-request(s) failed:\n` + warnings.join("\n"));
   }

@@ -10,16 +10,23 @@
 /**
  * @param {object[]} previousEvents - last run's merged Event[] (data/events.json)
  * @param {string} sourceName
+ * @param {Set<string>} [rawIds] - restrict to just these raw_ids (2026-09-18,
+ *   incremental fetch: an adapter that skipped its own expensive per-event
+ *   detail fetch for already-known events, see fetch.mjs's runAdapter(),
+ *   uses this to reuse exactly those events' previous normalized data
+ *   instead of the "reuse everything from this source" anomaly-fallback use
+ *   below, which omitting this argument still does.
  * @returns {object[]} single-source Event-shaped objects (id/merged_ids
  *   stripped) ready to feed back into dedupe() alongside this run's freshly
  *   normalized events from other sources — dedupe() naturally re-merges them
  *   with anything a still-working source finds for the same show.
  */
-export function fallbackEventsForSource(previousEvents, sourceName) {
+export function fallbackEventsForSource(previousEvents, sourceName, rawIds = null) {
   const fallback = [];
   for (const event of previousEvents) {
     const ownSource = event.sources.find((s) => s.name === sourceName);
     if (!ownSource) continue;
+    if (rawIds && !rawIds.has(ownSource.raw_id)) continue;
     const { id, merged_ids, sources, updated_fields, ...rest } = event;
     fallback.push({ ...rest, sources: [ownSource] });
   }

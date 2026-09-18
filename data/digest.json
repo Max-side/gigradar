@@ -1,43 +1,7 @@
 {
-  "generated_at": "2026-09-18T04:01:08.695Z",
+  "generated_at": "2026-09-18T06:37:34.554Z",
   "added_ids": [
-    "71810cf9bd0d2d17"
+    "f5980594fdd14fda"
   ],
-  "updated": [
-    {
-      "id": "9bef0b055525cadf",
-      "fields": [
-        "status",
-        "price_max"
-      ]
-    },
-    {
-      "id": "e651d8009433e36b",
-      "fields": [
-        "price_min",
-        "price_max"
-      ]
-    },
-    {
-      "id": "b42542e26828ffb1",
-      "fields": [
-        "price_min",
-        "price_max"
-      ]
-    },
-    {
-      "id": "fb2cff3af241f1fd",
-      "fields": [
-        "price_min",
-        "price_max"
-      ]
-    },
-    {
-      "id": "f139e3d32f1ffd41",
-      "fields": [
-        "price_min",
-        "price_max"
-      ]
-    }
-  ]
+  "updated": []
 }

@@ -25,14 +25,6 @@
       "detail": null
     },
     {
-      "raw_id": "48d24194",
-      "title_raw": "你是毋是拄著魔神仔 —— 隨性《魔神仔》發片最終場",
-      "url": "https://nicetoseeyou.kktix.cc/events/48d24194",
-      "source": "KKTIX",
-      "reason": "artist_unrecognized",
-      "detail": null
-    },
-    {
       "raw_id": "26_aaa",
       "title_raw": "2026 Asia Artist Awards in Kaohsiung",
       "url": "https://tixcraft.com/activity/detail/26_aaa",
@@ -137,14 +129,6 @@
       "detail": null
     },
     {
-      "raw_id": "26_iv041719d",
-      "title_raw": "存在証明NO FACE NO REaLiTY【金色黃昏曉】～雛菜Hina2026生誕祭",
-      "url": "https://www.indievox.com/activity/detail/26_iv041719d",
-      "source": "iNDIEVOX",
-      "reason": "artist_unrecognized",
-      "detail": null
-    },
-    {
       "raw_id": "26_iv0398843",
       "title_raw": "9.20(日) Punk Strike Warm-Up Party #6",
       "url": "https://www.indievox.com/activity/detail/26_iv0398843",
@@ -153,9 +137,9 @@
       "detail": null
     },
     {
-      "raw_id": "26_iv041349a",
-      "title_raw": "2026 秋夜爵醒祭｜霧峰盛典",
-      "url": "https://www.indievox.com/activity/detail/26_iv041349a",
+      "raw_id": "26_iv041719d",
+      "title_raw": "存在証明NO FACE NO REaLiTY【金色黃昏曉】～雛菜Hina2026生誕祭",
+      "url": "https://www.indievox.com/activity/detail/26_iv041719d",
       "source": "iNDIEVOX",
       "reason": "artist_unrecognized",
       "detail": null
@@ -164,6 +148,14 @@
       "raw_id": "26_iv041925e",
       "title_raw": "Wah SUB！014 龐氏騙局2；BB彈。Shootup。頂加集會。擊沈女孩",
       "url": "https://www.indievox.com/activity/detail/26_iv041925e",
+      "source": "iNDIEVOX",
+      "reason": "artist_unrecognized",
+      "detail": null
+    },
+    {
+      "raw_id": "26_iv041349a",
+      "title_raw": "2026 秋夜爵醒祭｜霧峰盛典",
+      "url": "https://www.indievox.com/activity/detail/26_iv041349a",
       "source": "iNDIEVOX",
       "reason": "artist_unrecognized",
       "detail": null
@@ -217,6 +209,14 @@
       "detail": null
     },
     {
+      "raw_id": "26_iv04222e2",
+      "title_raw": "青虫aoi 2026 冬季小巡迴《Before Sunrise》台中場",
+      "url": "https://www.indievox.com/activity/detail/26_iv04222e2",
+      "source": "iNDIEVOX",
+      "reason": "artist_unrecognized",
+      "detail": null
+    },
+    {
       "raw_id": "26_iv04197dd",
       "title_raw": "PHANTASMAGORIA： Psychedelic Halloween Party",
       "url": "https://www.indievox.com/activity/detail/26_iv04197dd",
@@ -236,6 +236,22 @@
       "raw_id": "26_iv042048c",
       "title_raw": "2026 The Next Big Thing 大團誕生（開發場5）",
       "url": "https://www.indievox.com/activity/detail/26_iv042048c",
+      "source": "iNDIEVOX",
+      "reason": "artist_unrecognized",
+      "detail": null
+    },
+    {
+      "raw_id": "26_iv04215c4",
+      "title_raw": "青虫aoi 2026 冬季小巡迴《Before Sunrise》高雄場",
+      "url": "https://www.indievox.com/activity/detail/26_iv04215c4",
+      "source": "iNDIEVOX",
+      "reason": "artist_unrecognized",
+      "detail": null
+    },
+    {
+      "raw_id": "26_iv04218a6",
+      "title_raw": "交個朋友吧演出系列-番外",
+      "url": "https://www.indievox.com/activity/detail/26_iv04218a6",
       "source": "iNDIEVOX",
       "reason": "artist_unrecognized",
       "detail": null
@@ -301,6 +317,22 @@
       "title_raw": "阿沁詞曲創作教室＿一天一秘技課程",
       "url": "https://go.fansi.me/events/110009",
       "source": "FANSI GO",
+      "reason": "artist_unrecognized",
+      "detail": null
+    },
+    {
+      "raw_id": "10f9ce45b5f3c1059a976a729952866f_d8f843bdbd2259d176a415fe349e9eea",
+      "title_raw": "TIPA西藏表演藝術學院-相遇西藏~雪域長歌・千年迴響~",
+      "url": "https://ticketplus.com.tw/activity/10f9ce45b5f3c1059a976a729952866f",
+      "source": "Ticket Plus",
+      "reason": "artist_unrecognized",
+      "detail": null
+    },
+    {
+      "raw_id": "e64f691cfbe5b7b432ed40c9dcacc678_8b322b167b9e9e297de8b48437100d23",
+      "title_raw": "鄭小韻年度演出《游雲》",
+      "url": "https://ticketplus.com.tw/activity/e64f691cfbe5b7b432ed40c9dcacc678",
+      "source": "Ticket Plus",
       "reason": "artist_unrecognized",
       "detail": null
     },

@@ -33,7 +33,17 @@ export const priority = 5;
 const UA =
   "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36";
 const API_BASE = "https://apis.ticketplus.com.tw/config/api/v1/getS3";
-const REQUEST_DELAY_MS = 2000;
+// 2026-09-18: lowered from the original blanket 2000ms (§4.3's NFR-04
+// default, applied uniformly to every adapter without per-source tuning).
+// With incremental fetch now skipping the expensive event.json price call
+// for already-known events, sessions.json's own per-eventId delay became the
+// pipeline's last remaining bottleneck (~88 eventIds × 2s ≈ 3min, checked on
+// every run regardless of what's known, since it's the only way to notice a
+// newly added session on an event we already have). This is a lightweight
+// JSON GET against a large commercial ticketing platform's public API, not a
+// full page load against a small indie venue's site — 500ms is still real
+// spacing, not zero.
+const REQUEST_DELAY_MS = 500;
 const REQUEST_TIMEOUT_MS = 30000;
 
 function sleep(ms) {
@@ -64,13 +74,14 @@ async function fetchJson(path) {
   }
 }
 
-export async function fetch() {
+export async function fetch(knownRawIds = new Set()) {
   logProgress("fetching Ticket Plus main event list");
   const main = await fetchJson("main/mainEvents.json");
   const eventIds = main.allEventId ?? [];
   logProgress(`Ticket Plus: ${eventIds.length} event(s) listed`);
 
   const results = [];
+  let skippedEventCount = 0;
   for (const eventId of eventIds) {
     await sleep(REQUEST_DELAY_MS);
     let sessionsData;
@@ -78,6 +89,27 @@ export async function fetch() {
       sessionsData = await fetchJson(`event/${eventId}/sessions.json`);
     } catch (err) {
       logProgress(`ticketplus sessions fetch failed for ${eventId}: ${err.message}`);
+      continue;
+    }
+
+    const sessions = (sessionsData.sessions ?? []).filter(
+      (s) => !s.hidden && !s.name?.includes("周邊商品"), // withdrawn session / merch pre-order, same filters as before
+    );
+    if (sessions.length === 0) continue;
+
+    // 2026-09-18, incremental fetch: sessions.json is still checked for
+    // EVERY eventId, every run — it's the only way to notice a newly added
+    // session (e.g. a tour adding a city) on an event we already know about.
+    // But if every one of this eventId's sessions is already known, there's
+    // nothing new to normalize, so skip the event.json price call entirely
+    // (that's the one that used to double Ticket Plus's own fetch time) and
+    // let fetch.mjs reuse each session's previous normalized data instead.
+    const sessionRawIds = sessions.map((s) => `${eventId}_${s.sessionId}`);
+    if (sessionRawIds.every((rawId) => knownRawIds.has(rawId))) {
+      skippedEventCount += 1;
+      for (const rawId of sessionRawIds) {
+        results.push({ raw_id: rawId, source_name: name, reuse_previous: true });
+      }
       continue;
     }
 
@@ -102,9 +134,7 @@ export async function fetch() {
       logProgress(`ticketplus event.json fetch failed for ${eventId}: ${err.message}`);
     }
 
-    for (const session of sessionsData.sessions ?? []) {
-      if (session.hidden) continue; // withdrawn/not-yet-on-sale session, same spirit as KKTIX skipping non-listed events
-      if (session.name?.includes("周邊商品")) continue; // merch pre-order listing, not a real performance (same filter FANSI GO needs)
+    for (const session of sessions) {
       results.push({
         raw_id: `${eventId}_${session.sessionId}`,
         url: `https://ticketplus.com.tw/activity/${eventId}`,
@@ -122,6 +152,6 @@ export async function fetch() {
     }
   }
 
-  logProgress(`Ticket Plus: ${results.length} session(s) fetched`);
+  logProgress(`Ticket Plus: ${results.length} session(s) fetched (${skippedEventCount} event(s) fully known, price fetch skipped)`);
   return results;
 }

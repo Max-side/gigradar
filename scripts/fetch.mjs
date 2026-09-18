@@ -49,6 +49,26 @@ function loadPreviousNeedsReview() {
 }
 
 /**
+ * 2026-09-18, incremental fetch: {sourceName -> Set<raw_id>} for every event
+ * that was ALREADY successfully recognized last run. Deliberately built only
+ * from previousEvents, never from needs-review items — a needs-review raw_id
+ * must always be re-fetched and re-normalized on every run, since that's the
+ * exact mechanism that lets adding an artist to artists.yml later promote a
+ * previously-unrecognized title into a real event. Treating it as "already
+ * known, skip" would silently break that workflow forever for that item.
+ */
+function buildKnownRawIdsBySource(previousEvents) {
+  const map = new Map();
+  for (const event of previousEvents) {
+    for (const source of event.sources) {
+      if (!map.has(source.name)) map.set(source.name, new Set());
+      map.get(source.name).add(source.raw_id);
+    }
+  }
+  return map;
+}
+
+/**
  * Runs one adapter end-to-end (fetch -> status classification -> fallback on
  * anomaly -> per-event normalize), fully self-contained so it can run
  * concurrently with the other adapters below. Never throws — every failure
@@ -57,13 +77,13 @@ function loadPreviousNeedsReview() {
  * just scoped to a function instead of loop iterations.
  */
 async function runAdapter(adapter, context) {
-  const { artistsYml, venuesYml, previousSources, previousEvents, previousNeedsReview } = context;
+  const { artistsYml, venuesYml, previousSources, previousEvents, previousNeedsReview, knownRawIdsBySource } = context;
 
   logProgress(`=== starting adapter: ${adapter.name} ===`);
   let rawEvents = [];
   let error = null;
   try {
-    rawEvents = await adapter.fetch();
+    rawEvents = await adapter.fetch(knownRawIdsBySource.get(adapter.name) ?? new Set());
   } catch (err) {
     error = err.message;
     logProgress(`${adapter.name} fetch() threw: ${err.stack}`);
@@ -96,7 +116,26 @@ async function runAdapter(adapter, context) {
     }
   }
 
+  // 2026-09-18, incremental fetch: an adapter marks an already-known event's
+  // raw entry with reuse_previous instead of re-fetching its expensive detail
+  // page (see e.g. tixcraft.mjs) — reuse its previous normalized data outright
+  // rather than re-running normalize() on the deliberately-incomplete stub.
+  const reuseRawIds = new Set();
+  const freshRawEvents = [];
   for (const raw of rawEvents) {
+    if (raw.reuse_previous) {
+      reuseRawIds.add(raw.raw_id);
+    } else {
+      freshRawEvents.push(raw);
+    }
+  }
+  if (reuseRawIds.size > 0) {
+    const reused = fallbackEventsForSource(previousEvents, adapter.name, reuseRawIds);
+    normalizedEvents.push(...reused);
+    logProgress(`${adapter.name}: reused ${reused.length} already-known event(s) without re-fetching detail`);
+  }
+
+  for (const raw of freshRawEvents) {
     // A single malformed record must never take down the whole run — every
     // other successfully-scraped event (and this run's writes) would be
     // lost with it (found in review: this loop had no isolation at all).
@@ -130,7 +169,8 @@ async function main() {
   const previousEvents = loadPreviousEvents();
   const previousSources = loadPreviousSources();
   const previousNeedsReview = loadPreviousNeedsReview();
-  const context = { artistsYml, venuesYml, previousSources, previousEvents, previousNeedsReview };
+  const knownRawIdsBySource = buildKnownRawIdsBySource(previousEvents);
+  const context = { artistsYml, venuesYml, previousSources, previousEvents, previousNeedsReview, knownRawIdsBySource };
 
   // Each adapter only paces requests against its OWN source (NFR-04) — there's
   // no shared rate limit between, say, tixcraft and iNDIEVOX, so there's no

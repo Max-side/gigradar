@@ -74,7 +74,7 @@ async function fetchCards(page) {
 const PRICE_REQUEST_DELAY_MS = 800; // see tixcraft.mjs's identical constant — same rationale
 const PRICE_NAV_TIMEOUT_MS = 20000;
 
-export async function fetch() {
+export async function fetch(knownRawIds = new Set()) {
   logProgress("fetching FANSI GO /allevents");
   let results;
   try {
@@ -96,8 +96,23 @@ export async function fetch() {
           source_name: name,
         }));
 
-      let priceFailures = 0;
+      // 2026-09-18, incremental fetch: skip the per-event Playwright detail
+      // visit for events already recognized last run (see tixcraft.mjs's
+      // identical comment — same fetch.mjs-level reuse_previous mechanism).
+      const toFetch = [];
       for (const event of events) {
+        if (knownRawIds.has(event.raw_id)) {
+          event.reuse_previous = true;
+        } else {
+          toFetch.push(event);
+        }
+      }
+      if (toFetch.length < events.length) {
+        logProgress(`FANSI GO: ${events.length - toFetch.length} event(s) already known, skipping detail/price fetch`);
+      }
+
+      let priceFailures = 0;
+      for (const event of toFetch) {
         await sleep(PRICE_REQUEST_DELAY_MS);
         const page = await newPage(browser);
         try {
@@ -116,7 +131,7 @@ export async function fetch() {
         }
       }
       if (priceFailures > 0) {
-        logProgress(`FANSI GO: price detail fetch failed for ${priceFailures}/${events.length} event(s)`);
+        logProgress(`FANSI GO: price detail fetch failed for ${priceFailures}/${toFetch.length} event(s)`);
       }
 
       return events;

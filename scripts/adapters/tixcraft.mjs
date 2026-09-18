@@ -70,7 +70,7 @@ async function fetchHtml(url, referer) {
   }
 }
 
-export async function fetch() {
+export async function fetch(knownRawIds = new Set()) {
   logProgress("fetching tixcraft activity listing");
   const html = await fetchHtml("https://tixcraft.com/activity", "https://tixcraft.com/");
   const $ = cheerio.load(html);
@@ -98,9 +98,27 @@ export async function fetch() {
 
   logProgress(`tixcraft: ${results.length} unique upcoming event(s) listed`);
 
+  // 2026-09-18, incremental fetch: skip the expensive per-event Playwright
+  // visit entirely for events already recognized last run — fetch.mjs reuses
+  // their previous normalized data instead (see reuse_previous in
+  // fetch.mjs's runAdapter()). This is what took tixcraft's own detail-fetch
+  // phase from several minutes down to roughly "however many genuinely new
+  // events showed up today", which is normally a handful.
+  const toFetch = [];
+  for (const event of results) {
+    if (knownRawIds.has(event.raw_id)) {
+      event.reuse_previous = true;
+    } else {
+      toFetch.push(event);
+    }
+  }
+  if (toFetch.length < results.length) {
+    logProgress(`tixcraft: ${results.length - toFetch.length} event(s) already known, skipping detail/price fetch`);
+  }
+
   let priceFailures = 0;
   await withBrowser(async (browser) => {
-    for (const event of results) {
+    for (const event of toFetch) {
       await sleep(DETAIL_REQUEST_DELAY_MS);
       const page = await newPage(browser);
       try {
@@ -121,7 +139,7 @@ export async function fetch() {
     }
   });
   if (priceFailures > 0) {
-    logProgress(`tixcraft: price detail fetch failed for ${priceFailures}/${results.length} event(s)`);
+    logProgress(`tixcraft: price detail fetch failed for ${priceFailures}/${toFetch.length} event(s)`);
   }
 
   return results;

@@ -91,6 +91,22 @@ test("a source's fallback event re-merges cleanly with a fresh event from a stil
   assert.equal(result[0].sources.length, 2, "keeps both sources — carried-forward KKTIX and fresh 拓元");
 });
 
+test("fallbackEventsForSource with a rawIds filter only reuses the specific events an adapter chose to skip", () => {
+  const previousEvents = [
+    makeMergedEvent({ id: "e1", sources: [{ name: "拓元", url: "x", raw_id: "known-1" }] }),
+    makeMergedEvent({ id: "e2", sources: [{ name: "拓元", url: "y", raw_id: "known-2" }] }),
+    makeMergedEvent({ id: "e3", sources: [{ name: "拓元", url: "z", raw_id: "known-3" }] }),
+  ];
+
+  const reused = fallbackEventsForSource(previousEvents, "拓元", new Set(["known-1", "known-3"]));
+
+  assert.equal(reused.length, 2);
+  assert.deepEqual(
+    reused.map((e) => e.sources[0].raw_id).sort(),
+    ["known-1", "known-3"],
+  );
+});
+
 test("fallbackReviewItemsForSource only returns items from that source", () => {
   const previousNeedsReview = [
     { raw_id: "a", source: "KKTIX", reason: "artist_unrecognized" },

@@ -121,10 +121,11 @@ async function fetchEventDetail(item) {
   };
 }
 
-export async function fetch() {
+export async function fetch(knownRawIds = new Set()) {
   const results = [];
   const seen = new Set();
   let cursor = new Date();
+  let skippedKnown = 0;
 
   for (let round = 0; round < MAX_ROUNDS; round++) {
     await sleep(REQUEST_DELAY_MS);
@@ -146,6 +147,17 @@ export async function fetch() {
       seen.add(item.url);
       newCount += 1;
 
+      // 2026-09-18, incremental fetch: an event already recognized last run
+      // skips its own detail-page fetch entirely (no delay either, since
+      // there's no request to pace) — fetch.mjs reuses its previous
+      // normalized data instead (see reuse_previous in runAdapter()).
+      const raw_id = item.url.split("/").filter(Boolean).pop();
+      if (knownRawIds.has(raw_id)) {
+        skippedKnown += 1;
+        results.push({ raw_id, url: item.url, title_raw: item.title_raw, source_name: name, reuse_previous: true });
+        continue;
+      }
+
       await sleep(REQUEST_DELAY_MS);
       try {
         results.push(await fetchEventDetail(item));
@@ -160,6 +172,6 @@ export async function fetch() {
     cursor.setDate(cursor.getDate() + 1); // next window starts the day after the latest date seen
   }
 
-  logProgress(`indievox: ${results.length} event(s) fetched`);
+  logProgress(`indievox: ${results.length} event(s) fetched (${skippedKnown} already known, detail fetch skipped)`);
   return results;
 }
