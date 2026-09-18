@@ -12,3 +12,710 @@
 - canonical: ABC Band
   aliases: ["A.B.C. Band", "ABC樂團"]
   tags_origin_default: 歐美
+
+# --- 2026-09-17 草稿：對照 342 筆待整理場次補的第一批，還沒 commit ---
+# 標了「⚠️ 短字/常見字」的是子字串比對風險較高、之後如果誤觸發到不相關的
+# 場次，優先檢查是不是這幾個。標了「已排除」的類別（運動賽事/課程/展覽/
+# 麵包等）故意沒有加進來，因為它們本來就不是音樂演出，加了也不該被辨識。
+
+- canonical: 九月高校
+  aliases: []
+  tags_origin_default: 本地
+- canonical: 午後幽靈
+  aliases: []
+  tags_origin_default: 本地
+- canonical: Sunday Something
+  aliases: []
+  tags_origin_default: 本地
+- canonical: 音羽-otoha-
+  aliases: []
+  tags_origin_default: 日韓
+- canonical: go!go!vanillas
+  aliases: []
+  tags_origin_default: 日韓
+- canonical: 島嶼都市浪漫譚
+  aliases: []
+  tags_origin_default: 本地
+- canonical: 火熱巨棒
+  aliases: []
+  tags_origin_default: 本地
+- canonical: Fear Tracker
+  aliases: []
+  tags_origin_default: 本地
+- canonical: Bloody Sweety
+  aliases: []
+  tags_origin_default: 本地
+- canonical: Silica Gel
+  aliases: []
+  tags_origin_default: 日韓
+- canonical: Kiefer
+  aliases: []
+  tags_origin_default: 歐美
+- canonical: THE RAMPAGE
+  aliases: []
+  tags_origin_default: 日韓
+- canonical: FANTASTICS
+  aliases: []
+  tags_origin_default: 日韓
+- canonical: HANAZAWA KANA
+  aliases: []
+  tags_origin_default: 日韓
+- canonical: 椅子樂團
+  aliases: []
+  tags_origin_default: 本地
+- canonical: 伊波杏樹
+  aliases: []
+  tags_origin_default: 日韓
+- canonical: 小原好美
+  aliases: []
+  tags_origin_default: 日韓
+- canonical: LEE MINHYUK
+  aliases: []
+  tags_origin_default: 日韓
+- canonical: 工藤晴香
+  aliases: []
+  tags_origin_default: 日韓
+- canonical: W!nky
+  aliases: []
+  tags_origin_default: 日韓
+- canonical: 伊藤美來
+  aliases: []
+  tags_origin_default: 日韓
+- canonical: 玉置成實
+  aliases: []
+  tags_origin_default: 日韓
+
+- canonical: Bruno Mars
+  aliases: []
+  tags_origin_default: 歐美
+- canonical: WESTLIFE
+  aliases: []
+  tags_origin_default: 歐美
+- canonical: Maroon 5
+  aliases: []
+  tags_origin_default: 歐美
+- canonical: AGAINST THE CURRENT
+  aliases: []
+  tags_origin_default: 歐美
+- canonical: BOYNEXTDOOR
+  aliases: []
+  tags_origin_default: 日韓
+- canonical: 鼓鼓
+  aliases: []
+  tags_origin_default: 本地
+- canonical: GBOYSWAG
+  aliases: []
+  tags_origin_default: 本地
+- canonical: Stray Kids
+  aliases: []
+  tags_origin_default: 日韓
+- canonical: Slowdive
+  aliases: []
+  tags_origin_default: 歐美
+- canonical: FKJ
+  aliases: []
+  tags_origin_default: 歐美
+- canonical: Khalid
+  aliases: []
+  tags_origin_default: 歐美
+- canonical: 劉若英
+  aliases: []
+  tags_origin_default: 本地
+- canonical: brb.
+  aliases: []
+  tags_origin_default: 歐美
+- canonical: AAA 2026
+  aliases: []
+  tags_origin_default: 日韓
+- canonical: DOMi
+  aliases: []
+  tags_origin_default: 歐美
+- canonical: JD BECK
+  aliases: []
+  tags_origin_default: 歐美
+- canonical: Young K
+  aliases: []
+  tags_origin_default: 日韓
+- canonical: JOJI
+  aliases: []
+  tags_origin_default: 歐美
+- canonical: 5 SECONDS OF SUMMER
+  aliases: []
+  tags_origin_default: 歐美
+- canonical: wave to earth
+  aliases: []
+  tags_origin_default: 日韓
+- canonical: Malcolm Todd
+  aliases: []
+  tags_origin_default: 歐美
+- canonical: BTS
+  aliases: []
+  tags_origin_default: 日韓
+- canonical: BINI
+  aliases: []
+  tags_origin_default: 海外
+- canonical: LE SSERAFIM
+  aliases: []
+  tags_origin_default: 日韓
+- canonical: Juice Boy
+  aliases: []
+  tags_origin_default: 本地
+- canonical: yung kai
+  aliases: []
+  tags_origin_default: 歐美
+- canonical: KIM JI WON
+  aliases: []
+  tags_origin_default: 日韓
+- canonical: 82MAJOR
+  aliases: []
+  tags_origin_default: 日韓
+- canonical: 徐暐翔
+  aliases: []
+  tags_origin_default: 本地
+- canonical: SO JI SUB
+  aliases: []
+  tags_origin_default: 日韓
+- canonical: 告五人
+  aliases: ["Accusefive"]
+  tags_origin_default: 本地
+- canonical: 孫盛希
+  aliases: []
+  tags_origin_default: 本地
+- canonical: 潤少
+  aliases: []
+  tags_origin_default: 本地
+- canonical: 徐晧程
+  aliases: []
+  tags_origin_default: 本地
+- canonical: c8ight陳全
+  aliases: []
+  tags_origin_default: 本地
+- canonical: TWS
+  aliases: []
+  tags_origin_default: 日韓
+- canonical: PLAVE
+  aliases: []
+  tags_origin_default: 日韓
+- canonical: Charlie Puth
+  aliases: []
+  tags_origin_default: 歐美
+- canonical: 劉芯妤
+  aliases: ["Roselyn"]
+  tags_origin_default: 本地
+- canonical: QWER
+  aliases: []
+  tags_origin_default: 日韓
+- canonical: 派偉俊
+  # "Patrick Brasca" alias removed (2026-09-17 review): it's a case-insensitive
+  # substring collision with canonical "ASCA" below ("brASCA" contains "asca"),
+  # and no real scraped title in the current dataset actually needs this
+  # English-name alias to be recognized — it was added from general knowledge,
+  # not from observed data. Re-add only with a longer/safer form if it's ever
+  # actually needed (e.g. a full "Patrick Brasca" match won't help since ASCA
+  # is still a substring of it).
+  aliases: []
+  tags_origin_default: 本地
+- canonical: izna
+  aliases: []
+  tags_origin_default: 日韓
+- canonical: Henry Moodie
+  aliases: []
+  tags_origin_default: 歐美
+- canonical: BE：FIRST
+  aliases: []
+  tags_origin_default: 日韓
+- canonical: LANY
+  aliases: []
+  tags_origin_default: 歐美
+- canonical: NIEL
+  aliases: []
+  tags_origin_default: 日韓
+- canonical: Do As Infinity
+  aliases: []
+  tags_origin_default: 日韓
+- canonical: THE ROSE
+  aliases: []
+  tags_origin_default: 日韓
+- canonical: LEE YOUNGJI
+  aliases: []
+  tags_origin_default: 日韓
+- canonical: Post Malone
+  aliases: []
+  tags_origin_default: 歐美
+- canonical: 李大奔
+  aliases: []
+  tags_origin_default: 本地
+- canonical: GGteens
+  aliases: []
+  tags_origin_default: 本地
+- canonical: HWANG IN YOUP
+  aliases: []
+  tags_origin_default: 日韓
+- canonical: 潘越雲
+  aliases: []
+  tags_origin_default: 本地
+- canonical: IVE WORLD TOUR  # 不能只用 "IVE"：會是 "LIVE"/"Live"/"live" 任何字串的子字串，測試時抓到 36 個誤判
+  aliases: []
+  tags_origin_default: 日韓
+- canonical: 蕭景鴻
+  aliases: ["Edy Hsiao"]
+  tags_origin_default: 本地
+
+- canonical: Ozone
+  aliases: []
+  tags_origin_default: 本地
+- canonical: Suming
+  aliases: ["舒米恩"]
+  tags_origin_default: 本地
+- canonical: P!SCO-16
+  aliases: []
+  tags_origin_default: 本地
+- canonical: 乙水YEE WATER
+  aliases: []
+  tags_origin_default: 本地
+- canonical: 虎小島
+  aliases: []
+  tags_origin_default: 本地
+- canonical: 南西肯恩
+  aliases: []
+  tags_origin_default: 本地
+- canonical: 傻子與白痴
+  aliases: []
+  tags_origin_default: 本地
+- canonical: EmptyORio
+  aliases: []
+  tags_origin_default: 本地
+- canonical: Quanzo
+  aliases: []
+  tags_origin_default: 本地
+- canonical: O.Dkizzya
+  aliases: []
+  tags_origin_default: 本地
+- canonical: Peatle
+  aliases: []
+  tags_origin_default: 本地
+- canonical: SiNNER MOON
+  aliases: []
+  tags_origin_default: 本地
+- canonical: 布魯飛斯
+  aliases: []
+  tags_origin_default: 本地
+- canonical: 阿橘
+  aliases: ["Ahh G"]
+  tags_origin_default: 本地
+- canonical: JAYWANG王子慧
+  aliases: []
+  tags_origin_default: 本地
+- canonical: Theseus忒修斯
+  aliases: []
+  tags_origin_default: 本地
+- canonical: 青原Fida
+  aliases: ["青原 Fida", "青原FIDA"]
+  tags_origin_default: 本地
+- canonical: OBSESS
+  aliases: []
+  tags_origin_default: 本地
+- canonical: 大墩釀
+  aliases: []
+  tags_origin_default: 本地
+- canonical: 未來肆
+  aliases: []
+  tags_origin_default: 本地
+- canonical: 茜茜溱妮
+  aliases: []
+  tags_origin_default: 本地
+- canonical: MONZEN NO KOZO
+  aliases: []
+  tags_origin_default: 日韓
+- canonical: Control T
+  aliases: []
+  tags_origin_default: 本地
+- canonical: cephalo
+  aliases: []
+  tags_origin_default: 本地
+- canonical: iVy  # ⚠️ 短字
+  aliases: []
+  tags_origin_default: 本地
+- canonical: 王泰翔2000wtx
+  aliases: []
+  tags_origin_default: 本地
+- canonical: 風旅藏花
+  aliases: []
+  tags_origin_default: 本地
+- canonical: Johnny Pandora
+  aliases: []
+  tags_origin_default: 本地
+- canonical: 那閃爍的到底是什麼
+  aliases: []
+  tags_origin_default: 本地
+- canonical: 邱淑蟬
+  aliases: []
+  tags_origin_default: 本地
+- canonical: 草包小姐
+  aliases: []
+  tags_origin_default: 本地
+- canonical: Parannoul
+  aliases: []
+  tags_origin_default: 日韓
+- canonical: Shin Yunsu
+  aliases: []
+  tags_origin_default: 日韓
+- canonical: 莊鵑瑛
+  aliases: ["小球"]  # ⚠️「小球」是常見詞，只當 alias 沒當 canonical 降低風險
+  tags_origin_default: 本地
+- canonical: A_Root同根生
+  aliases: []
+  tags_origin_default: 本地
+- canonical: 小男孩樂團
+  aliases: []
+  tags_origin_default: 本地
+- canonical: 紙鳶Seizer
+  aliases: []
+  tags_origin_default: 本地
+- canonical: 奔等泰迪
+  aliases: []
+  tags_origin_default: 本地
+- canonical: 藥師寺寛邦
+  aliases: ["藥師寺寬邦"]
+  tags_origin_default: 日韓
+- canonical: 黃玠
+  aliases: []
+  tags_origin_default: 本地
+- canonical: 琳誼Ring
+  aliases: ["琳誼 Ring"]
+  tags_origin_default: 本地
+- canonical: DSPS
+  aliases: []
+  tags_origin_default: 本地
+- canonical: 蔡題謙
+  aliases: []
+  tags_origin_default: 本地
+- canonical: PiA吳蓓雅
+  aliases: []
+  tags_origin_default: 本地
+- canonical: 格式塔少女
+  aliases: ["Gestalt Girl"]
+  tags_origin_default: 本地
+- canonical: 蔡旻佑
+  aliases: ["Evan Yo"]
+  tags_origin_default: 本地
+- canonical: honeydip
+  aliases: []
+  tags_origin_default: 本地
+- canonical: 輻射馬卡龍
+  aliases: []
+  tags_origin_default: 本地
+- canonical: 薄暮EVENFALL
+  aliases: []
+  tags_origin_default: 本地
+- canonical: Makav真愛
+  aliases: []
+  tags_origin_default: 本地
+- canonical: Holotropics
+  aliases: []
+  tags_origin_default: 本地
+- canonical: Temple Smoke
+  aliases: []
+  tags_origin_default: 本地
+- canonical: Cowman  # ⚠️ 短字/常見字
+  aliases: []
+  tags_origin_default: 本地
+- canonical: 琉璃花RURIKA
+  aliases: []
+  tags_origin_default: 日韓
+
+- canonical: 一點生
+  aliases: []
+  tags_origin_default: 本地
+- canonical: Tickle Tickle癢癢
+  aliases: []
+  tags_origin_default: 本地
+- canonical: 好大一把勇者劍
+  aliases: []
+  tags_origin_default: 本地
+- canonical: 阿克沃Awkward
+  aliases: []
+  tags_origin_default: 本地
+- canonical: Mental Disintegration
+  aliases: []
+  tags_origin_default: 本地
+- canonical: MCNI
+  aliases: []
+  tags_origin_default: 本地
+- canonical: LEIGHT NINE
+  aliases: []
+  tags_origin_default: 本地
+- canonical: 法克遊
+  aliases: []
+  tags_origin_default: 本地
+- canonical: 塵沐
+  aliases: []
+  tags_origin_default: 本地
+- canonical: 陳俊名
+  aliases: []
+  tags_origin_default: 本地
+- canonical: 含金鵲
+  aliases: []
+  tags_origin_default: 本地
+- canonical: Geloomy
+  aliases: []
+  tags_origin_default: 本地
+- canonical: yeti  # ⚠️ 短字/常見字
+  aliases: []
+  tags_origin_default: 本地
+- canonical: Salut Sonia淞雅
+  aliases: []
+  tags_origin_default: 本地
+- canonical: 路阿春
+  aliases: []
+  tags_origin_default: 本地
+- canonical: EVILDEAD
+  aliases: []
+  tags_origin_default: 歐美
+- canonical: Eddie Marcon
+  aliases: []
+  tags_origin_default: 日韓
+- canonical: THE ORCHESTRA TOKYO
+  aliases: []
+  tags_origin_default: 日韓
+- canonical: 逐火
+  aliases: []
+  tags_origin_default: 本地
+- canonical: can't be blue
+  aliases: []
+  tags_origin_default: 本地
+- canonical: MASS OF THE FERMENTING DREGS
+  aliases: []
+  tags_origin_default: 日韓
+- canonical: Blood As Ink
+  aliases: []
+  tags_origin_default: 本地
+- canonical: SIGH  # ⚠️ 常見字
+  aliases: []
+  tags_origin_default: 日韓
+
+- canonical: 步行者
+  aliases: []
+  tags_origin_default: 本地
+- canonical: 李拾壹
+  aliases: []
+  tags_origin_default: 本地
+- canonical: Yo Chen
+  aliases: []
+  tags_origin_default: 本地
+- canonical: 氣象限定
+  aliases: ["Quadrant"]
+  tags_origin_default: 本地
+- canonical: 孫一軒
+  aliases: []
+  tags_origin_default: 本地
+- canonical: 蓋亞
+  aliases: ["Gaea Lee"]
+  tags_origin_default: 本地
+- canonical: 曾稔文
+  aliases: []
+  tags_origin_default: 本地
+- canonical: KNK
+  aliases: []
+  tags_origin_default: 日韓
+- canonical: 王立  # ⚠️ 常見姓名
+  aliases: []
+  tags_origin_default: 本地
+- canonical: 閻韋伶
+  aliases: []
+  tags_origin_default: 本地
+- canonical: OURA歐拉
+  aliases: ["OURA 歐拉"]
+  tags_origin_default: 本地
+- canonical: 伯爵白
+  aliases: []
+  tags_origin_default: 本地
+- canonical: 爛泥發芽
+  aliases: []
+  tags_origin_default: 本地
+- canonical: R1AN
+  aliases: []
+  tags_origin_default: 日韓
+- canonical: JIAHN
+  aliases: []
+  tags_origin_default: 日韓
+- canonical: 溫室雜草
+  aliases: []
+  tags_origin_default: 本地
+- canonical: 梶浦由記
+  aliases: ["Yuki Kajiura"]
+  tags_origin_default: 日韓
+- canonical: jiMMY CHYN
+  aliases: []
+  tags_origin_default: 本地
+- canonical: THE SPELLBOUND
+  aliases: []
+  tags_origin_default: 日韓
+- canonical: BOOM BOOM SATELLITES
+  aliases: []
+  tags_origin_default: 日韓
+- canonical: YOASOBI
+  aliases: []
+  tags_origin_default: 日韓
+- canonical: 李芳旭
+  aliases: []
+  tags_origin_default: 本地
+- canonical: 楊大葳
+  aliases: []
+  tags_origin_default: 本地
+- canonical: 地瓜蘇
+  aliases: []
+  tags_origin_default: 本地
+- canonical: 郝方竹
+  aliases: []
+  tags_origin_default: 本地
+- canonical: 巴賴Balai
+  aliases: []
+  tags_origin_default: 本地
+- canonical: FNC BAND KINGDOM
+  aliases: []
+  tags_origin_default: 日韓
+- canonical: WHIB
+  aliases: []
+  tags_origin_default: 日韓
+- canonical: 魏妙如
+  aliases: []
+  tags_origin_default: 本地
+- canonical: 謝紫若
+  aliases: []
+  tags_origin_default: 本地
+- canonical: Crossing Road
+  aliases: []
+  tags_origin_default: 本地
+- canonical: sulysalt
+  aliases: []
+  tags_origin_default: 本地
+- canonical: skipskipbenben
+  aliases: []
+  tags_origin_default: 本地
+- canonical: 蔡元彰
+  aliases: []
+  tags_origin_default: 本地
+- canonical: OK TAECYEON
+  aliases: []
+  tags_origin_default: 日韓
+- canonical: 呂杰達
+  aliases: []
+  tags_origin_default: 本地
+- canonical: 鄭翔予
+  aliases: []
+  tags_origin_default: 本地
+- canonical: 鍾建暉
+  aliases: []
+  tags_origin_default: 本地
+- canonical: Ilid Kaolo
+  aliases: ["以莉高露"]
+  tags_origin_default: 本地
+- canonical: 房潔恩
+  aliases: ["James Fong"]
+  tags_origin_default: 本地
+- canonical: 杏仁茶Victoria
+  aliases: []
+  tags_origin_default: 本地
+- canonical: UVERworld
+  aliases: []
+  tags_origin_default: 日韓
+- canonical: 風間俊介
+  aliases: ["Kazama Shunsuke"]
+  tags_origin_default: 日韓
+- canonical: INFINITE
+  aliases: []
+  tags_origin_default: 日韓
+- canonical: 李東軒
+  aliases: ["Austin Lee"]
+  tags_origin_default: 本地
+- canonical: Amenra
+  aliases: []
+  tags_origin_default: 歐美
+- canonical: Tiffany Young
+  aliases: []
+  tags_origin_default: 日韓
+- canonical: PREP
+  aliases: []
+  tags_origin_default: 歐美
+- canonical: Chevon
+  aliases: []
+  tags_origin_default: 本地
+- canonical: Yoshinani
+  aliases: []
+  tags_origin_default: 日韓
+- canonical: BIGBANG
+  aliases: []
+  tags_origin_default: 日韓
+- canonical: 無妄合作社
+  aliases: []
+  tags_origin_default: 本地
+- canonical: TREASURE
+  aliases: []
+  tags_origin_default: 日韓
+- canonical: ASCA
+  aliases: []
+  tags_origin_default: 日韓
+- canonical: EMI NODA
+  aliases: []
+  tags_origin_default: 日韓
+- canonical: 音田雅則
+  aliases: []
+  tags_origin_default: 日韓
+- canonical: YUURI
+  aliases: []
+  tags_origin_default: 日韓
+- canonical: FLOW
+  aliases: []
+  tags_origin_default: 日韓
+- canonical: TAKUYA KIMURA
+  aliases: ["木村拓哉"]
+  tags_origin_default: 日韓
+- canonical: 志崎樺音
+  aliases: []
+  tags_origin_default: 日韓
+- canonical: CHIAI FUJIKAWA
+  aliases: []
+  tags_origin_default: 日韓
+- canonical: The Omnific
+  aliases: []
+  tags_origin_default: 本地
+- canonical: 岡崎體育
+  aliases: []
+  tags_origin_default: 日韓
+- canonical: LORNA SHORE
+  aliases: []
+  tags_origin_default: 歐美
+- canonical: Moi dix Mois
+  aliases: []
+  tags_origin_default: 日韓
+- canonical: Kaya  # ⚠️ 常見短字
+  aliases: []
+  tags_origin_default: 日韓
+- canonical: Vaundy
+  aliases: []
+  tags_origin_default: 日韓
+- canonical: RUSH BALL
+  aliases: []
+  tags_origin_default: 日韓
+- canonical: FRIENDSHIP.
+  aliases: []
+  tags_origin_default: 日韓
+- canonical: MAHIRU
+  aliases: []
+  tags_origin_default: 日韓
+- canonical: Mili
+  aliases: []
+  tags_origin_default: 日韓
+- canonical: 高明駿
+  aliases: []
+  tags_origin_default: 本地
+- canonical: 旺福
+  aliases: []
+  tags_origin_default: 本地
+- canonical: 張秀卿
+  aliases: []
+  tags_origin_default: 本地
+- canonical: JUST YOU & WIN
+  aliases: []
+  tags_origin_default: 日韓

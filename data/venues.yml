@@ -5,14 +5,19 @@
 # "Legacy"), or the generic one will shadow it. Maintained by hand, same
 # spirit as artists.yml — an unmatched venue just gets city: null and can be
 # added here once you notice it in needs-review.
+#
+# Only ever write the common/simplified city spelling (台北, not 臺北) —
+# parseTixcraftVenue() normalizes 臺→台 on both sides before matching
+# (normalizeTraditionalChars in normalize.mjs), so a single "台北大巨蛋" entry
+# already matches a source that renders it "臺北大巨蛋"; a second, parallel
+# traditional-character entry is redundant and was removed once that
+# normalization landed (2026-09-17 review).
 
 - match: "高雄國家體育場"
   city: 高雄
 - match: "Zepp New Taipei"
   city: 新北
 - match: "台北大巨蛋"
-  city: 台北
-- match: "臺北大巨蛋"
   city: 台北
 - match: "高雄巨蛋"
   city: 高雄
@@ -26,3 +31,24 @@
   city: 台北
 - match: "流行音樂中心"
   city: 高雄
+
+# 2026-09-17 追加：加 iNDIEVOX 之後發現這些場館名稱沒有地址可以判斷城市，
+# 逐一查證後補上（見 GIGRADAR-SPEC.md §5.4）。
+- match: "LIVE WAREHOUSE"
+  city: 高雄
+- match: "快樂谷大舞場"
+  city: 台中
+- match: "野地方"
+  city: 台北
+- match: "THE PILLARS"
+  city: 台中
+- match: "CLASH NEW TAIPEI"
+  city: 新北
+- match: "台中迴響"
+  city: 台中
+- match: "玉成戲院"
+  city: 台北
+- match: "百樂門酒館"
+  city: 高雄
+- match: "三創"
+  city: 台北

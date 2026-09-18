@@ -7,11 +7,33 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ARTISTS_PATH = path.join(__dirname, "..", "data", "artists.yml");
 const VENUES_PATH = path.join(__dirname, "..", "data", "venues.yml");
 
+// 台北/台中/台南/台東 have an official traditional-character variant
+// (臺北/臺中/臺南/臺東) that real address/venue-name data actually uses —
+// found via Ticket Plus, whose address field is consistently "臺北市"/
+// "臺中市"/"臺南市", not "台北市"/"台中市"/"台南市". Normalizing 臺→台 once,
+// up front, closes this off everywhere instead of special-casing each
+// affected city — the first version of this fix (2026-09-17) instead
+// enumerated 4 hardcoded regex alternations, which still left every OTHER
+// place in the codebase doing the same 台/臺 comparison (venues.yml's plain
+// substring match, kktix.mjs's SEARCH_VENUES) unfixed. Exported so those
+// other call sites can share this instead of re-deriving it.
+export function normalizeTraditionalChars(text) {
+  return text.replace(/臺/g, "台");
+}
+
 const CITY_NAMES = [
   "台北", "新北", "桃園", "新竹", "苗栗", "台中", "彰化", "南投",
   "雲林", "嘉義", "台南", "高雄", "屏東", "宜蘭", "花蓮", "台東",
   "澎湖", "金門", "連江",
 ];
+
+function cityFromAddress(address) {
+  // Some sources (Ticket Plus) prefix the address with a postal code before
+  // the city name (e.g. "100台北市中正區..." or the newer hyphenated
+  // "100-01台北市...") — strip it so the startsWith checks below still match.
+  const withoutPostalCode = normalizeTraditionalChars(address).replace(/^\d+(-\d+)?/, "");
+  return CITY_NAMES.find((c) => withoutPostalCode.startsWith(c)) ?? null;
+}
 
 const TYPE_KEYWORDS = [
   ["音樂祭", "音樂祭"],
@@ -34,16 +56,69 @@ export function loadVenues() {
   return loadYaml(raw) ?? [];
 }
 
-/** Find every known artist whose alias/canonical name appears in the raw title. */
+const ASCII_WORD = /^[A-Za-z0-9]+$/;
+function isAsciiWordChar(ch) {
+  return ch !== undefined && /[A-Za-z0-9]/.test(ch);
+}
+
+/**
+ * Finds `name` inside `titleRaw`, returning its index or null.
+ *
+ * A pure-ASCII/Latin name (e.g. "FLOW", "IVE", "ASCA") requires a word
+ * boundary on both sides — three real, unrelated bugs this session were all
+ * the same shape: a short Latin canonical silently matching as a substring of
+ * an unrelated English word ("IVE" inside "LIVE", "ASCA" inside a
+ * "...Brasca" alias, "FLOW" inside LE SSERAFIM's "PUREFLOW" tour name).
+ * Renaming each offending canonical one at a time doesn't scale once
+ * artists.yml has ~230 entries — this is the general fix. A CJK/mixed name
+ * keeps plain substring matching: Chinese text has no spaces to define a
+ * "word boundary" against, and an artist name embedded in a longer title
+ * string is the normal, correct case there (see the ⚠️ short/common-word
+ * comments already in artists.yml for known residual risk in that case).
+ */
+function findNameIndex(titleRaw, name) {
+  if (!ASCII_WORD.test(name)) {
+    const idx = titleRaw.indexOf(name);
+    return idx === -1 ? null : idx;
+  }
+  let fromIndex = 0;
+  while (true) {
+    const idx = titleRaw.indexOf(name, fromIndex);
+    if (idx === -1) return null;
+    if (!isAsciiWordChar(titleRaw[idx - 1]) && !isAsciiWordChar(titleRaw[idx + name.length])) {
+      return idx;
+    }
+    fromIndex = idx + 1;
+  }
+}
+
+/**
+ * Find every known artist whose alias/canonical name appears in the raw title.
+ *
+ * Order matters: headliners[0] is treated elsewhere as "the main act" (the
+ * exclude-menu's displayed artist, the block-artist target, the tags_origin
+ * pick before the fix below). Sorting by each match's first character
+ * position IN THE TITLE — not by artists.yml's file order — is what makes
+ * that "main act" the one actually billed first in the text, instead of
+ * whichever artist happens to sit earliest in the data file. This only
+ * mattered rarely with a 2-entry file; with ~230 entries, multi-headliner
+ * bills are common enough that file-order was producing an effectively
+ * arbitrary "main act" (found in review, 2026-09-17).
+ */
 export function matchArtists(titleRaw, artistsYml) {
   const matches = [];
   for (const entry of artistsYml) {
     const names = [entry.canonical, ...(entry.aliases ?? [])];
-    if (names.some((n) => titleRaw.includes(n))) {
-      matches.push(entry.canonical);
+    let bestIndex = null;
+    for (const n of names) {
+      const idx = findNameIndex(titleRaw, n);
+      if (idx !== null && (bestIndex === null || idx < bestIndex)) bestIndex = idx;
+    }
+    if (bestIndex !== null) {
+      matches.push({ canonical: entry.canonical, position: bestIndex });
     }
   }
-  return matches;
+  return matches.sort((a, b) => a.position - b.position).map((m) => m.canonical);
 }
 
 /** "2026/09/16(周三) 20:00(+0800)" or "2026/09/16 20:00(+0800)" -> { date, time } */
@@ -57,8 +132,7 @@ export function parseKktixDate(dateRaw) {
 /** "The Wall Live House / 台北市文山區羅斯福路四段200號B1" -> { venue, city } */
 export function parseKktixVenue(venueRaw) {
   const [venuePart, addressPart = ""] = venueRaw.split("/").map((s) => s.trim());
-  const city = CITY_NAMES.find((c) => addressPart.startsWith(c)) ?? null;
-  return { venue: venuePart, city };
+  return { venue: venuePart, city: cityFromAddress(addressPart) };
 }
 
 /** "2027/05/01 (六)  ~ 2027/05/02 (日) " or "2026/12/10 (四)" -> { date, time: null } */
@@ -71,7 +145,11 @@ export function parseTixcraftDate(dateRaw) {
 
 /** No address on tixcraft's listing page — look the venue name up in venues.yml instead. */
 export function parseTixcraftVenue(venueRaw, venuesYml) {
-  const entry = venuesYml.find((v) => venueRaw.includes(v.match));
+  // Normalize both sides so a venues.yml entry only needs one spelling —
+  // "台北小巨蛋" now also matches a source that renders it "臺北小巨蛋"
+  // without needing a second, parallel entry (see normalizeTraditionalChars).
+  const normalizedVenue = normalizeTraditionalChars(venueRaw);
+  const entry = venuesYml.find((v) => normalizedVenue.includes(normalizeTraditionalChars(v.match)));
   return { venue: venueRaw, city: entry?.city ?? null };
 }
 
@@ -109,8 +187,7 @@ export function parseIndievoxVenue(venueRaw, venuesYml) {
   const m = venueRaw.match(/^(.*?)[（(]([^）)]+)[）)]/);
   if (m) {
     const [, venue, address] = m;
-    const city = CITY_NAMES.find((c) => address.startsWith(c)) ?? null;
-    return { venue: venue.trim(), city };
+    return { venue: venue.trim(), city: cityFromAddress(address) };
   }
   return parseTixcraftVenue(venueRaw, venuesYml);
 }
@@ -230,7 +307,17 @@ export function normalize(rawEvent, artistsYml, venuesYml = []) {
   const { venue, city } = parseVenue(rawEvent.venue_raw ?? "", venuesYml);
   const { min, max } = priceFromTickets(rawEvent.tickets_raw ?? []);
   const { status, on_sale_at } = statusFromTickets(rawEvent.tickets_raw ?? [], dateParsed.date);
-  const originDefault = artistsYml.find((a) => a.canonical === headliners[0])?.tags_origin_default;
+  // Union across ALL recognized headliners, not just headliners[0] — a
+  // multi-artist bill (common now that artists.yml has ~230 entries) can mix
+  // origins, and picking only the first-billed act's origin silently dropped
+  // the others (found in review, 2026-09-17).
+  const originTags = [
+    ...new Set(
+      headliners
+        .map((h) => artistsYml.find((a) => a.canonical === h)?.tags_origin_default)
+        .filter(Boolean),
+    ),
+  ];
 
   return {
     event: {
@@ -247,7 +334,7 @@ export function normalize(rawEvent, artistsYml, venuesYml = []) {
       price_max: max,
       status,
       tags_type: guessTagsType(rawEvent.title_raw, headliners.length),
-      tags_origin: originDefault ? [originDefault] : [],
+      tags_origin: originTags,
       ticket_url: rawEvent.url,
       sources: [{ name: rawEvent.source_name, url: rawEvent.url, raw_id: rawEvent.raw_id }],
       first_seen_at: new Date().toISOString(),

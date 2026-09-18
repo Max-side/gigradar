@@ -133,6 +133,16 @@ type Event = {
 
 人工維護，FR-16/US-16 的「待整理歸位」動作就是往這個檔案加一筆。
 
+**2026-09-17 第一批補完**：五個來源都做完後，對照 342 筆待整理的原始標題手動判斷主秀，一次加了約 230 筆（草稿先寫進檔案讓人工用 `git diff` 審過，符合 D15「AI 可以先猜，但要人工確認」的精神，沒有自動 commit）。過程中兩個值得記住的教訓：
+1. **canonical 太短、剛好是常見英文字的子字串會誤觸發**——加的「IVE」（韓國女團）會比對到任何包含「LIVE」的標題（LIVE 這個字本身就包含 ive），36 筆完全不相關的場次被誤判有 IVE 參演，改用更完整的「IVE WORLD TOUR」才修好。新增 3-4 個字母內的短英文 canonical，一定要用 `matchArtists()` 對照現有的 `needs-review.json`/`events.json` 標題跑一次交叉檢查，不要只憑感覺覺得「應該不會撞」。
+2. **拓元／Ticket Plus 什麼票都賣**，`needs-review.json` 裡混了運動賽事、課程、展覽等非音樂項目（例如「Feedback Fascial Tools 筋膜刀專業技術課程」出現 13 次）——這些故意不加進 `artists.yml`（加了也不該被辨識成音樂演出），留在待整理頁用「忽略」按鈕手動清掉即可，不用改抓取邏輯去過濾，因為分類欄位在來源端本來就沒有給。
+
+**2026-09-17 補完後重新 review 抓到的第二組同類 bug**：canonical `ASCA` 是 `派偉俊` 別名 `Patrick Brasca` 的子字串（不分大小寫），跟上面的 IVE/LIVE 是同一種問題。修法是拿掉 `Patrick Brasca` 這個別名（現有資料沒有任何一筆真的需要它）。這次額外補了系統性防護：`scripts/normalize.test.mjs` 新增一個測試，把 `loadArtists()` 讀到的全部 canonical/alias 兩兩交叉比對子字串包含關係，有任何一組就直接測試失敗——之後新增資料如果不小心又造出一組這種組合，`npm test` 會直接抓到，不用等到真的抓資料、標題誤判才發現。
+
+`matchArtists()` 也修了一個排序問題：原本回傳順序是 `artists.yml` 的檔案宣告順序，不是標題裡真正的出場順序，而 `headliners[0]` 在別的地方被當「主秀藝人」用（排除選單顯示、`tags_origin` 預設值、`dedup.mjs` 算 id）。只有 2 筆資料時看不出問題，補完到 230 筆之後多主秀拼盤場次變常見，就會出現「主秀」其實只是資料檔裡宣告較早的藝人、跟標題裡誰先出場無關的情況。改成依照每個命中字串在標題裡的字元位置排序。連帶把 `normalize()` 的 `tags_origin` 從「只取 `headliners[0]` 一人的出身地區」改成「所有辨識到的 headliners 取聯集」，避免多主秀場次漏掉其他人的出身地區標籤。
+
+**同一批修完後跑真實 pipeline 驗證，當場又抓到第三個同類 bug**：canonical `FLOW`（真實存在的日本搖滾樂團）比對到 LE SSERAFIM《PUREFLOW》巡演標題裡的「PUREFLOW」。IVE/LIVE、ASCA/Brasca、FLOW/PUREFLOW 三次都是同一種形狀的問題，說明根因是 `matchArtists()` 用 `.includes()` 做純子字串比對這個機制本身，不是個別名字「運氣不好」。**改成從根本修**：`findNameIndex()`（`matchArtists()` 內部）對純 ASCII 英數字的 canonical/別名要求前後是字邊界（前後字元不能也是英文字母/數字），中文或混合字元的名字維持原本的純子字串比對——中文沒有空白分詞，字邊界概念套不上，而且中文名字被包在更長標題字串裡本來就是預期、正確的情況。修好後拿全部真實抓到的標題把所有 4 字以內的純英文 canonical/別名跑過一次交叉核對，確認不再有子字串誤判，且沒有把原本該匹配的場次漏掉。
+
 ### 3.3 UserPrefs（存在 localStorage + Gist，不進 repo）
 
 ```ts

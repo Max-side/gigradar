@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { normalize, parseIndievoxDate, parseIndievoxVenue, parseTicketPlusDate } from "./normalize.mjs";
+import { normalize, parseIndievoxDate, parseIndievoxVenue, parseTicketPlusDate, parseKktixVenue, loadArtists, matchArtists } from "./normalize.mjs";
 
 const artistsYml = [{ canonical: "深海系樂團", aliases: [], tags_origin_default: "本地" }];
 
@@ -107,6 +107,18 @@ test("parseIndievoxVenue: an unmapped bare venue name gets city: null, not a thr
   assert.deepEqual(result, { venue: "某個沒收錄過的展演空間", city: null });
 });
 
+test("parseKktixVenue: recognizes the traditional-character city variants (臺北/臺中/臺南/臺東), not just the common form", () => {
+  // Found via a real Ticket Plus run: its address field consistently uses
+  // "臺北市"/"臺中市"/"臺南市", not "台北市" — a plain CITY_NAMES.find(startsWith)
+  // silently produced city: null for ~40% of promoted events until this was
+  // caught. Must still output the common form so the rest of the app only
+  // ever sees one spelling.
+  assert.equal(parseKktixVenue("臺北大巨蛋 / 臺北市信義區忠孝東路四段515號").city, "台北");
+  assert.equal(parseKktixVenue("Legacy Taichung / 臺中市西屯區安和路117號").city, "台中");
+  assert.equal(parseKktixVenue("大臺南會展中心 / 臺南市歸仁區歸仁十二路3號").city, "台南");
+  assert.equal(parseKktixVenue("The Wall / 台北市文山區羅斯福路四段200號").city, "台北", "common form must still work");
+});
+
 test("parseTicketPlusDate: extracts the start date/time from concatenated range strings", () => {
   const result = parseTicketPlusDate("2027-01-09 ~ 2027-01-09 18:00 ~ 18:00");
   assert.deepEqual(result, { date: "2027-01-09", time: "18:00" });
@@ -163,4 +175,64 @@ test("normalize() end-to-end for an iNDIEVOX raw event", () => {
   assert.equal(event.time, "20:00");
   assert.equal(event.venue, "野地方 Wildlab");
   assert.equal(event.city, "台北");
+});
+
+test("matchArtists: headliners are ordered by position in the title, not by artists.yml file order", () => {
+  const yml = [
+    { canonical: "第二順位", aliases: [], tags_origin_default: "本地" },
+    { canonical: "第一順位", aliases: [], tags_origin_default: "歐美" },
+  ];
+  // "第二順位" is declared first in yml, but "第一順位" appears earlier in the title.
+  const headliners = matchArtists("第一順位 x 第二順位 聯合演出", yml);
+  assert.deepEqual(headliners, ["第一順位", "第二順位"]);
+});
+
+test("normalize(): tags_origin is the union of ALL recognized headliners' origins, not just the first", () => {
+  const yml = [
+    { canonical: "甲團", aliases: [], tags_origin_default: "本地" },
+    { canonical: "乙團", aliases: [], tags_origin_default: "歐美" },
+  ];
+  const raw = makeRaw({ title_raw: "甲團 x 乙團 聯合演出" });
+  const { event } = normalize(raw, yml, []);
+  assert.deepEqual(event.tags_origin, ["本地", "歐美"]);
+});
+
+test("matchArtists: a pure-Latin canonical requires a word boundary, not a bare substring match", () => {
+  const yml = [{ canonical: "FLOW", aliases: [], tags_origin_default: "日韓" }];
+  // Real bug found live in production data (2026-09-17): FLOW (a real J-rock
+  // band) matched inside LE SSERAFIM's unrelated "PUREFLOW" tour name.
+  assert.deepEqual(matchArtists("2026 LE SSERAFIM TOUR 'PUREFLOW' IN TAIPEI", yml), []);
+  assert.deepEqual(matchArtists('FLOW WORLD TOUR 2026 "NARUTO THE ROCK" Live in Taipei', yml), ["FLOW"]);
+});
+
+test("matchArtists: word-boundary check does not affect CJK/mixed-script names, which still match as plain substrings", () => {
+  const yml = [{ canonical: "小球", aliases: [], tags_origin_default: "本地" }];
+  assert.deepEqual(matchArtists("莊鵑瑛（小球）Live in 台北", yml), ["小球"]);
+});
+
+test("artists.yml has no case-insensitive substring collisions between any two canonical/alias names", () => {
+  // Regression guard for the real "IVE"/"LIVE" and "ASCA"/"Patrick Brasca"
+  // bugs found in review (2026-09-17): a short or common canonical/alias name
+  // that is a substring of another entry's name causes matchArtists() to
+  // silently over-match. This is a hard failure, not a warning — 0 such
+  // collisions currently exist in the live data, so any future addition that
+  // creates one should be caught here before it ships.
+  const artistsYml = loadArtists();
+  const names = [];
+  for (const entry of artistsYml) {
+    for (const n of [entry.canonical, ...(entry.aliases ?? [])]) {
+      names.push({ canonical: entry.canonical, name: n, lower: n.toLowerCase() });
+    }
+  }
+  const collisions = [];
+  for (const a of names) {
+    for (const b of names) {
+      if (a.canonical === b.canonical) continue;
+      if (a.name === b.name) continue;
+      if (b.lower.includes(a.lower)) {
+        collisions.push(`"${a.name}" (${a.canonical}) is a substring of "${b.name}" (${b.canonical})`);
+      }
+    }
+  }
+  assert.deepEqual(collisions, []);
 });

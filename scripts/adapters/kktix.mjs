@@ -1,6 +1,7 @@
 import * as cheerio from "cheerio";
 import { logProgress } from "../progress-log.mjs";
 import { withPage } from "../browser.mjs";
+import { normalizeTraditionalChars } from "../normalize.mjs";
 
 /**
  * KKTIX adapter (SPEC §5, §5.1, §5.2). Two fetch strategies, decided during
@@ -45,12 +46,22 @@ const ORG_PAGE_VENUES = ["thewalllivehouse", "kafka", "pipelivemusic", "emergeli
 // gets through. Event detail pages found via search are NOT behind this
 // challenge and still use plain fetch. See GIGRADAR-SPEC.md §5.1.
 
-// Match both the colloquial (台北/台中) and official (臺北/臺中) character
-// variants — real Taiwanese address data uses both, and a silent no-match
-// here takes the exact same code path as an intentional false-positive drop.
+// Real Taiwanese address data mixes the colloquial (台北/台中) and official
+// (臺北/臺中) characters — normalizeTraditionalChars (shared with
+// normalize.mjs's city/venue matching, see its own doc comment) collapses
+// both to one spelling before matching, instead of each call site
+// maintaining its own separate [台臺] regex (that drift is exactly how this
+// bug shipped in the first place — normalize.mjs's address matching and this
+// file's venue matching were fixed as two unrelated one-off patches).
 const SEARCH_VENUES = [
-  { keyword: "Legacy Taipei", match: (venue, address) => /^Legacy(\s|$)/.test(venue) && /^[台臺]北/.test(address) },
-  { keyword: "Legacy Taichung", match: (venue, address) => /^Legacy(\s|$)/.test(venue) && /^[台臺]中/.test(address) },
+  {
+    keyword: "Legacy Taipei",
+    match: (venue, address) => /^Legacy(\s|$)/.test(venue) && normalizeTraditionalChars(address).startsWith("台北"),
+  },
+  {
+    keyword: "Legacy Taichung",
+    match: (venue, address) => /^Legacy(\s|$)/.test(venue) && normalizeTraditionalChars(address).startsWith("台中"),
+  },
   { keyword: "Revolver", match: (venue) => /^Revolver/i.test(venue) },
   { keyword: "Clapper Studio", match: (venue) => /^Clapper/i.test(venue) },
 ];

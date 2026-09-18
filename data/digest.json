@@ -1,5 +1,12 @@
 {
-  "generated_at": "2026-09-17T07:14:26.216Z",
+  "generated_at": "2026-09-17T09:57:03.284Z",
   "added_ids": [],
-  "updated": []
+  "updated": [
+    {
+      "id": "a0ba83e23ee58a57",
+      "fields": [
+        "price_max"
+      ]
+    }
+  ]
 }
