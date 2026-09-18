@@ -756,10 +756,115 @@ textarea.field-input {
 @media (min-width: 1200px) {
   .app {
     max-width: 1180px;
+    padding-bottom: 0; /* the bottom nav becomes a left sidebar below — no bottom clearance needed */
+    padding-left: 96px;
+  }
+  .app--no-nav {
+    padding-left: 0; /* no sidebar on sub-pages that never had a bottom nav either */
   }
 
-  .bottom-nav,
-  .sheet {
-    max-width: 1180px;
+  /* Bottom tab bar -> left sidebar rail. A tab bar pinned to the bottom edge
+     is a mobile/touch convention — on a wide desktop viewport it reads as an
+     odd, disconnected strip you have to look away from the content to reach.
+     A fixed vertical rail keeps navigation one glance away regardless of how
+     tall the page is, which is the more familiar desktop pattern. */
+  .bottom-nav {
+    left: 0;
+    right: auto;
+    top: 0;
+    bottom: 0;
+    max-width: none;
+    width: 96px;
+    height: 100vh;
+    margin: 0;
+    flex-direction: column;
+    justify-content: center;
+    gap: 40px;
+    box-shadow: 2px 0 12px rgba(0, 0, 0, 0.05);
+  }
+  .nav-item {
+    flex: 0 0 auto;
+    width: 100%;
+  }
+  .fab {
+    position: absolute;
+    top: 32px;
+    left: 50%;
+    right: auto;
+    transform: translateX(-50%);
+  }
+
+  /* Typography: the same font sizes as mobile start to look small against
+     cards that are now 300-400px wide instead of filling a 480px column
+     edge-to-edge — a modest bump restores the original proportions instead
+     of just "the same page, but with more air around the text". Left at the
+     tablet tier (800-1199px) untouched since those cards are still close to
+     mobile width. */
+  .wordmark {
+    font-size: 22px;
+  }
+  .icon-btn,
+  .back-btn {
+    width: 40px;
+    height: 40px;
+  }
+  .page-title {
+    font-size: 34px;
+  }
+  .event-title {
+    font-size: 17px;
+  }
+  .event-date__day {
+    font-size: 29px;
+  }
+}
+
+/* Hover feedback for mouse/trackpad pointers only (hover:hover excludes
+   touchscreens) — without this guard, a tap on a touch device leaves the
+   ":hover" style "stuck" on until the user taps elsewhere, which is exactly
+   the kind of thing that makes a touch-first UI feel broken on a phone.
+   Applies at every width, not just the desktop breakpoint above — a mouse
+   plugged into a small window still benefits from it. */
+@media (hover: hover) and (pointer: fine) {
+  .event-card {
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+  }
+  .event-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(20, 10, 5, 0.12);
+  }
+
+  .icon-btn:hover,
+  .back-btn:hover,
+  .icon-circle:hover,
+  .pill-arrow:hover {
+    filter: brightness(0.94);
+  }
+
+  .chip:hover {
+    border-color: var(--border-strong);
+  }
+  .chip-selectable:hover {
+    filter: brightness(0.97);
+  }
+
+  .btn-primary:hover,
+  .btn-dark:hover {
+    filter: brightness(1.08);
+  }
+  .btn-ghost:hover {
+    background: var(--surface-2);
+  }
+
+  .nav-item:hover {
+    color: var(--coral-ink);
+  }
+
+  .sheet-option:hover {
+    background: var(--surface-2);
+  }
+
+  .fab:hover {
+    filter: brightness(1.06);
   }
 }

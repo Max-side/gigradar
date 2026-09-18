@@ -44,17 +44,19 @@ export function renderEventCard(event, { pinned = false, mode = "timeline", show
     mode === "favorites" && event.updated_fields?.length ? `<span class="badge-updated">已更新</span>` : "";
 
   let priceLine;
-  let ctaButton;
   if (event.status === "sold_out") {
     priceLine = `<div class="event-price muted">已售完</div>`;
-    ctaButton = "";
   } else {
     const priceText = event.price_min != null ? `NT$${event.price_min.toLocaleString()} up` : "票價未公布";
     const sourceNames = [...new Set(event.sources.map((s) => s.name))].join(" · ");
     priceLine = `<div class="event-price">${priceText} <span class="muted">· ${escapeHtml(sourceNames)}</span></div>`;
-    const ctaLabel = event.status === "on_sale" ? "購票" : "查看頁面";
-    ctaButton = `<button class="pill-arrow" aria-label="${ctaLabel}" data-ticket-url="${escapeHtml(event.ticket_url)}">${ARROW_ICON}</button>`;
   }
+  // Sold out still gets the link — the external page is still worth reaching
+  // (resale, waitlists, checking for a newly added date) even once the
+  // primary sale is over; only the label changes to stop implying you can
+  // still buy a ticket there.
+  const ctaLabel = event.status === "on_sale" ? "購票" : event.status === "sold_out" ? "已售完，查看頁面" : "查看頁面";
+  const ctaButton = `<button class="pill-arrow" aria-label="${ctaLabel}" data-ticket-url="${escapeHtml(event.ticket_url)}">${ARROW_ICON}</button>`;
 
   const actionButtons =
     mode === "favorites"
