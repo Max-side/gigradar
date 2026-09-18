@@ -121,8 +121,10 @@ export async function fetch(knownRawIds = new Set()) {
     for (const event of toFetch) {
       await sleep(DETAIL_REQUEST_DELAY_MS);
       const page = await newPage(browser);
+      const startedAt = Date.now();
       try {
         await page.goto(event.url, { waitUntil: "domcontentloaded", timeout: DETAIL_NAV_TIMEOUT_MS });
+        const gotoMs = Date.now() - startedAt;
         // #intro isn't in the DOM yet at domcontentloaded — this page renders
         // it client-side a beat later. Found by testing: an unguarded $eval
         // right after goto() failed for every single event (100% silent
@@ -130,9 +132,18 @@ export async function fetch(knownRawIds = new Set()) {
         // element that doesn't exist yet, unlike waitForSelector.
         await page.waitForSelector("#intro", { timeout: DETAIL_NAV_TIMEOUT_MS });
         event.price_text_raw = await page.$eval("#intro", (el) => el.innerHTML);
+        const totalMs = Date.now() - startedAt;
+        // 2026-09-18: diagnosing unexplained run-to-run slowness in this loop
+        // (measured 2min+ for just 20 events some runs, expected under 1min)
+        // — logging goto vs. total time per event to see whether it's spread
+        // evenly (real per-page slowness) or concentrated in a few outliers
+        // (near-timeout waitForSelector calls), instead of guessing.
+        if (totalMs > 5000) {
+          logProgress(`tixcraft: slow detail fetch for ${event.url} — goto ${gotoMs}ms, total ${totalMs}ms`);
+        }
       } catch (err) {
         priceFailures += 1;
-        logProgress(`tixcraft price fetch failed for ${event.url}: ${err.message}`);
+        logProgress(`tixcraft price fetch failed for ${event.url}: ${err.message} (after ${Date.now() - startedAt}ms)`);
       } finally {
         await page.close();
       }

@@ -39,7 +39,32 @@ export async function withBrowser(fn) {
   }
 }
 
-/** New tab in an existing browser (see withBrowser) — same UA/locale withPage uses. */
+/**
+ * New tab in an existing browser (see withBrowser) — same UA/locale withPage
+ * uses.
+ *
+ * 2026-09-18 investigation note: tixcraft's detail page routinely took 5-9s
+ * between domcontentloaded and its own "#intro" tab content actually
+ * appearing (measured directly — goto() itself was consistently under 1s, so
+ * the delay is real client-side rendering time, not network latency). Tried
+ * blocking images/fonts/media and known ad/analytics hosts via page.route()
+ * to speed that up — a small 5-event sample looked genuinely faster (~4s vs
+ * ~7-9s), but a full 79-event run right after came back SLOWER overall with
+ * far more 20s timeouts than any previous run (18/79 vs a handful before).
+ * The likely cause isn't the blocking itself: by that point this debugging
+ * session had made 150+ rapid detail-page requests to tixcraft within about
+ * half an hour (several full-adapter test runs back to back), which plausibly
+ * tripped some session-based bot-suspicion scoring on their end (the adapter
+ * comment above already documents this being an Akamai/PerimeterX-style JS
+ * challenge) — blocking ad/analytics requests is also a known bot-detection
+ * signal some sites specifically watch for, so it may have made things worse
+ * on top of that, or may be unrelated; the two effects couldn't be told apart
+ * from a single noisy run. Reverted rather than ship an unconfirmed change
+ * with a plausible downside — not worth risking degrading a real data source
+ * over a speed optimization that isn't verified to actually help. If
+ * revisited, retest on a fresh day/session with real gaps between runs so a
+ * single test isn't itself the confound.
+ */
 export async function newPage(browser) {
   return browser.newPage({ userAgent: UA, locale: "zh-TW" });
 }
