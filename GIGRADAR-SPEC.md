@@ -460,6 +460,17 @@ export function resolveVisibility(event, prefs, viewFilters) {
 
 `styles/tokens.css` 定義一份 CSS variables（對應設計稿 ComponentSpec 畫板的兩組 token），淺色寫在 `:root`，深色寫在 `@media (prefers-color-scheme: dark)`，不做手動切換開關（跟隨系統即可，符合 SRS 範圍）。所有畫面樣式一律用 `var(--xxx)`，不得寫死色碼，這樣新增畫面時深色模式是自動生效的，不需要每頁另外處理。
 
+### 9.1 響應式縮放（RWD，2026-09-18）
+
+GigRadar 原本完全 mobile-first（`.app{max-width:480px}`，SPEC 一開始就定調手機是主要裝置），在桌機瀏覽器上就是畫面中間一條窄窄的欄，兩側大量留白。Max 要求「除了手機版之外，用不同尺寸做 RWD 縮放」，做法：
+
+- **兩個新斷點**：`min-width:800px`（平板）與 `min-width:1200px`（桌機），`.app` 分別放寬到 820px／1180px。
+- **場次列表改用 CSS Grid，其他內容維持單欄**：這是這次改動的核心判斷——「哪裡值得變寬」跟「哪裡該維持窄欄」不一樣。`.event-list`（有 `.event-card` 直屬子元素的頁面，如收藏頁／搜尋結果的空狀態）跟 `.day-group`（時間表／新上架這種按日期分組的頁面）在寬螢幕下改成 `display:grid; grid-template-columns:repeat(auto-fit, minmax(340px,1fr))`，讓場次卡片並排顯示，而不是被迫排成一條長長的單欄。用 `:has(> .event-card)` 選擇器分辨「這個 `.event-list` 底下是不是直接放卡片」，因為同一個 class 在不同頁面的巢狀結構不一樣（時間表是 `.event-list > .day-group > .event-card`，收藏頁是 `.event-list > .event-card` 沒有 `.day-group` 這層）。`auto-fit`（不是 `auto-fill`）確保當某一天只有 1-2 場時，卡片會撐開填滿那一列，不會留下奇怪的空白欄位。
+- **新增 `.page-content` class**：表單、設定頁、待整理／已隱藏管理這種「本來就該維持單欄閱讀寬度」的內容，即使 `.app` 變寬了也不該跟著被拉伸成又寬又扁的輸入框——`.page-content{max-width:560px;margin:0 auto}` 蓋在這些頁面的內容容器上（`add.html` 的表單、`settings.html`／`review.html`／`hidden.html`／`search.html` 的內容區與標題列），讓它們在寬螢幕下維持置中、舒適的閱讀寬度，跟旁邊留白，而場次列表頁（時間表／新上架／收藏）的標題列刻意不套用這個 class，讓標題跟下面變寬的格線對齊。
+- **底部導覽列／彈出選單同步加寬**：`.bottom-nav`／`.sheet` 的 `max-width` 跟著 `.app` 的兩個斷點一起放寬，維持視覺上跟內容區同寬，不會變成寬螢幕裡一條突兀的窄導覽列。
+- 手機尺寸（<800px）完全不受影響，沒有新增任何 media query 影響到既有行為；800px 以下的邏輯就是原本的樣子。
+- 沒有改動任何 JS 邏輯或元件標記結構，純粹是 CSS media query + 少數幾個頁面補上 `class="page-content"`，`npm test` 58 個測試全過（本來就跟這次改動無關）。實測過 390px（手機）／834px（平板）／1280px（桌機）三種寬度下的時間表、新上架、收藏、搜尋、設定、待整理、已隱藏管理、手動新增場次八個頁面，都正確縮放且沒有 console 錯誤。
+
 ---
 
 ## 10. GitHub Actions 設定

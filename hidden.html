@@ -9,20 +9,22 @@
 <body>
 <div class="app app--no-nav" id="app">
 
-  <div class="page-header--with-back">
+  <div class="page-header--with-back page-content">
     <a class="back-btn" href="./index.html" aria-label="返回">
       <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg>
     </a>
     <div class="page-title page-title--sm">已隱藏管理</div>
   </div>
 
-  <div style="padding:6px 18px 4px;">
-    <span class="chip" id="rule-summary">共 0 條規則 · 隱藏 0 場未來場次</span>
-  </div>
+  <div class="page-content">
+    <div style="padding:6px 18px 4px;">
+      <span class="chip" id="rule-summary">共 0 條規則 · 隱藏 0 場未來場次</span>
+    </div>
 
-  <!-- Populated by src/app.js from localStorage exclude rules (M5). -->
-  <div style="display:flex;flex-direction:column;gap:12px;padding:16px 18px 18px;" id="rule-list" data-page="hidden">
-    <div style="padding:32px 4px;text-align:center;color:var(--muted);font-size:13px;">載入中…</div>
+    <!-- Populated by src/app.js from localStorage exclude rules (M5). -->
+    <div style="display:flex;flex-direction:column;gap:12px;padding:16px 18px 18px;" id="rule-list" data-page="hidden">
+      <div style="padding:32px 4px;text-align:center;color:var(--muted);font-size:13px;">載入中…</div>
+    </div>
   </div>
 
 </div>
