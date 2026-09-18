@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { normalize, parseIndievoxDate, parseIndievoxVenue, parseTicketPlusDate, parseKktixVenue, loadArtists, matchArtists, parsePriceFromText } from "./normalize.mjs";
+import { normalize, parseIndievoxDate, parseIndievoxVenue, parseTicketPlusDate, parseKktixVenue, loadArtists, matchArtists, parsePriceFromText, guessTagsType } from "./normalize.mjs";
 
 const artistsYml = [{ canonical: "深海系樂團", aliases: [], tags_origin_default: "本地" }];
 
@@ -303,4 +303,45 @@ test("normalize(): RUSH BALL and FNC BAND KINGDOM are also recognized festival b
   const yml2 = [{ canonical: "FNC BAND KINGDOM", aliases: [], tags_origin_default: "日韓" }];
   const raw2 = normalize(makeRaw({ title_raw: "2026 FNC BAND KINGDOM IN TAIPEI（11/7場次）" }), yml2, []);
   assert.deepEqual(raw2.event.tags_type, ["音樂祭"]);
+});
+
+test("findNameIndex/matchArtists: an ASCII canonical matches case-insensitively (real bug: 'Punk Strike' in one listing vs 'PUNK STRIKE' in another, same series)", () => {
+  const yml = [{ canonical: "Punk Strike", aliases: [], tags_origin_default: "本地" }];
+  assert.deepEqual(matchArtists("9.20(日) Punk Strike Warm-Up Party #6", yml), ["Punk Strike"]);
+  assert.deepEqual(matchArtists("9.27(日)PUNK STRIKE ： NEXT GENERATION", yml), ["Punk Strike"]);
+});
+
+test("guessTagsType: keyword matching is also case-insensitive (real bug: 'TOUR' in an all-caps title didn't match the ['Tour', '巡迴'] entry)", () => {
+  assert.deepEqual(guessTagsType("PERSONA LIVE TOUR 2026 - Resonance - 台北公演", 1), ["巡迴"]);
+});
+
+test("normalize(): non-music noise (sports tickets, courses, exhibitions, comedy, podcasts) is excluded outright, not sent to needs-review", () => {
+  const yml = [];
+  const cases = [
+    "2026福岡軟銀鷹例行賽門票",
+    "2026年第14屆亞洲(U18)青棒錦標賽",
+    "2026 摔角兄弟會-高雄場 Wrestling Brotherhood",
+    "Feedback Fascial Tools 筋膜刀專業技術課程(台北7/4-7/5)",
+    "CHIIKAWA DAYS 台北特展（一般全票）",
+    "Des Bishop Live in Taipei",
+    "2026 法白 13 週年 LIVE PODCAST SHOW｜建國派對",
+  ];
+  for (const title_raw of cases) {
+    const result = normalize(makeRaw({ title_raw }), yml, []);
+    assert.equal(result.excluded?.reason, "non_music_noise", `expected "${title_raw}" to be excluded`);
+  }
+});
+
+test("normalize(): a bare 'https://' title (a real FANSI GO scrape artifact) is excluded as junk, not sent to needs-review", () => {
+  const result = normalize(makeRaw({ title_raw: "https://" }), [], []);
+  assert.equal(result.excluded?.reason, "junk_title");
+});
+
+test("normalize(): a real music event is not caught by the noise filter just because it shares a word with a noise keyword", () => {
+  // 摔角 (wrestling) is noise, but a title merely mentioning "節" or "課" in
+  // an unrelated sense must not be excluded — sanity check the filter is
+  // keyed on the actual curated phrases, not single loose characters.
+  const yml = [{ canonical: "深海系樂團", aliases: [], tags_origin_default: "本地" }];
+  const result = normalize(makeRaw({ title_raw: "深海系樂團 音樂節 Live" }), yml, []);
+  assert.ok(result.event, "a real festival-titled event must not be excluded");
 });

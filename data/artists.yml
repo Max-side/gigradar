@@ -420,7 +420,9 @@
 - canonical: Cowman  # ⚠️ 短字/常見字
   aliases: []
   tags_origin_default: 本地
-- canonical: 琉璃花RURIKA
+- canonical: 琉璃花  # 原本寫「琉璃花RURIKA」，但真實標題裡 RURIKA 用的是粗體數學 Unicode
+  # 字元（𝐑𝐔𝐑𝐈𝐊𝐀），跟一般 ASCII "RURIKA" 不是同一個字元序列，比對不到；只留
+  # 中文部分反而比較穩，不用去猜對方會用哪種 Unicode 變體（2026-09-18 查證修正）。
   aliases: []
   tags_origin_default: 日韓
 
@@ -719,3 +721,160 @@
 - canonical: JUST YOU & WIN
   aliases: []
   tags_origin_default: 日韓
+
+# --- 2026-09-18 第二批：對照待整理清單裡「看得出是真的音樂演出，只是還沒被
+# 辨識」的場次逐筆開票券頁查證後補的（不是憑標題猜的）。同時也補了幾個確認
+#過真的是音樂祭/派對品牌名稱、只是標題本身沒寫「音樂祭」三個字的招牌名稱
+# （做法跟爛泥發芽/RUSH BALL/FNC BAND KINGDOM一樣，靠 TYPE_KEYWORDS 對應）。
+# 運動賽事/課程/展覽/蛋黃酥等非音樂雜訊故意沒有加——改成用 normalize.mjs 的
+# NOISE_KEYWORDS 在抓取階段直接排除，不會再進到待整理清單。
+
+# 凝聚力展演空間《西部地區懸賞公告 2.0》四團共演（查證：cohesionmusic.kktix.cc）
+- canonical: 島嶼都市浪漫譚
+  aliases: []
+  tags_origin_default: 本地
+- canonical: 火熱巨棒
+  aliases: []
+  tags_origin_default: 本地
+- canonical: Fear Tracker  # ⚠️ 常見英文詞組合
+  aliases: []
+  tags_origin_default: 本地
+- canonical: Bloody Sweety
+  aliases: []
+  tags_origin_default: 本地
+
+# ThERE 音樂展演空間《河馬玖狂｜四團共演》（查證：indievox 26_iv0410760）
+- canonical: Mazbar&Lalan
+  aliases: []
+  tags_origin_default: 本地
+- canonical: Monomania偏執狂
+  aliases: []
+  tags_origin_default: 本地
+- canonical: Hbun河紋
+  aliases: []
+  tags_origin_default: 本地
+- canonical: 臺玖巴樂隊
+  aliases: []
+  tags_origin_default: 本地
+
+# LIVE WAREHOUSE《交個朋友吧演出系列-番外》三團拼盤（查證：indievox 26_iv04218a6）
+- canonical: HeheHaha  # ⚠️ 常見疊字詞
+  aliases: []
+  tags_origin_default: 本地
+- canonical: 油漬艾莉
+  aliases: []
+  tags_origin_default: 本地
+- canonical: 秋山  # ⚠️ 常見人名/姓氏，2字短名
+  aliases: []
+  tags_origin_default: 本地
+
+# Wah SUB！014（查證：indievox 26_iv041925e，標題裡已經直接列出團名）
+- canonical: 龐氏騙局2
+  aliases: []
+  tags_origin_default: 本地
+- canonical: BB彈  # ⚠️ 短字
+  aliases: []
+  tags_origin_default: 本地
+- canonical: Shootup  # ⚠️ 常見英文詞
+  aliases: []
+  tags_origin_default: 本地
+- canonical: 頂加集會
+  aliases: []
+  tags_origin_default: 本地
+- canonical: 擊沈女孩
+  aliases: []
+  tags_origin_default: 本地
+
+# 個別藝人/團體（逐筆查證過票券頁，不是猜的）
+- canonical: Andr  # ⚠️ 短字，亞洲巡迴獨立藝人（查證：fujimusic.kktix.cc）
+  aliases: []
+  tags_origin_default: 海外
+- canonical: 存在証明NO FACE NO REaLiTY
+  aliases: []
+  tags_origin_default: 本地
+- canonical: 天使シグナル
+  aliases: []
+  tags_origin_default: 日韓
+- canonical: 白玖ウタノ
+  aliases: []
+  tags_origin_default: 日韓
+- canonical: 鄭小韻
+  aliases: []
+  tags_origin_default: 本地
+- canonical: 青虫aoi
+  aliases: []
+  tags_origin_default: 日韓
+- canonical: 日日春  # ⚠️ 常見詞組（也是日日春關懷互助協會的簡稱），3字仍有風險
+  aliases: []
+  tags_origin_default: 本地
+- canonical: 國語作業簿
+  aliases: []
+  tags_origin_default: 本地
+- canonical: TIPA西藏表演藝術學院
+  aliases: []
+  tags_origin_default: 海外
+- canonical: MISOGI  # ⚠️ 日文常見詞（禊），查證是日本樂團「真天地開闢集團」的巡迴名稱
+  aliases: []
+  tags_origin_default: 日韓
+- canonical: The Next Big Thing  # ⚠️ 常見英文詞組
+  aliases: []
+  tags_origin_default: 本地
+- canonical: Asia Artist Awards
+  aliases: []
+  tags_origin_default: 海外
+- canonical: PERSONA LIVE TOUR
+  aliases: []
+  tags_origin_default: 日韓
+- canonical: GMMTV FANDAY
+  aliases: []
+  tags_origin_default: 海外
+- canonical: hyper_link
+  aliases: ["Wrong Game"]
+  tags_origin_default: 本地
+
+# 確認過真的是音樂祭/派對品牌（TYPE_KEYWORDS 已對應好分類，見 normalize.mjs）
+- canonical: ASIA METAL FESTIVAL
+  aliases: []
+  tags_origin_default: 海外
+- canonical: 火球祭
+  aliases: []
+  tags_origin_default: 本地
+- canonical: 秋夜爵醒祭
+  aliases: []
+  tags_origin_default: 本地
+- canonical: X-Formosa
+  aliases: []
+  tags_origin_default: 本地
+- canonical: 囪擊音樂祭
+  aliases: []
+  tags_origin_default: 本地
+- canonical: Kaohsiung Park Music Festival
+  aliases: []
+  tags_origin_default: 本地
+- canonical: FRIENDS MEETING  # ⚠️ 常見英文詞組
+  aliases: []
+  tags_origin_default: 海外
+- canonical: 重型宇宙派對
+  aliases: []
+  tags_origin_default: 本地
+- canonical: Punk Strike
+  aliases: []
+  tags_origin_default: 本地
+- canonical: PHANTASMAGORIA
+  aliases: []
+  tags_origin_default: 本地
+- canonical: 西部地區懸賞公告
+  aliases: []
+  tags_origin_default: 本地
+- canonical: 河馬玖狂
+  aliases: []
+  tags_origin_default: 本地
+- canonical: 交個朋友吧
+  aliases: []
+  tags_origin_default: 本地
+- canonical: 戀愛即興曲
+  aliases: []
+  tags_origin_default: 本地
+- canonical: 隨性  # ⚠️ 常見詞（隨性/casual），查證是真的台語歌手（查證：nicetoseeyou.kktix.cc）
+  aliases: []
+  tags_origin_default: 本地

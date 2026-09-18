@@ -143,8 +143,12 @@ async function runAdapter(adapter, context) {
       const result = normalize(raw, artistsYml, venuesYml);
       if (result.event) {
         normalizedEvents.push(result.event);
-      } else {
+      } else if (result.needsReview) {
         needsReview.push(result.needsReview);
+      } else {
+        // result.excluded: confirmed non-music noise or a junk scrape —
+        // deliberately dropped, not written to events.json OR needs-review.json.
+        logProgress(`${adapter.name}: excluded (${result.excluded.reason}): ${result.excluded.title_raw}`);
       }
     } catch (err) {
       logProgress(`normalize() threw for raw_id=${raw.raw_id}: ${err.stack}`);

@@ -49,15 +49,28 @@ function cityFromAddress(address) {
 const TYPE_KEYWORDS = [
   ["音樂祭", "音樂祭"],
   ["音樂節", "音樂祭"],
+  ["Music Festival", "音樂祭"], // English equivalent of 音樂節/音樂祭, same gap this session found (Kaohsiung Park Music Festival)
   ["爛泥發芽", "音樂祭"],
   ["RUSH BALL", "音樂祭"],
   ["FNC BAND KINGDOM", "音樂祭"],
+  ["ASIA METAL FESTIVAL", "音樂祭"],
+  ["火球祭", "音樂祭"],
+  ["秋夜爵醒祭", "音樂祭"],
+  ["FRIENDS MEETING", "音樂祭"], // self-describes as "一場音樂節" in its own copy but the title itself never spells out 音樂祭/音樂節
   ["見面會", "見面會"],
+  ["FANDAY", "見面會"], // English equivalent (GMMTV FANDAY)
   ["簽唱會", "簽唱會"],
   ["音樂劇", "音樂劇"],
   ["巡迴", "巡迴"],
   ["Tour", "巡迴"],
   ["拼盤", "拼盤"],
+  ["電音派對", "拼盤"], // general synonym: an "electronic music party" title implies multiple acts/DJs, same shape as 拼盤
+  ["重型宇宙派對", "拼盤"],
+  ["Punk Strike", "拼盤"],
+  ["PHANTASMAGORIA", "拼盤"],
+  ["西部地區懸賞公告", "拼盤"], // themed multi-band bill brand, title never spells out band names or 拼盤
+  ["河馬玖狂", "拼盤"], // same shape: "四團共演" bill, brand name only in the title
+  ["交個朋友吧", "拼盤"],
   ["古典", "古典"],
 ];
 
@@ -72,6 +85,12 @@ export function loadVenues() {
 }
 
 const ASCII_WORD = /^[A-Za-z0-9]+$/;
+// Broader than ASCII_WORD: also true for a multi-word/punctuated Latin phrase
+// like "Punk Strike" or "RUSH BALL" (which ASCII_WORD rejects outright since
+// it contains a space) — anything in this class still gets case-insensitive
+// matching below, just not the word-boundary check (a several-word phrase is
+// already specific enough not to need one).
+const ASCII_ONLY = /^[\x00-\x7F]+$/;
 function isAsciiWordChar(ch) {
   return ch !== undefined && /[A-Za-z0-9]/.test(ch);
 }
@@ -92,13 +111,28 @@ function isAsciiWordChar(ch) {
  * comments already in artists.yml for known residual risk in that case).
  */
 function findNameIndex(titleRaw, name) {
-  if (!ASCII_WORD.test(name)) {
+  if (!ASCII_ONLY.test(name)) {
+    // CJK/mixed name: plain, case-sensitive substring match (unchanged).
     const idx = titleRaw.indexOf(name);
+    return idx === -1 ? null : idx;
+  }
+  // ASCII names match case-insensitively — real data has the same brand
+  // titlecased in one listing and all-caps in another (indieVOX's "Punk
+  // Strike Warm-Up Party #6" vs "PUNK STRIKE：NEXT GENERATION", both the same
+  // event series). toLowerCase() doesn't change string length for ASCII, so
+  // indices found on the lowercased strings still index correctly into the
+  // original titleRaw for the word-boundary check below.
+  const lowerTitle = titleRaw.toLowerCase();
+  const lowerName = name.toLowerCase();
+  if (!ASCII_WORD.test(name)) {
+    // A multi-word/punctuated phrase ("Punk Strike", "RUSH BALL") is already
+    // specific enough that it doesn't need the word-boundary check below.
+    const idx = lowerTitle.indexOf(lowerName);
     return idx === -1 ? null : idx;
   }
   let fromIndex = 0;
   while (true) {
-    const idx = titleRaw.indexOf(name, fromIndex);
+    const idx = lowerTitle.indexOf(lowerName, fromIndex);
     if (idx === -1) return null;
     if (!isAsciiWordChar(titleRaw[idx - 1]) && !isAsciiWordChar(titleRaw[idx + name.length])) {
       return idx;
@@ -225,8 +259,12 @@ export function parseTicketPlusDate(dateRaw) {
 }
 
 export function guessTagsType(titleRaw, headlinerCount) {
+  // Case-insensitive for the same reason as findNameIndex above — an
+  // all-caps "PERSONA LIVE TOUR" title otherwise silently misses the
+  // ["Tour", "巡迴"] entry that a titlecased "...Tour..." would hit.
+  const lowerTitle = titleRaw.toLowerCase();
   for (const [kw, tag] of TYPE_KEYWORDS) {
-    if (titleRaw.includes(kw)) return [tag];
+    if (lowerTitle.includes(kw.toLowerCase())) return [tag];
   }
   return headlinerCount > 1 ? ["拼盤"] : ["專場"];
 }
@@ -348,12 +386,50 @@ function statusFromTickets(ticketsRaw, eventDate) {
   return { status: eventDate >= taiwanTodayDateStr() ? "sold_out" : "ended", on_sale_at: null };
 }
 
+// 拓元/Ticket Plus sell whatever their organizers list, not just music —
+// 2026-09-18 review of the real needs-review queue found sports tickets
+// (棒球/籃球例行賽), a wrestling promotion, paid courses, a character-brand
+// exhibition, an unofficial shuttle-bus "ticket", and even a mooncake
+// pre-order sitting there right alongside real gigs. None of these will ever
+// gain a matching artists.yml entry (they're not artists), so left alone they
+// sit in needs-review forever — Max asked for these to not enter the data at
+// all, not just be hidden per-browser via the "忽略" button. Checked BEFORE
+// date parsing / artist matching so a malformed date on a noise item never
+// even reaches those checks. Curated by hand off observed real titles, same
+// style as TYPE_KEYWORDS/CITY_NAMES — expand this list as new noise shapes
+// turn up, don't try to make it "smart".
+const NOISE_KEYWORDS = [
+  // spectator sports (tixcraft/Ticket Plus sell season/single-game tickets)
+  "例行賽", "季後", "錦標賽", "主場賽事", "季票",
+  "摔角", // wrestling
+  "紋身藝術節", // tattoo art festival, not music
+  "返鄉專車", // unofficial fan shuttle-bus service riding on a real concert's name
+  "蛋黃酥", // a pastry pre-order
+  "筋膜刀", "專業技術課程", "詞曲創作教室", // paid courses/workshops, not performances
+  "chiikawa", // character-brand exhibition
+  "des bishop", // stand-up comedy, not music
+  "podcast", // podcast anniversary live shows — spoken word, not music
+];
+
+function isNonMusicNoise(titleRaw) {
+  const lower = titleRaw.toLowerCase();
+  return NOISE_KEYWORDS.some((kw) => lower.includes(kw.toLowerCase()));
+}
+
+// A handful of FANSI GO raw events come through with a bare "https://" as
+// their title — some organizer left the title field empty and the scraper
+// picked up a stray link instead. Not fixable data, not worth a "待整理"
+// slot either.
+function isJunkTitle(titleRaw) {
+  return /^https?:\/\/?\s*$/i.test(titleRaw.trim());
+}
+
 /**
  * @param {object} rawEvent - shape returned by an adapter's fetch()
  * @param {object[]} artistsYml - loadArtists() result
  * @param {object[]} venuesYml - loadVenues() result (only used for sources
  *   whose listing has no address to derive city from, e.g. tixcraft)
- * @returns {{ event: object }|{ needsReview: object }}
+ * @returns {{ event: object }|{ needsReview: object }|{ excluded: object }}
  */
 // FANSI GO's date_raw ("2026/09/19", no time) and venue_raw (bare name, no
 // address — every event needs the venues.yml fallback) are shaped exactly
@@ -371,6 +447,13 @@ const DATE_PARSERS = {
 const VENUE_PARSERS = { "拓元": parseTixcraftVenue, "iNDIEVOX": parseIndievoxVenue, "FANSI GO": parseTixcraftVenue };
 
 export function normalize(rawEvent, artistsYml, venuesYml = []) {
+  if (isJunkTitle(rawEvent.title_raw)) {
+    return { excluded: { raw_id: rawEvent.raw_id, title_raw: rawEvent.title_raw, reason: "junk_title" } };
+  }
+  if (isNonMusicNoise(rawEvent.title_raw)) {
+    return { excluded: { raw_id: rawEvent.raw_id, title_raw: rawEvent.title_raw, reason: "non_music_noise" } };
+  }
+
   const parseDate = DATE_PARSERS[rawEvent.source_name] ?? parseKktixDate;
   const parseVenue = VENUE_PARSERS[rawEvent.source_name] ?? parseKktixVenue;
   const dateParsed = parseDate(rawEvent.date_raw);
