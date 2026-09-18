@@ -280,3 +280,27 @@ test("normalize(): falls back to parsePriceFromText's price_text_raw when ticket
   assert.equal(event.price_min, 800);
   assert.equal(event.price_max, 1200);
 });
+
+test("normalize(): tags_type recognizes 音樂節 as a festival synonym, not just 音樂祭", () => {
+  const yml = [{ canonical: "李芳旭", aliases: [], tags_origin_default: "本地" }];
+  const raw = makeRaw({ title_raw: "2026臺北爵士音樂節 感爵夜現場｜李芳旭三重奏" });
+  const { event } = normalize(raw, yml, []);
+  assert.deepEqual(event.tags_type, ["音樂祭"]);
+});
+
+test("normalize(): a branded festival name in the title is tagged 音樂祭 even with a single recognized headliner (real bug: 爛泥發芽10週年 was tagged 專場)", () => {
+  const yml = [{ canonical: "爛泥發芽", aliases: [], tags_origin_default: "本地" }];
+  const raw = makeRaw({ title_raw: "爛泥發芽10週年" });
+  const { event } = normalize(raw, yml, []);
+  assert.deepEqual(event.tags_type, ["音樂祭"]);
+});
+
+test("normalize(): RUSH BALL and FNC BAND KINGDOM are also recognized festival brands", () => {
+  const yml = [{ canonical: "RUSH BALL", aliases: [], tags_origin_default: "日韓" }];
+  const raw1 = normalize(makeRaw({ title_raw: "RUSH BALL 2026 in Taipei & Taichung on the ROAD(台北場)" }), yml, []);
+  assert.deepEqual(raw1.event.tags_type, ["音樂祭"]);
+
+  const yml2 = [{ canonical: "FNC BAND KINGDOM", aliases: [], tags_origin_default: "日韓" }];
+  const raw2 = normalize(makeRaw({ title_raw: "2026 FNC BAND KINGDOM IN TAIPEI（11/7場次）" }), yml2, []);
+  assert.deepEqual(raw2.event.tags_type, ["音樂祭"]);
+});

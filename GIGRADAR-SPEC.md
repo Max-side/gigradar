@@ -144,6 +144,8 @@ type Event = {
 
 **同一批修完後跑真實 pipeline 驗證，當場又抓到第三個同類 bug**：canonical `FLOW`（真實存在的日本搖滾樂團）比對到 LE SSERAFIM《PUREFLOW》巡演標題裡的「PUREFLOW」。IVE/LIVE、ASCA/Brasca、FLOW/PUREFLOW 三次都是同一種形狀的問題，說明根因是 `matchArtists()` 用 `.includes()` 做純子字串比對這個機制本身，不是個別名字「運氣不好」。**改成從根本修**：`findNameIndex()`（`matchArtists()` 內部）對純 ASCII 英數字的 canonical/別名要求前後是字邊界（前後字元不能也是英文字母/數字），中文或混合字元的名字維持原本的純子字串比對——中文沒有空白分詞，字邊界概念套不上，而且中文名字被包在更長標題字串裡本來就是預期、正確的情況。修好後拿全部真實抓到的標題把所有 4 字以內的純英文 canonical/別名跑過一次交叉核對，確認不再有子字串誤判，且沒有把原本該匹配的場次漏掉。
 
+**2026-09-18 又抓到一種新的資料品質問題**：`爛泥發芽`、`RUSH BALL`、`FNC BAND KINGDOM` 這三個 canonical 其實是音樂祭/聯合公演的品牌名稱，不是單一演出者——當初補完那 230 筆時被誤判成藝人加了進去，導致 `guessTagsType()` 只認出一個「演出者」、標題文字裡又沒有「音樂祭」字樣，就被分類成「專場」而不是「音樂祭」。順便發現 `scripts/normalize.mjs` 的 `TYPE_KEYWORDS` 只認「音樂祭」，沒認「音樂節」這個一樣常見的同義詞（真實案例：「2026臺北爵士音樂節」也被誤判）。修法是在 `TYPE_KEYWORDS` 補上「音樂節」同義詞，以及這三個確認過的品牌名稱關鍵字，讓 `guessTagsType()` 不管標題怎麼寫都能正確辨識——這比把這三個名字從 `artists.yml` 移除更務實：它們本來就是使用者會拿來搜尋/辨識這場活動的字串，拿掉反而會讓這幾場變成待整理。因為增量抓取（§4.2）已經上線，已辨識過的場次不會自動重新分類，這次額外寫了一次性腳本直接對現有 `data/events.json` 重新跑 `guessTagsType()` 修正 7 筆受影響資料。
+
 ### 3.3 UserPrefs（存在 localStorage + Gist，不進 repo）
 
 ```ts

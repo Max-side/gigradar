@@ -21,7 +21,7 @@ const X_ICON = `<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stro
  * adds a "距今 N 天" line (favorites.html, US-07) instead of the exclude menu.
  */
 export function renderEventCard(event, { pinned = false, mode = "timeline", showNewBadge = false } = {}) {
-  const { day, weekday } = splitDate(event.date);
+  const { day, month, weekday } = splitDate(event.date);
 
   const tags = [
     ...event.tags_type.map((t) => `<span class="tag-perf">${escapeHtml(t)}</span>`),
@@ -67,7 +67,7 @@ export function renderEventCard(event, { pinned = false, mode = "timeline", show
   return `
     <div class="event-card${event.status === "sold_out" ? " event-card--muted" : ""}" data-event-id="${escapeHtml(event.id)}">
       <div class="event-date">
-        <div class="event-date__day">${day}</div>
+        <div class="event-date__day">${month}/${day}</div>
         <div class="event-date__weekday">${weekday}</div>
       </div>
       <div class="event-body">

@@ -35,8 +35,23 @@ function cityFromAddress(address) {
   return CITY_NAMES.find((c) => withoutPostalCode.startsWith(c)) ?? null;
 }
 
+// 2026-09-18: found via a real event ("爛泥發芽10週年" tagged 專場 instead of
+// 音樂祭) that this list had two gaps, both worth fixing at the root instead
+// of one-off patching each title: (1) "音樂節" is a real, commonly-used
+// synonym for "festival" that only "音樂祭" was covering — 臺北爵士音樂節 was
+// silently missing it; (2) some real festivals are branded/named events
+// whose own title never spells out "音樂祭"/"音樂節" at all (爛泥發芽, 拓元's
+// RUSH BALL, FNC Entertainment's multi-band FNC BAND KINGDOM showcase) — for
+// these, matching the brand name itself is the only way to catch them. All
+// three were previously in data/artists.yml as if they were solo-performer
+// canonicals, which is what fed them into the headliners[0]-based "專場"
+// fallback in the first place.
 const TYPE_KEYWORDS = [
   ["音樂祭", "音樂祭"],
+  ["音樂節", "音樂祭"],
+  ["爛泥發芽", "音樂祭"],
+  ["RUSH BALL", "音樂祭"],
+  ["FNC BAND KINGDOM", "音樂祭"],
   ["見面會", "見面會"],
   ["簽唱會", "簽唱會"],
   ["音樂劇", "音樂劇"],
@@ -209,7 +224,7 @@ export function parseTicketPlusDate(dateRaw) {
   return { date: `${y}-${mo}-${d}`, time: timeMatch?.[1] ?? null };
 }
 
-function guessTagsType(titleRaw, headlinerCount) {
+export function guessTagsType(titleRaw, headlinerCount) {
   for (const [kw, tag] of TYPE_KEYWORDS) {
     if (titleRaw.includes(kw)) return [tag];
   }

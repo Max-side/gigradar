@@ -2,11 +2,12 @@
 
 const WEEKDAYS = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];
 
-/** "2026-10-15" -> { day: "15", weekday: "THU", month: "10月15日" } */
+/** "2026-10-15" -> { day: "15", month: "10", weekday: "THU", groupLabel: "10月15日" } */
 export function splitDate(isoDate) {
   const d = new Date(isoDate + "T00:00:00");
   return {
     day: String(d.getDate()).padStart(2, "0"),
+    month: String(d.getMonth() + 1),
     weekday: WEEKDAYS[d.getDay()],
     groupLabel: `${d.getMonth() + 1}月${d.getDate()}日`,
   };
