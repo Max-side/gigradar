@@ -1,13 +1,24 @@
 import * as cheerio from "cheerio";
 import { logProgress } from "../progress-log.mjs";
+import { withBrowser, newPage } from "../browser.mjs";
 
 /**
- * 拓元 tixcraft adapter (SPEC §5.3). Listing page only — the detail pages
- * (where price lives) sit behind a JS-challenge anti-bot wall that a plain
- * fetch() can't pass (real browser test showed content, but that's out of
- * budget for a GitHub Actions job — see SPEC D16). So every event from this
- * source has price_min/max = null and status = "announced"; the ticket_url
- * still takes the user straight to the real page to check.
+ * 拓元 tixcraft adapter (SPEC §5.3).
+ *
+ * Listing page: plain fetch works fine (WAF only needs a real browser UA
+ * string, see UA below). Detail pages (where price lives, as prose in the
+ * "節目介紹" tab) sit behind a real JS-challenge anti-bot wall that a plain
+ * fetch() can't pass at all — confirmed 2026-09-18, a plain fetch with the
+ * same UA/headers gets 401 {"response":"identify"}.
+ *
+ * D16 (2026-09-15) originally decided to skip detail pages entirely rather
+ * than pay Playwright's cost on every GitHub Actions run. That constraint is
+ * gone since S5 (2026-09-17) made fetching manual/local-only — Playwright
+ * was already added as a dependency for FANSI GO/KKTIX's search anyway — so
+ * this now fetches each event's detail page for price text too. Real cost:
+ * one Playwright page navigation per event (~80-140 events some runs), which
+ * meaningfully lengthens the manual "重新抓取" button's run time — see
+ * HANDOFF.md for the measured before/after.
  */
 
 export const name = "拓元";
@@ -18,6 +29,16 @@ export const priority = 2;
 const UA =
   "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36";
 const REQUEST_TIMEOUT_MS = 30000;
+// Shorter than the plain-fetch retry delay above — a full Playwright page
+// navigation already takes real wall-clock time on its own, so this is on
+// top of that, not instead of it. Still real spacing between requests
+// (NFR-04), just not doubling up on top of navigation latency.
+const DETAIL_REQUEST_DELAY_MS = 800;
+const DETAIL_NAV_TIMEOUT_MS = 20000;
+
+function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
 
 async function fetchOnce(url, referer) {
   const controller = new AbortController();
@@ -72,9 +93,36 @@ export async function fetch() {
     const url = href.startsWith("http") ? href : `https://tixcraft.com${href}`;
     const raw_id = href.split("/").filter(Boolean).pop();
 
-    results.push({ raw_id, url, title_raw, date_raw, venue_raw, tickets_raw: [], source_name: name });
+    results.push({ raw_id, url, title_raw, date_raw, venue_raw, tickets_raw: [], price_text_raw: "", source_name: name });
   });
 
   logProgress(`tixcraft: ${results.length} unique upcoming event(s) listed`);
+
+  let priceFailures = 0;
+  await withBrowser(async (browser) => {
+    for (const event of results) {
+      await sleep(DETAIL_REQUEST_DELAY_MS);
+      const page = await newPage(browser);
+      try {
+        await page.goto(event.url, { waitUntil: "domcontentloaded", timeout: DETAIL_NAV_TIMEOUT_MS });
+        // #intro isn't in the DOM yet at domcontentloaded — this page renders
+        // it client-side a beat later. Found by testing: an unguarded $eval
+        // right after goto() failed for every single event (100% silent
+        // miss, not a partial/expected gap) since $eval doesn't wait for an
+        // element that doesn't exist yet, unlike waitForSelector.
+        await page.waitForSelector("#intro", { timeout: DETAIL_NAV_TIMEOUT_MS });
+        event.price_text_raw = await page.$eval("#intro", (el) => el.innerHTML);
+      } catch (err) {
+        priceFailures += 1;
+        logProgress(`tixcraft price fetch failed for ${event.url}: ${err.message}`);
+      } finally {
+        await page.close();
+      }
+    }
+  });
+  if (priceFailures > 0) {
+    logProgress(`tixcraft: price detail fetch failed for ${priceFailures}/${results.length} event(s)`);
+  }
+
   return results;
 }

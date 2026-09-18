@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-18T02:51:15.623Z",
+  "generated_at": "2026-09-18T03:47:00.082Z",
   "events": [
     {
       "title_raw": "「跨校聯誼Vol.2」九月高校 / 午後幽靈 / Sunday Something",
@@ -196,6 +196,47 @@
       ]
     },
     {
+      "title_raw": "【9/25特典加購】THE RAMPAGE PREMIUM LIVE EVENT 2026 in TAIPEI",
+      "headliners": [
+        "THE RAMPAGE"
+      ],
+      "lineup": [
+        "THE RAMPAGE"
+      ],
+      "is_festival": false,
+      "venue": "Legacy TERA",
+      "city": "台北",
+      "date": "2026-09-25",
+      "time": "18:00",
+      "on_sale_at": null,
+      "price_min": 2000,
+      "price_max": 2000,
+      "status": "sold_out",
+      "tags_type": [
+        "專場"
+      ],
+      "tags_origin": [
+        "日韓"
+      ],
+      "ticket_url": "https://ldh.kktix.cc/events/therampage-live-2026-3",
+      "sources": [
+        {
+          "name": "KKTIX",
+          "url": "https://ldh.kktix.cc/events/therampage-live-2026-3",
+          "raw_id": "therampage-live-2026-3"
+        }
+      ],
+      "first_seen_at": "2026-09-17T07:41:11.996Z",
+      "updated_at": "2026-09-18T03:47:00.081Z",
+      "id": "9bef0b055525cadf",
+      "merged_ids": [
+        "9bef0b055525cadf"
+      ],
+      "updated_fields": [
+        "price_max"
+      ]
+    },
+    {
       "title_raw": "【特典加購】FANTASTICS LIVE 2026 in TAIPEI \"放大絶\"",
       "headliners": [
         "FANTASTICS"
@@ -226,11 +267,49 @@
           "raw_id": "fantastics-live-2026-2"
         }
       ],
-      "first_seen_at": "2026-09-17T07:41:11.996Z",
-      "updated_at": "2026-09-18T02:09:24.637Z",
+      "first_seen_at": "2026-09-18T03:29:21.584Z",
+      "updated_at": "2026-09-18T03:29:21.584Z",
       "id": "f5980594fdd14fda",
       "merged_ids": [
         "f5980594fdd14fda"
+      ]
+    },
+    {
+      "title_raw": "【晚場】HANAZAWA KANA LIVE 2026 KANAMEGURI in TAIPEI",
+      "headliners": [
+        "HANAZAWA KANA"
+      ],
+      "lineup": [
+        "HANAZAWA KANA"
+      ],
+      "is_festival": false,
+      "venue": "Legacy TAIPEI",
+      "city": "台北",
+      "date": "2026-09-26",
+      "time": "18:30",
+      "on_sale_at": null,
+      "price_min": 1490,
+      "price_max": 2980,
+      "status": "on_sale",
+      "tags_type": [
+        "專場"
+      ],
+      "tags_origin": [
+        "日韓"
+      ],
+      "ticket_url": "https://welcome-music.kktix.cc/events/11da7a3a",
+      "sources": [
+        {
+          "name": "KKTIX",
+          "url": "https://welcome-music.kktix.cc/events/11da7a3a",
+          "raw_id": "11da7a3a"
+        }
+      ],
+      "first_seen_at": "2026-09-18T03:11:34.673Z",
+      "updated_at": "2026-09-18T03:11:34.673Z",
+      "id": "71810cf9bd0d2d17-evening",
+      "merged_ids": [
+        "71810cf9bd0d2d17-evening"
       ]
     },
     {
@@ -264,54 +343,11 @@
           "raw_id": "0bc26b19"
         }
       ],
-      "first_seen_at": "2026-09-18T02:03:01.551Z",
-      "updated_at": "2026-09-18T02:03:01.551Z",
-      "id": "71810cf9bd0d2d17",
+      "first_seen_at": "2026-09-18T03:11:34.672Z",
+      "updated_at": "2026-09-18T03:11:34.672Z",
+      "id": "71810cf9bd0d2d17-day",
       "merged_ids": [
-        "71810cf9bd0d2d17"
-      ]
-    },
-    {
-      "title_raw": "【9/25售票頁】THE RAMPAGE PREMIUM LIVE EVENT 2026 in TAIPEI",
-      "headliners": [
-        "THE RAMPAGE"
-      ],
-      "lineup": [
-        "THE RAMPAGE"
-      ],
-      "is_festival": false,
-      "venue": "Legacy TERA",
-      "city": "台北",
-      "date": "2026-09-25",
-      "time": "18:00",
-      "on_sale_at": null,
-      "price_min": 2000,
-      "price_max": 3480,
-      "status": "on_sale",
-      "tags_type": [
-        "專場"
-      ],
-      "tags_origin": [
-        "日韓"
-      ],
-      "ticket_url": "https://ldh.kktix.cc/events/therampage-live-2026-1",
-      "sources": [
-        {
-          "name": "KKTIX",
-          "url": "https://ldh.kktix.cc/events/therampage-live-2026-1",
-          "raw_id": "therampage-live-2026-1"
-        },
-        {
-          "name": "KKTIX",
-          "url": "https://ldh.kktix.cc/events/therampage-live-2026-3",
-          "raw_id": "therampage-live-2026-3"
-        }
-      ],
-      "first_seen_at": "2026-09-17T07:41:11.996Z",
-      "updated_at": "2026-09-18T02:09:24.637Z",
-      "id": "9bef0b055525cadf",
-      "merged_ids": [
-        "9bef0b055525cadf"
+        "71810cf9bd0d2d17-day"
       ]
     },
     {
@@ -426,44 +462,6 @@
       "id": "e63300986c817b29",
       "merged_ids": [
         "e63300986c817b29"
-      ]
-    },
-    {
-      "title_raw": "【第一場】伊波杏樹 ASIA FAN MEETING TOUR 台北站",
-      "headliners": [
-        "伊波杏樹"
-      ],
-      "lineup": [
-        "伊波杏樹"
-      ],
-      "is_festival": false,
-      "venue": "Clapper Studio",
-      "city": "台北",
-      "date": "2026-11-21",
-      "time": "14:00",
-      "on_sale_at": null,
-      "price_min": 2780,
-      "price_max": 2780,
-      "status": "on_sale",
-      "tags_type": [
-        "專場"
-      ],
-      "tags_origin": [
-        "日韓"
-      ],
-      "ticket_url": "https://atc-twn.kktix.cc/events/427dbf2a",
-      "sources": [
-        {
-          "name": "KKTIX",
-          "url": "https://atc-twn.kktix.cc/events/427dbf2a",
-          "raw_id": "427dbf2a"
-        }
-      ],
-      "first_seen_at": "2026-09-17T07:41:11.998Z",
-      "updated_at": "2026-09-17T07:41:11.998Z",
-      "id": "1097cd8282efa3c0",
-      "merged_ids": [
-        "1097cd8282efa3c0"
       ]
     },
     {
@@ -583,6 +581,44 @@
       "id": "8bc06b8977845e38",
       "merged_ids": [
         "8bc06b8977845e38"
+      ]
+    },
+    {
+      "title_raw": "【第一場】伊波杏樹 ASIA FAN MEETING TOUR 台北站",
+      "headliners": [
+        "伊波杏樹"
+      ],
+      "lineup": [
+        "伊波杏樹"
+      ],
+      "is_festival": false,
+      "venue": "Clapper Studio",
+      "city": "台北",
+      "date": "2026-11-21",
+      "time": "14:00",
+      "on_sale_at": null,
+      "price_min": 2780,
+      "price_max": 2780,
+      "status": "on_sale",
+      "tags_type": [
+        "專場"
+      ],
+      "tags_origin": [
+        "日韓"
+      ],
+      "ticket_url": "https://atc-twn.kktix.cc/events/427dbf2a",
+      "sources": [
+        {
+          "name": "KKTIX",
+          "url": "https://atc-twn.kktix.cc/events/427dbf2a",
+          "raw_id": "427dbf2a"
+        }
+      ],
+      "first_seen_at": "2026-09-17T07:41:11.998Z",
+      "updated_at": "2026-09-17T07:41:11.998Z",
+      "id": "1097cd8282efa3c0",
+      "merged_ids": [
+        "1097cd8282efa3c0"
       ]
     },
     {
@@ -751,8 +787,8 @@
       "date": "2027-05-01",
       "time": null,
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 2990,
+      "price_max": 7980,
       "status": "announced",
       "tags_type": [
         "巡迴"
@@ -769,10 +805,14 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:41:12.883Z",
-      "updated_at": "2026-09-17T07:41:12.883Z",
+      "updated_at": "2026-09-18T03:47:00.081Z",
       "id": "c9185f36263f1745",
       "merged_ids": [
         "c9185f36263f1745"
+      ],
+      "updated_fields": [
+        "price_min",
+        "price_max"
       ]
     },
     {
@@ -789,8 +829,8 @@
       "date": "2027-01-30",
       "time": null,
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 2980,
+      "price_max": 8680,
       "status": "announced",
       "tags_type": [
         "專場"
@@ -807,10 +847,14 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:41:12.883Z",
-      "updated_at": "2026-09-17T07:41:12.883Z",
+      "updated_at": "2026-09-18T03:47:00.081Z",
       "id": "cd10c9ad1b08aca0",
       "merged_ids": [
         "cd10c9ad1b08aca0"
+      ],
+      "updated_fields": [
+        "price_min",
+        "price_max"
       ]
     },
     {
@@ -827,8 +871,8 @@
       "date": "2027-01-24",
       "time": null,
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 1900,
+      "price_max": 9700,
       "status": "announced",
       "tags_type": [
         "專場"
@@ -845,10 +889,14 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:41:12.883Z",
-      "updated_at": "2026-09-17T07:41:12.883Z",
+      "updated_at": "2026-09-18T03:47:00.081Z",
       "id": "0763a0a016c36a0b",
       "merged_ids": [
         "0763a0a016c36a0b"
+      ],
+      "updated_fields": [
+        "price_min",
+        "price_max"
       ]
     },
     {
@@ -865,8 +913,8 @@
       "date": "2027-01-15",
       "time": null,
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 1650,
+      "price_max": 5500,
       "status": "announced",
       "tags_type": [
         "專場"
@@ -883,10 +931,14 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:41:12.883Z",
-      "updated_at": "2026-09-17T07:41:12.883Z",
+      "updated_at": "2026-09-18T03:47:00.081Z",
       "id": "68450ba9999de032",
       "merged_ids": [
         "68450ba9999de032"
+      ],
+      "updated_fields": [
+        "price_min",
+        "price_max"
       ]
     },
     {
@@ -903,8 +955,8 @@
       "date": "2027-01-08",
       "time": null,
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 6980,
+      "price_max": 6980,
       "status": "announced",
       "tags_type": [
         "專場"
@@ -921,10 +973,14 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:41:12.884Z",
-      "updated_at": "2026-09-17T07:41:12.884Z",
+      "updated_at": "2026-09-18T03:47:00.081Z",
       "id": "d453cdb6cc53e4e9",
       "merged_ids": [
         "d453cdb6cc53e4e9"
+      ],
+      "updated_fields": [
+        "price_min",
+        "price_max"
       ]
     },
     {
@@ -943,8 +999,8 @@
       "date": "2026-12-26",
       "time": null,
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 4580,
+      "price_max": 4580,
       "status": "announced",
       "tags_type": [
         "巡迴"
@@ -961,10 +1017,14 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:41:12.884Z",
-      "updated_at": "2026-09-17T07:41:12.884Z",
+      "updated_at": "2026-09-18T03:47:00.081Z",
       "id": "016f56da2cbf9f15",
       "merged_ids": [
         "016f56da2cbf9f15"
+      ],
+      "updated_fields": [
+        "price_min",
+        "price_max"
       ]
     },
     {
@@ -981,8 +1041,8 @@
       "date": "2026-12-12",
       "time": null,
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 6880,
+      "price_max": 6880,
       "status": "announced",
       "tags_type": [
         "巡迴"
@@ -999,10 +1059,14 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:41:12.884Z",
-      "updated_at": "2026-09-17T07:41:12.884Z",
+      "updated_at": "2026-09-18T03:47:00.081Z",
       "id": "05ec5fee324ec4c9",
       "merged_ids": [
         "05ec5fee324ec4c9"
+      ],
+      "updated_fields": [
+        "price_min",
+        "price_max"
       ]
     },
     {
@@ -1057,8 +1121,8 @@
       "date": "2026-12-10",
       "time": null,
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 1880,
+      "price_max": 3680,
       "status": "announced",
       "tags_type": [
         "專場"
@@ -1075,10 +1139,14 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:41:12.884Z",
-      "updated_at": "2026-09-17T07:41:12.884Z",
+      "updated_at": "2026-09-18T03:47:00.081Z",
       "id": "be4d963e84e597c3",
       "merged_ids": [
         "be4d963e84e597c3"
+      ],
+      "updated_fields": [
+        "price_min",
+        "price_max"
       ]
     },
     {
@@ -1095,8 +1163,8 @@
       "date": "2026-12-08",
       "time": null,
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 1440,
+      "price_max": 3680,
       "status": "announced",
       "tags_type": [
         "巡迴"
@@ -1113,10 +1181,14 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:41:12.884Z",
-      "updated_at": "2026-09-17T07:41:12.884Z",
+      "updated_at": "2026-09-18T03:47:00.081Z",
       "id": "5ea63dd133f8446a",
       "merged_ids": [
         "5ea63dd133f8446a"
+      ],
+      "updated_fields": [
+        "price_min",
+        "price_max"
       ]
     },
     {
@@ -1133,8 +1205,8 @@
       "date": "2026-12-07",
       "time": null,
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 2290,
+      "price_max": 7500,
       "status": "announced",
       "tags_type": [
         "巡迴"
@@ -1151,10 +1223,14 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:41:12.884Z",
-      "updated_at": "2026-09-17T07:41:12.884Z",
+      "updated_at": "2026-09-18T03:47:00.081Z",
       "id": "83781779ceaa721c",
       "merged_ids": [
         "83781779ceaa721c"
+      ],
+      "updated_fields": [
+        "price_min",
+        "price_max"
       ]
     },
     {
@@ -1171,8 +1247,8 @@
       "date": "2026-12-05",
       "time": null,
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 1680,
+      "price_max": 1680,
       "status": "announced",
       "tags_type": [
         "巡迴"
@@ -1189,10 +1265,14 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:41:12.884Z",
-      "updated_at": "2026-09-17T07:41:12.884Z",
+      "updated_at": "2026-09-18T03:47:00.081Z",
       "id": "04da383697ab5642",
       "merged_ids": [
         "04da383697ab5642"
+      ],
+      "updated_fields": [
+        "price_min",
+        "price_max"
       ]
     },
     {
@@ -1247,8 +1327,8 @@
       "date": "2026-12-05",
       "time": null,
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 400,
+      "price_max": 400,
       "status": "announced",
       "tags_type": [
         "巡迴"
@@ -1265,10 +1345,14 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:41:12.884Z",
-      "updated_at": "2026-09-17T07:41:12.884Z",
+      "updated_at": "2026-09-18T03:47:00.081Z",
       "id": "0845cd16ce4739a1",
       "merged_ids": [
         "0845cd16ce4739a1"
+      ],
+      "updated_fields": [
+        "price_min",
+        "price_max"
       ]
     },
     {
@@ -1287,8 +1371,8 @@
       "date": "2026-12-04",
       "time": null,
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 1980,
+      "price_max": 1980,
       "status": "announced",
       "tags_type": [
         "巡迴"
@@ -1305,10 +1389,14 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:41:12.884Z",
-      "updated_at": "2026-09-17T07:41:12.884Z",
+      "updated_at": "2026-09-18T03:47:00.081Z",
       "id": "e651d8009433e36b",
       "merged_ids": [
         "e651d8009433e36b"
+      ],
+      "updated_fields": [
+        "price_min",
+        "price_max"
       ]
     },
     {
@@ -1325,8 +1413,8 @@
       "date": "2026-11-28",
       "time": null,
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 6880,
+      "price_max": 6880,
       "status": "announced",
       "tags_type": [
         "巡迴"
@@ -1343,10 +1431,14 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:41:12.884Z",
-      "updated_at": "2026-09-17T07:41:12.884Z",
+      "updated_at": "2026-09-18T03:47:00.081Z",
       "id": "6fccb15f505f7437",
       "merged_ids": [
         "6fccb15f505f7437"
+      ],
+      "updated_fields": [
+        "price_min",
+        "price_max"
       ]
     },
     {
@@ -1363,8 +1455,8 @@
       "date": "2026-11-27",
       "time": null,
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 2026,
+      "price_max": 2026,
       "status": "announced",
       "tags_type": [
         "專場"
@@ -1386,10 +1478,14 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:41:12.884Z",
-      "updated_at": "2026-09-17T07:41:12.884Z",
+      "updated_at": "2026-09-18T03:47:00.081Z",
       "id": "d6d6df06cec0348f",
       "merged_ids": [
         "d6d6df06cec0348f"
+      ],
+      "updated_fields": [
+        "price_min",
+        "price_max"
       ]
     },
     {
@@ -1406,8 +1502,8 @@
       "date": "2026-11-25",
       "time": null,
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 1990,
+      "price_max": 8680,
       "status": "announced",
       "tags_type": [
         "專場"
@@ -1429,10 +1525,14 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:41:12.884Z",
-      "updated_at": "2026-09-17T07:41:12.884Z",
+      "updated_at": "2026-09-18T03:47:00.081Z",
       "id": "fa77bc12d592c9b8",
       "merged_ids": [
         "fa77bc12d592c9b8"
+      ],
+      "updated_fields": [
+        "price_min",
+        "price_max"
       ]
     },
     {
@@ -1449,8 +1549,8 @@
       "date": "2026-11-24",
       "time": null,
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 1950,
+      "price_max": 6300,
       "status": "announced",
       "tags_type": [
         "專場"
@@ -1472,10 +1572,14 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:41:12.884Z",
-      "updated_at": "2026-09-17T07:41:12.884Z",
+      "updated_at": "2026-09-18T03:47:00.081Z",
       "id": "fa004027fb7565ae",
       "merged_ids": [
         "fa004027fb7565ae"
+      ],
+      "updated_fields": [
+        "price_min",
+        "price_max"
       ]
     },
     {
@@ -1492,8 +1596,8 @@
       "date": "2026-11-23",
       "time": null,
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 1640,
+      "price_max": 5180,
       "status": "announced",
       "tags_type": [
         "巡迴"
@@ -1510,10 +1614,14 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:41:12.884Z",
-      "updated_at": "2026-09-17T07:41:12.884Z",
+      "updated_at": "2026-09-18T03:47:00.081Z",
       "id": "d2f719a9dd4b0d7f",
       "merged_ids": [
         "d2f719a9dd4b0d7f"
+      ],
+      "updated_fields": [
+        "price_min",
+        "price_max"
       ]
     },
     {
@@ -1530,8 +1638,8 @@
       "date": "2026-11-19",
       "time": null,
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 7980,
+      "price_max": 7980,
       "status": "announced",
       "tags_type": [
         "專場"
@@ -1548,10 +1656,14 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:41:12.884Z",
-      "updated_at": "2026-09-17T07:41:12.884Z",
+      "updated_at": "2026-09-18T03:47:00.081Z",
       "id": "836076fe0659f86f",
       "merged_ids": [
         "836076fe0659f86f"
+      ],
+      "updated_fields": [
+        "price_min",
+        "price_max"
       ]
     },
     {
@@ -1606,8 +1718,8 @@
       "date": "2026-11-15",
       "time": null,
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 2026,
+      "price_max": 2026,
       "status": "announced",
       "tags_type": [
         "專場"
@@ -1629,10 +1741,14 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:41:12.884Z",
-      "updated_at": "2026-09-17T07:41:12.884Z",
+      "updated_at": "2026-09-18T03:47:00.081Z",
       "id": "7bdb29cc34c278be",
       "merged_ids": [
         "7bdb29cc34c278be"
+      ],
+      "updated_fields": [
+        "price_min",
+        "price_max"
       ]
     },
     {
@@ -1649,8 +1765,8 @@
       "date": "2026-11-14",
       "time": null,
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 3190,
+      "price_max": 6980,
       "status": "announced",
       "tags_type": [
         "專場"
@@ -1667,10 +1783,14 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:41:12.884Z",
-      "updated_at": "2026-09-17T07:41:12.884Z",
+      "updated_at": "2026-09-18T03:47:00.081Z",
       "id": "90eb9cc2141a641f",
       "merged_ids": [
         "90eb9cc2141a641f"
+      ],
+      "updated_fields": [
+        "price_min",
+        "price_max"
       ]
     },
     {
@@ -1687,8 +1807,8 @@
       "date": "2026-11-14",
       "time": null,
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 2080,
+      "price_max": 2080,
       "status": "announced",
       "tags_type": [
         "專場"
@@ -1705,10 +1825,14 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:41:12.884Z",
-      "updated_at": "2026-09-17T07:41:12.884Z",
+      "updated_at": "2026-09-18T03:47:00.081Z",
       "id": "47fba0f5439cf9e0",
       "merged_ids": [
         "47fba0f5439cf9e0"
+      ],
+      "updated_fields": [
+        "price_min",
+        "price_max"
       ]
     },
     {
@@ -1725,8 +1849,8 @@
       "date": "2026-11-11",
       "time": null,
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 940,
+      "price_max": 2380,
       "status": "announced",
       "tags_type": [
         "專場"
@@ -1743,10 +1867,14 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:41:12.885Z",
-      "updated_at": "2026-09-17T07:41:12.885Z",
+      "updated_at": "2026-09-18T03:47:00.081Z",
       "id": "178d60be9e58f876",
       "merged_ids": [
         "178d60be9e58f876"
+      ],
+      "updated_fields": [
+        "price_min",
+        "price_max"
       ]
     },
     {
@@ -1763,8 +1891,8 @@
       "date": "2026-11-08",
       "time": null,
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 2490,
+      "price_max": 5800,
       "status": "announced",
       "tags_type": [
         "專場"
@@ -1781,10 +1909,14 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:41:12.885Z",
-      "updated_at": "2026-09-17T07:41:12.885Z",
+      "updated_at": "2026-09-18T03:47:00.081Z",
       "id": "c7384933e688f822",
       "merged_ids": [
         "c7384933e688f822"
+      ],
+      "updated_fields": [
+        "price_min",
+        "price_max"
       ]
     },
     {
@@ -1801,8 +1933,8 @@
       "date": "2026-11-08",
       "time": null,
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 2026,
+      "price_max": 2140,
       "status": "announced",
       "tags_type": [
         "專場"
@@ -1819,10 +1951,14 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:41:12.885Z",
-      "updated_at": "2026-09-17T07:41:12.885Z",
+      "updated_at": "2026-09-18T03:47:00.081Z",
       "id": "744fd7d1e770d81b",
       "merged_ids": [
         "744fd7d1e770d81b"
+      ],
+      "updated_fields": [
+        "price_min",
+        "price_max"
       ]
     },
     {
@@ -1839,8 +1975,8 @@
       "date": "2026-11-08",
       "time": null,
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 1450,
+      "price_max": 1450,
       "status": "announced",
       "tags_type": [
         "專場"
@@ -1862,10 +1998,14 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:41:12.885Z",
-      "updated_at": "2026-09-17T07:41:12.885Z",
+      "updated_at": "2026-09-18T03:47:00.081Z",
       "id": "afa14a26670acd07",
       "merged_ids": [
         "afa14a26670acd07"
+      ],
+      "updated_fields": [
+        "price_min",
+        "price_max"
       ]
     },
     {
@@ -1882,8 +2022,8 @@
       "date": "2026-11-07",
       "time": null,
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 7880,
+      "price_max": 7880,
       "status": "announced",
       "tags_type": [
         "專場"
@@ -1900,10 +2040,14 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:41:12.885Z",
-      "updated_at": "2026-09-17T07:41:12.885Z",
+      "updated_at": "2026-09-18T03:47:00.081Z",
       "id": "f89689d1941c1b42",
       "merged_ids": [
         "f89689d1941c1b42"
+      ],
+      "updated_fields": [
+        "price_min",
+        "price_max"
       ]
     },
     {
@@ -1920,8 +2064,8 @@
       "date": "2026-11-06",
       "time": null,
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 400,
+      "price_max": 400,
       "status": "announced",
       "tags_type": [
         "巡迴"
@@ -1938,10 +2082,14 @@
         }
       ],
       "first_seen_at": "2026-09-18T02:03:02.704Z",
-      "updated_at": "2026-09-18T02:03:02.704Z",
+      "updated_at": "2026-09-18T03:47:00.081Z",
       "id": "17540e5ca7860a76",
       "merged_ids": [
         "17540e5ca7860a76"
+      ],
+      "updated_fields": [
+        "price_min",
+        "price_max"
       ]
     },
     {
@@ -1958,8 +2106,8 @@
       "date": "2026-11-01",
       "time": null,
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 3100,
+      "price_max": 3100,
       "status": "announced",
       "tags_type": [
         "專場"
@@ -1976,10 +2124,14 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:41:12.885Z",
-      "updated_at": "2026-09-17T07:41:12.885Z",
+      "updated_at": "2026-09-18T03:47:00.081Z",
       "id": "b42542e26828ffb1",
       "merged_ids": [
         "b42542e26828ffb1"
+      ],
+      "updated_fields": [
+        "price_min",
+        "price_max"
       ]
     },
     {
@@ -1996,8 +2148,8 @@
       "date": "2026-10-24",
       "time": null,
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 1040,
+      "price_max": 2940,
       "status": "announced",
       "tags_type": [
         "專場"
@@ -2014,10 +2166,14 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:41:12.885Z",
-      "updated_at": "2026-09-17T07:41:12.885Z",
+      "updated_at": "2026-09-18T03:47:00.081Z",
       "id": "80c87fdd574fe852",
       "merged_ids": [
         "80c87fdd574fe852"
+      ],
+      "updated_fields": [
+        "price_min",
+        "price_max"
       ]
     },
     {
@@ -2038,8 +2194,8 @@
       "date": "2026-10-24",
       "time": null,
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 990,
+      "price_max": 990,
       "status": "announced",
       "tags_type": [
         "拼盤"
@@ -2056,10 +2212,14 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:41:12.885Z",
-      "updated_at": "2026-09-17T07:41:12.885Z",
+      "updated_at": "2026-09-18T03:47:00.081Z",
       "id": "5d7f1ebdabc7482e",
       "merged_ids": [
         "5d7f1ebdabc7482e"
+      ],
+      "updated_fields": [
+        "price_min",
+        "price_max"
       ]
     },
     {
@@ -2076,8 +2236,8 @@
       "date": "2026-10-23",
       "time": null,
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 6300,
+      "price_max": 6300,
       "status": "announced",
       "tags_type": [
         "巡迴"
@@ -2094,10 +2254,14 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:41:12.885Z",
-      "updated_at": "2026-09-17T07:41:12.885Z",
+      "updated_at": "2026-09-18T03:47:00.081Z",
       "id": "df2a9b875a65c065",
       "merged_ids": [
         "df2a9b875a65c065"
+      ],
+      "updated_fields": [
+        "price_min",
+        "price_max"
       ]
     },
     {
@@ -2114,8 +2278,8 @@
       "date": "2026-10-20",
       "time": null,
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 400,
+      "price_max": 5880,
       "status": "announced",
       "tags_type": [
         "巡迴"
@@ -2132,10 +2296,14 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:41:12.885Z",
-      "updated_at": "2026-09-17T07:41:12.885Z",
+      "updated_at": "2026-09-18T03:47:00.081Z",
       "id": "682756d6c4fff0a4",
       "merged_ids": [
         "682756d6c4fff0a4"
+      ],
+      "updated_fields": [
+        "price_min",
+        "price_max"
       ]
     },
     {
@@ -2152,8 +2320,8 @@
       "date": "2026-10-18",
       "time": null,
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 2190,
+      "price_max": 10400,
       "status": "announced",
       "tags_type": [
         "巡迴"
@@ -2175,10 +2343,14 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:41:12.885Z",
-      "updated_at": "2026-09-17T07:41:12.885Z",
+      "updated_at": "2026-09-18T03:47:00.081Z",
       "id": "22a822cb1593b3a3",
       "merged_ids": [
         "22a822cb1593b3a3"
+      ],
+      "updated_fields": [
+        "price_min",
+        "price_max"
       ]
     },
     {
@@ -2195,8 +2367,8 @@
       "date": "2026-10-16",
       "time": null,
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 510,
+      "price_max": 510,
       "status": "announced",
       "tags_type": [
         "專場"
@@ -2213,10 +2385,14 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:41:12.885Z",
-      "updated_at": "2026-09-17T07:41:12.885Z",
+      "updated_at": "2026-09-18T03:47:00.081Z",
       "id": "122cef6395a23d41",
       "merged_ids": [
         "122cef6395a23d41"
+      ],
+      "updated_fields": [
+        "price_min",
+        "price_max"
       ]
     },
     {
@@ -2233,8 +2409,8 @@
       "date": "2026-10-10",
       "time": null,
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 2026,
+      "price_max": 2026,
       "status": "announced",
       "tags_type": [
         "專場"
@@ -2251,10 +2427,14 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:41:12.885Z",
-      "updated_at": "2026-09-17T07:41:12.885Z",
+      "updated_at": "2026-09-18T03:47:00.081Z",
       "id": "4fb19beb908b82a8",
       "merged_ids": [
         "4fb19beb908b82a8"
+      ],
+      "updated_fields": [
+        "price_min",
+        "price_max"
       ]
     },
     {
@@ -2271,8 +2451,8 @@
       "date": "2026-10-10",
       "time": null,
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 1640,
+      "price_max": 1640,
       "status": "announced",
       "tags_type": [
         "專場"
@@ -2289,10 +2469,14 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:41:12.885Z",
-      "updated_at": "2026-09-17T07:41:12.885Z",
+      "updated_at": "2026-09-18T03:47:00.081Z",
       "id": "2e3f67c9c5db934f",
       "merged_ids": [
         "2e3f67c9c5db934f"
+      ],
+      "updated_fields": [
+        "price_min",
+        "price_max"
       ]
     },
     {
@@ -2309,8 +2493,8 @@
       "date": "2026-10-09",
       "time": null,
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 2140,
+      "price_max": 2140,
       "status": "announced",
       "tags_type": [
         "巡迴"
@@ -2327,10 +2511,14 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:41:12.885Z",
-      "updated_at": "2026-09-17T07:41:12.885Z",
+      "updated_at": "2026-09-18T03:47:00.081Z",
       "id": "53729592a2920e95",
       "merged_ids": [
         "53729592a2920e95"
+      ],
+      "updated_fields": [
+        "price_min",
+        "price_max"
       ]
     },
     {
@@ -2347,8 +2535,8 @@
       "date": "2026-10-05",
       "time": null,
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 2280,
+      "price_max": 2280,
       "status": "announced",
       "tags_type": [
         "巡迴"
@@ -2365,10 +2553,14 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:41:12.885Z",
-      "updated_at": "2026-09-17T07:41:12.885Z",
+      "updated_at": "2026-09-18T03:47:00.081Z",
       "id": "155fabf02494297f",
       "merged_ids": [
         "155fabf02494297f"
+      ],
+      "updated_fields": [
+        "price_min",
+        "price_max"
       ]
     },
     {
@@ -2423,8 +2615,8 @@
       "date": "2026-09-28",
       "time": null,
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 2280,
+      "price_max": 2280,
       "status": "announced",
       "tags_type": [
         "巡迴"
@@ -2441,10 +2633,14 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:41:12.885Z",
-      "updated_at": "2026-09-17T07:41:12.885Z",
+      "updated_at": "2026-09-18T03:47:00.081Z",
       "id": "11766bc4840627e0",
       "merged_ids": [
         "11766bc4840627e0"
+      ],
+      "updated_fields": [
+        "price_min",
+        "price_max"
       ]
     },
     {
@@ -2461,8 +2657,8 @@
       "date": "2026-09-27",
       "time": null,
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 1240,
+      "price_max": 2480,
       "status": "announced",
       "tags_type": [
         "專場"
@@ -2479,10 +2675,14 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:41:12.885Z",
-      "updated_at": "2026-09-17T07:41:12.885Z",
+      "updated_at": "2026-09-18T03:47:00.081Z",
       "id": "a39a68642dbd9c71",
       "merged_ids": [
         "a39a68642dbd9c71"
+      ],
+      "updated_fields": [
+        "price_min",
+        "price_max"
       ]
     },
     {
@@ -2499,8 +2699,8 @@
       "date": "2026-09-26",
       "time": null,
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 1990,
+      "price_max": 1990,
       "status": "announced",
       "tags_type": [
         "專場"
@@ -2517,10 +2717,14 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:41:12.885Z",
-      "updated_at": "2026-09-17T07:41:12.885Z",
+      "updated_at": "2026-09-18T03:47:00.081Z",
       "id": "1a217cf426b0abb7",
       "merged_ids": [
         "1a217cf426b0abb7"
+      ],
+      "updated_fields": [
+        "price_min",
+        "price_max"
       ]
     },
     {
@@ -2537,8 +2741,8 @@
       "date": "2026-09-26",
       "time": null,
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 400,
+      "price_max": 8880,
       "status": "announced",
       "tags_type": [
         "專場"
@@ -2565,10 +2769,14 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:41:12.885Z",
-      "updated_at": "2026-09-17T07:41:12.885Z",
+      "updated_at": "2026-09-18T03:47:00.081Z",
       "id": "4347b7fe0e4855b3",
       "merged_ids": [
         "4347b7fe0e4855b3"
+      ],
+      "updated_fields": [
+        "price_min",
+        "price_max"
       ]
     },
     {
@@ -2623,8 +2831,8 @@
       "date": "2026-09-19",
       "time": null,
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 2190,
+      "price_max": 5680,
       "status": "announced",
       "tags_type": [
         "專場"
@@ -2646,10 +2854,14 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:41:12.886Z",
-      "updated_at": "2026-09-17T07:41:12.886Z",
+      "updated_at": "2026-09-18T03:47:00.081Z",
       "id": "2eb80cb276000cf7",
       "merged_ids": [
         "2eb80cb276000cf7"
+      ],
+      "updated_fields": [
+        "price_min",
+        "price_max"
       ]
     },
     {
@@ -2666,8 +2878,8 @@
       "date": "2026-09-19",
       "time": null,
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 2190,
+      "price_max": 12180,
       "status": "announced",
       "tags_type": [
         "巡迴"
@@ -2689,10 +2901,14 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:41:12.886Z",
-      "updated_at": "2026-09-17T07:41:12.886Z",
+      "updated_at": "2026-09-18T03:47:00.081Z",
       "id": "334bafb8e4e9734a",
       "merged_ids": [
         "334bafb8e4e9734a"
+      ],
+      "updated_fields": [
+        "price_min",
+        "price_max"
       ]
     },
     {
@@ -2709,8 +2925,8 @@
       "date": "2026-09-19",
       "time": null,
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 1900,
+      "price_max": 2150,
       "status": "announced",
       "tags_type": [
         "專場"
@@ -2727,10 +2943,14 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:41:12.886Z",
-      "updated_at": "2026-09-17T07:41:12.886Z",
+      "updated_at": "2026-09-18T03:47:00.081Z",
       "id": "1bd42edd429a7615",
       "merged_ids": [
         "1bd42edd429a7615"
+      ],
+      "updated_fields": [
+        "price_min",
+        "price_max"
       ]
     },
     {
@@ -2823,8 +3043,8 @@
       "date": "2026-09-13",
       "time": null,
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 800,
+      "price_max": 2400,
       "status": "announced",
       "tags_type": [
         "專場"
@@ -2841,10 +3061,14 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:41:12.886Z",
-      "updated_at": "2026-09-17T07:41:12.886Z",
+      "updated_at": "2026-09-18T03:47:00.081Z",
       "id": "6f7f163d771ae88b",
       "merged_ids": [
         "6f7f163d771ae88b"
+      ],
+      "updated_fields": [
+        "price_min",
+        "price_max"
       ]
     },
     {
@@ -2861,8 +3085,8 @@
       "date": "2026-09-12",
       "time": null,
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 2840,
+      "price_max": 5680,
       "status": "announced",
       "tags_type": [
         "專場"
@@ -2879,10 +3103,14 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:41:12.886Z",
-      "updated_at": "2026-09-17T07:41:12.886Z",
+      "updated_at": "2026-09-18T03:47:00.081Z",
       "id": "22af730ce6a0d136",
       "merged_ids": [
         "22af730ce6a0d136"
+      ],
+      "updated_fields": [
+        "price_min",
+        "price_max"
       ]
     },
     {
@@ -2899,8 +3127,8 @@
       "date": "2026-09-12",
       "time": null,
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 400,
+      "price_max": 400,
       "status": "announced",
       "tags_type": [
         "巡迴"
@@ -2917,10 +3145,14 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:41:12.886Z",
-      "updated_at": "2026-09-17T07:41:12.886Z",
+      "updated_at": "2026-09-18T03:47:00.081Z",
       "id": "d75baac587478ab9",
       "merged_ids": [
         "d75baac587478ab9"
+      ],
+      "updated_fields": [
+        "price_min",
+        "price_max"
       ]
     },
     {
@@ -2975,8 +3207,8 @@
       "date": "2026-09-11",
       "time": null,
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 5800,
+      "price_max": 5800,
       "status": "announced",
       "tags_type": [
         "專場"
@@ -2993,10 +3225,14 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:41:12.886Z",
-      "updated_at": "2026-09-17T07:41:12.886Z",
+      "updated_at": "2026-09-18T03:47:00.081Z",
       "id": "17cead68b1b07f1e",
       "merged_ids": [
         "17cead68b1b07f1e"
+      ],
+      "updated_fields": [
+        "price_min",
+        "price_max"
       ]
     },
     {
@@ -3013,8 +3249,8 @@
       "date": "2026-07-12",
       "time": null,
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 2400,
+      "price_max": 2400,
       "status": "announced",
       "tags_type": [
         "巡迴"
@@ -3031,10 +3267,14 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:41:12.886Z",
-      "updated_at": "2026-09-17T07:41:12.886Z",
+      "updated_at": "2026-09-18T03:47:00.081Z",
       "id": "95d1ae4b76c8fc07",
       "merged_ids": [
         "95d1ae4b76c8fc07"
+      ],
+      "updated_fields": [
+        "price_min",
+        "price_max"
       ]
     },
     {
@@ -3051,8 +3291,8 @@
       "date": "2026-09-13",
       "time": null,
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 1750,
+      "price_max": 9900,
       "status": "announced",
       "tags_type": [
         "專場"
@@ -3069,7 +3309,7 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:44:16.779Z",
-      "updated_at": "2026-09-17T07:44:16.779Z",
+      "updated_at": "2026-09-18T03:23:48.864Z",
       "id": "5373d4c09a3f8725",
       "merged_ids": [
         "5373d4c09a3f8725"
@@ -3089,8 +3329,8 @@
       "date": "2026-09-18",
       "time": null,
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 1200,
+      "price_max": 1500,
       "status": "announced",
       "tags_type": [
         "專場"
@@ -3107,7 +3347,7 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:44:16.779Z",
-      "updated_at": "2026-09-17T07:44:16.779Z",
+      "updated_at": "2026-09-18T03:23:48.864Z",
       "id": "100ab06ddacfaefc",
       "merged_ids": [
         "100ab06ddacfaefc"
@@ -3127,8 +3367,8 @@
       "date": "2026-09-19",
       "time": null,
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 400,
+      "price_max": 999,
       "status": "announced",
       "tags_type": [
         "專場"
@@ -3145,7 +3385,7 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:44:16.779Z",
-      "updated_at": "2026-09-17T07:44:16.779Z",
+      "updated_at": "2026-09-18T03:23:48.864Z",
       "id": "9b6f5b50be4ba080",
       "merged_ids": [
         "9b6f5b50be4ba080"
@@ -3203,8 +3443,8 @@
       "date": "2026-09-19",
       "time": "20:00",
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 650,
+      "price_max": 1200,
       "status": "announced",
       "tags_type": [
         "專場"
@@ -3221,7 +3461,7 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:44:16.780Z",
-      "updated_at": "2026-09-17T07:44:16.780Z",
+      "updated_at": "2026-09-18T03:23:48.864Z",
       "id": "2c512e04ffc52d1a",
       "merged_ids": [
         "2c512e04ffc52d1a"
@@ -3243,8 +3483,8 @@
       "date": "2026-09-23",
       "time": null,
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 600,
+      "price_max": 2000,
       "status": "announced",
       "tags_type": [
         "拼盤"
@@ -3261,7 +3501,7 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:44:16.780Z",
-      "updated_at": "2026-09-17T07:44:16.780Z",
+      "updated_at": "2026-09-18T03:23:48.864Z",
       "id": "35d60f7700543de4",
       "merged_ids": [
         "35d60f7700543de4"
@@ -3321,8 +3561,8 @@
       "date": "2026-09-25",
       "time": null,
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 500,
+      "price_max": 700,
       "status": "announced",
       "tags_type": [
         "拼盤"
@@ -3339,7 +3579,7 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:44:16.780Z",
-      "updated_at": "2026-09-17T07:44:16.780Z",
+      "updated_at": "2026-09-18T03:23:48.864Z",
       "id": "b71b12c46ce786a2",
       "merged_ids": [
         "b71b12c46ce786a2"
@@ -3361,8 +3601,8 @@
       "date": "2026-09-25",
       "time": null,
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 500,
+      "price_max": 700,
       "status": "announced",
       "tags_type": [
         "拼盤"
@@ -3379,7 +3619,7 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:44:16.780Z",
-      "updated_at": "2026-09-17T07:44:16.780Z",
+      "updated_at": "2026-09-18T03:23:48.864Z",
       "id": "97afc4bd0cb16a54",
       "merged_ids": [
         "97afc4bd0cb16a54"
@@ -3399,8 +3639,8 @@
       "date": "2026-09-26",
       "time": null,
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 400,
+      "price_max": 500,
       "status": "announced",
       "tags_type": [
         "專場"
@@ -3417,7 +3657,7 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:44:16.780Z",
-      "updated_at": "2026-09-17T07:44:16.780Z",
+      "updated_at": "2026-09-18T03:23:48.864Z",
       "id": "ad74efd553e0cd21",
       "merged_ids": [
         "ad74efd553e0cd21"
@@ -3439,8 +3679,8 @@
       "date": "2026-09-26",
       "time": null,
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 500,
+      "price_max": 700,
       "status": "announced",
       "tags_type": [
         "拼盤"
@@ -3457,7 +3697,7 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:44:16.780Z",
-      "updated_at": "2026-09-17T07:44:16.780Z",
+      "updated_at": "2026-09-18T03:23:48.864Z",
       "id": "47def32ff1d8e14b",
       "merged_ids": [
         "47def32ff1d8e14b"
@@ -3479,8 +3719,8 @@
       "date": "2026-09-27",
       "time": null,
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 250,
+      "price_max": 700,
       "status": "announced",
       "tags_type": [
         "拼盤"
@@ -3497,7 +3737,7 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:44:16.780Z",
-      "updated_at": "2026-09-17T07:44:16.780Z",
+      "updated_at": "2026-09-18T03:23:48.864Z",
       "id": "6453e42e94ee64a0",
       "merged_ids": [
         "6453e42e94ee64a0"
@@ -3597,8 +3837,8 @@
       "date": "2026-10-02",
       "time": null,
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 400,
+      "price_max": 700,
       "status": "announced",
       "tags_type": [
         "巡迴"
@@ -3615,7 +3855,7 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:44:16.781Z",
-      "updated_at": "2026-09-17T07:44:16.781Z",
+      "updated_at": "2026-09-18T03:23:48.864Z",
       "id": "ab208f3f871f687f",
       "merged_ids": [
         "ab208f3f871f687f"
@@ -3635,8 +3875,8 @@
       "date": "2026-10-02",
       "time": null,
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 500,
+      "price_max": 880,
       "status": "announced",
       "tags_type": [
         "專場"
@@ -3653,7 +3893,7 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:44:16.781Z",
-      "updated_at": "2026-09-17T07:44:16.781Z",
+      "updated_at": "2026-09-18T03:23:48.864Z",
       "id": "f404f9bdae469df7",
       "merged_ids": [
         "f404f9bdae469df7"
@@ -3675,8 +3915,8 @@
       "date": "2026-10-02",
       "time": null,
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 1500,
+      "price_max": 1500,
       "status": "announced",
       "tags_type": [
         "拼盤"
@@ -3693,7 +3933,7 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:44:16.781Z",
-      "updated_at": "2026-09-17T07:44:16.781Z",
+      "updated_at": "2026-09-18T03:23:48.864Z",
       "id": "40f8faf1cae502b9",
       "merged_ids": [
         "40f8faf1cae502b9"
@@ -3713,8 +3953,8 @@
       "date": "2026-10-03",
       "time": "19:30",
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 450,
+      "price_max": 800,
       "status": "announced",
       "tags_type": [
         "專場"
@@ -3731,7 +3971,7 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:44:16.781Z",
-      "updated_at": "2026-09-17T07:44:16.781Z",
+      "updated_at": "2026-09-18T03:23:48.864Z",
       "id": "6dc4fe734d60786f",
       "merged_ids": [
         "6dc4fe734d60786f"
@@ -3789,8 +4029,8 @@
       "date": "2026-10-03",
       "time": null,
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 1800,
+      "price_max": 1800,
       "status": "announced",
       "tags_type": [
         "專場"
@@ -3807,7 +4047,7 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:44:16.781Z",
-      "updated_at": "2026-09-17T07:44:16.781Z",
+      "updated_at": "2026-09-18T03:23:48.864Z",
       "id": "fe767dcca94ff1ba",
       "merged_ids": [
         "fe767dcca94ff1ba"
@@ -3831,8 +4071,8 @@
       "date": "2026-10-03",
       "time": null,
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 400,
+      "price_max": 400,
       "status": "announced",
       "tags_type": [
         "拼盤"
@@ -3849,7 +4089,7 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:44:16.781Z",
-      "updated_at": "2026-09-17T07:44:16.781Z",
+      "updated_at": "2026-09-18T03:23:48.864Z",
       "id": "39625e515f1ad0e1",
       "merged_ids": [
         "39625e515f1ad0e1"
@@ -3869,8 +4109,8 @@
       "date": "2026-10-03",
       "time": null,
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 1280,
+      "price_max": 2400,
       "status": "announced",
       "tags_type": [
         "專場"
@@ -3887,7 +4127,7 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:44:16.781Z",
-      "updated_at": "2026-09-17T07:44:16.781Z",
+      "updated_at": "2026-09-18T03:23:48.864Z",
       "id": "d8d4e19f6f041811",
       "merged_ids": [
         "d8d4e19f6f041811"
@@ -3907,8 +4147,8 @@
       "date": "2026-10-04",
       "time": "19:30",
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 500,
+      "price_max": 880,
       "status": "announced",
       "tags_type": [
         "專場"
@@ -3925,7 +4165,7 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:44:16.782Z",
-      "updated_at": "2026-09-17T07:44:16.782Z",
+      "updated_at": "2026-09-18T03:23:48.864Z",
       "id": "05dc2092cb5e49d6",
       "merged_ids": [
         "05dc2092cb5e49d6"
@@ -4021,8 +4261,8 @@
       "date": "2026-10-11",
       "time": null,
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 250,
+      "price_max": 600,
       "status": "announced",
       "tags_type": [
         "專場"
@@ -4039,7 +4279,7 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:44:16.782Z",
-      "updated_at": "2026-09-17T07:44:16.782Z",
+      "updated_at": "2026-09-18T03:23:48.864Z",
       "id": "b5a6c762feb27021",
       "merged_ids": [
         "b5a6c762feb27021"
@@ -4059,8 +4299,8 @@
       "date": "2026-10-14",
       "time": null,
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 250,
+      "price_max": 600,
       "status": "announced",
       "tags_type": [
         "專場"
@@ -4077,7 +4317,7 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:44:16.782Z",
-      "updated_at": "2026-09-17T07:44:16.782Z",
+      "updated_at": "2026-09-18T03:23:48.864Z",
       "id": "20cf057c0d8485d6",
       "merged_ids": [
         "20cf057c0d8485d6"
@@ -4097,8 +4337,8 @@
       "date": "2026-10-16",
       "time": null,
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 700,
+      "price_max": 1200,
       "status": "announced",
       "tags_type": [
         "巡迴"
@@ -4115,7 +4355,7 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:44:16.782Z",
-      "updated_at": "2026-09-17T07:44:16.782Z",
+      "updated_at": "2026-09-18T03:23:48.864Z",
       "id": "4a462def03e86bfb",
       "merged_ids": [
         "4a462def03e86bfb"
@@ -4173,8 +4413,8 @@
       "date": "2026-10-17",
       "time": null,
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 250,
+      "price_max": 600,
       "status": "announced",
       "tags_type": [
         "專場"
@@ -4191,7 +4431,7 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:44:16.782Z",
-      "updated_at": "2026-09-17T07:44:16.782Z",
+      "updated_at": "2026-09-18T03:23:48.864Z",
       "id": "41df5a7db7c8d63d",
       "merged_ids": [
         "41df5a7db7c8d63d"
@@ -4251,8 +4491,8 @@
       "date": "2026-10-21",
       "time": null,
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 555,
+      "price_max": 999,
       "status": "announced",
       "tags_type": [
         "專場"
@@ -4269,7 +4509,7 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:44:16.782Z",
-      "updated_at": "2026-09-17T07:44:16.782Z",
+      "updated_at": "2026-09-18T03:23:48.864Z",
       "id": "29b183556de514cc",
       "merged_ids": [
         "29b183556de514cc"
@@ -4289,8 +4529,8 @@
       "date": "2026-10-24",
       "time": null,
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 850,
+      "price_max": 3200,
       "status": "announced",
       "tags_type": [
         "專場"
@@ -4307,7 +4547,7 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:44:16.782Z",
-      "updated_at": "2026-09-17T07:44:16.782Z",
+      "updated_at": "2026-09-18T03:23:48.864Z",
       "id": "b336050a65d854c7",
       "merged_ids": [
         "b336050a65d854c7"
@@ -4327,8 +4567,8 @@
       "date": "2026-10-24",
       "time": null,
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 800,
+      "price_max": 1500,
       "status": "announced",
       "tags_type": [
         "專場"
@@ -4345,7 +4585,7 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:44:16.782Z",
-      "updated_at": "2026-09-17T07:44:16.782Z",
+      "updated_at": "2026-09-18T03:23:48.864Z",
       "id": "92babd344c1be863",
       "merged_ids": [
         "92babd344c1be863"
@@ -4365,8 +4605,8 @@
       "date": "2026-10-25",
       "time": null,
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 550,
+      "price_max": 650,
       "status": "announced",
       "tags_type": [
         "專場"
@@ -4383,7 +4623,7 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:44:16.782Z",
-      "updated_at": "2026-09-17T07:44:16.782Z",
+      "updated_at": "2026-09-18T03:23:48.864Z",
       "id": "44a8ea6fadb89fff",
       "merged_ids": [
         "44a8ea6fadb89fff"
@@ -4403,8 +4643,8 @@
       "date": "2026-10-25",
       "time": null,
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 650,
+      "price_max": 1500,
       "status": "announced",
       "tags_type": [
         "巡迴"
@@ -4421,7 +4661,7 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:44:16.782Z",
-      "updated_at": "2026-09-17T07:44:16.782Z",
+      "updated_at": "2026-09-18T03:23:48.864Z",
       "id": "9144b2464a9b44f8",
       "merged_ids": [
         "9144b2464a9b44f8"
@@ -4441,8 +4681,8 @@
       "date": "2026-10-25",
       "time": null,
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 400,
+      "price_max": 1500,
       "status": "announced",
       "tags_type": [
         "專場"
@@ -4459,7 +4699,7 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:44:16.782Z",
-      "updated_at": "2026-09-17T07:44:16.782Z",
+      "updated_at": "2026-09-18T03:23:48.864Z",
       "id": "dade197eed3ac441",
       "merged_ids": [
         "dade197eed3ac441"
@@ -4479,8 +4719,8 @@
       "date": "2026-10-26",
       "time": null,
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 550,
+      "price_max": 650,
       "status": "announced",
       "tags_type": [
         "專場"
@@ -4497,7 +4737,7 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:44:16.782Z",
-      "updated_at": "2026-09-17T07:44:16.782Z",
+      "updated_at": "2026-09-18T03:23:48.864Z",
       "id": "be7b10d0a759bedf",
       "merged_ids": [
         "be7b10d0a759bedf"
@@ -4555,8 +4795,8 @@
       "date": "2026-10-31",
       "time": null,
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 1000,
+      "price_max": 2200,
       "status": "announced",
       "tags_type": [
         "專場"
@@ -4573,7 +4813,7 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:44:16.782Z",
-      "updated_at": "2026-09-17T07:44:16.782Z",
+      "updated_at": "2026-09-18T03:23:48.864Z",
       "id": "bce92ef6eeba4961",
       "merged_ids": [
         "bce92ef6eeba4961"
@@ -4593,8 +4833,8 @@
       "date": "2026-11-01",
       "time": null,
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 650,
+      "price_max": 1500,
       "status": "announced",
       "tags_type": [
         "巡迴"
@@ -4611,7 +4851,7 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:44:16.782Z",
-      "updated_at": "2026-09-17T07:44:16.782Z",
+      "updated_at": "2026-09-18T03:23:48.864Z",
       "id": "2583c9a985fc8381",
       "merged_ids": [
         "2583c9a985fc8381"
@@ -4631,8 +4871,8 @@
       "date": "2026-11-01",
       "time": null,
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 700,
+      "price_max": 1200,
       "status": "announced",
       "tags_type": [
         "巡迴"
@@ -4649,7 +4889,7 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:44:16.783Z",
-      "updated_at": "2026-09-17T07:44:16.783Z",
+      "updated_at": "2026-09-18T03:23:48.864Z",
       "id": "40e0f203506b922f",
       "merged_ids": [
         "40e0f203506b922f"
@@ -4707,8 +4947,8 @@
       "date": "2026-11-06",
       "time": null,
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 700,
+      "price_max": 1200,
       "status": "announced",
       "tags_type": [
         "巡迴"
@@ -4725,7 +4965,7 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:44:16.783Z",
-      "updated_at": "2026-09-17T07:44:16.783Z",
+      "updated_at": "2026-09-18T03:23:48.864Z",
       "id": "dea05fda42712995",
       "merged_ids": [
         "dea05fda42712995"
@@ -4745,8 +4985,8 @@
       "date": "2026-11-07",
       "time": null,
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 990,
+      "price_max": 2180,
       "status": "announced",
       "tags_type": [
         "專場"
@@ -4763,7 +5003,7 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:44:16.783Z",
-      "updated_at": "2026-09-17T07:44:16.783Z",
+      "updated_at": "2026-09-18T03:23:48.864Z",
       "id": "7eddaedaa5304069",
       "merged_ids": [
         "7eddaedaa5304069"
@@ -4783,8 +5023,8 @@
       "date": "2026-11-08",
       "time": null,
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 1000,
+      "price_max": 1800,
       "status": "announced",
       "tags_type": [
         "巡迴"
@@ -4801,7 +5041,7 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:44:16.783Z",
-      "updated_at": "2026-09-17T07:44:16.783Z",
+      "updated_at": "2026-09-18T03:23:48.864Z",
       "id": "3180049b6cfd2b8e",
       "merged_ids": [
         "3180049b6cfd2b8e"
@@ -4859,8 +5099,8 @@
       "date": "2026-11-14",
       "time": null,
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 325,
+      "price_max": 1200,
       "status": "announced",
       "tags_type": [
         "專場"
@@ -4877,7 +5117,7 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:44:16.783Z",
-      "updated_at": "2026-09-17T07:44:16.783Z",
+      "updated_at": "2026-09-18T03:23:48.864Z",
       "id": "45914d1d9f45985c",
       "merged_ids": [
         "45914d1d9f45985c"
@@ -4935,8 +5175,8 @@
       "date": "2026-11-27",
       "time": null,
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 850,
+      "price_max": 3200,
       "status": "announced",
       "tags_type": [
         "專場"
@@ -4953,7 +5193,7 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:44:16.783Z",
-      "updated_at": "2026-09-17T07:44:16.783Z",
+      "updated_at": "2026-09-18T03:23:48.864Z",
       "id": "49179d2cd0892aad",
       "merged_ids": [
         "49179d2cd0892aad"
@@ -4973,8 +5213,8 @@
       "date": "2026-12-04",
       "time": null,
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 600,
+      "price_max": 2400,
       "status": "announced",
       "tags_type": [
         "巡迴"
@@ -4991,7 +5231,7 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:44:16.783Z",
-      "updated_at": "2026-09-17T07:44:16.783Z",
+      "updated_at": "2026-09-18T03:23:48.864Z",
       "id": "4b73260ce4afb93c",
       "merged_ids": [
         "4b73260ce4afb93c"
@@ -5011,8 +5251,8 @@
       "date": "2026-12-06",
       "time": null,
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 650,
+      "price_max": 2400,
       "status": "announced",
       "tags_type": [
         "巡迴"
@@ -5029,7 +5269,7 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:44:16.783Z",
-      "updated_at": "2026-09-17T07:44:16.783Z",
+      "updated_at": "2026-09-18T03:23:48.864Z",
       "id": "573d33c9a494546a",
       "merged_ids": [
         "573d33c9a494546a"
@@ -5087,8 +5327,8 @@
       "date": "2026-12-12",
       "time": null,
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 850,
+      "price_max": 3200,
       "status": "announced",
       "tags_type": [
         "專場"
@@ -5105,7 +5345,7 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:44:16.783Z",
-      "updated_at": "2026-09-17T07:44:16.783Z",
+      "updated_at": "2026-09-18T03:23:48.864Z",
       "id": "6f9ba48dae422b3b",
       "merged_ids": [
         "6f9ba48dae422b3b"
@@ -5201,8 +5441,8 @@
       "date": "2026-12-20",
       "time": null,
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 800,
+      "price_max": 1500,
       "status": "announced",
       "tags_type": [
         "專場"
@@ -5219,7 +5459,7 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:44:16.783Z",
-      "updated_at": "2026-09-17T07:44:16.783Z",
+      "updated_at": "2026-09-18T03:23:48.864Z",
       "id": "5a25fe6da6100cbe",
       "merged_ids": [
         "5a25fe6da6100cbe"
@@ -5239,8 +5479,8 @@
       "date": "2027-01-02",
       "time": null,
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 850,
+      "price_max": 1600,
       "status": "announced",
       "tags_type": [
         "專場"
@@ -5257,7 +5497,7 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:44:16.783Z",
-      "updated_at": "2026-09-17T07:44:16.783Z",
+      "updated_at": "2026-09-18T03:23:48.864Z",
       "id": "0bc9711336261165",
       "merged_ids": [
         "0bc9711336261165"
@@ -5277,8 +5517,8 @@
       "date": "2026-09-06",
       "time": null,
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 600,
+      "price_max": 1000,
       "status": "announced",
       "tags_type": [
         "巡迴"
@@ -5295,10 +5535,14 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:44:23.554Z",
-      "updated_at": "2026-09-17T07:44:23.554Z",
+      "updated_at": "2026-09-18T03:47:00.081Z",
       "id": "12c5b0b5cbd8100e",
       "merged_ids": [
         "12c5b0b5cbd8100e"
+      ],
+      "updated_fields": [
+        "price_min",
+        "price_max"
       ]
     },
     {
@@ -5317,8 +5561,8 @@
       "date": "2026-09-19",
       "time": null,
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 500,
+      "price_max": 600,
       "status": "announced",
       "tags_type": [
         "拼盤"
@@ -5335,10 +5579,14 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:44:23.554Z",
-      "updated_at": "2026-09-17T07:44:23.554Z",
+      "updated_at": "2026-09-18T03:47:00.081Z",
       "id": "6c559430ba07516a",
       "merged_ids": [
         "6c559430ba07516a"
+      ],
+      "updated_fields": [
+        "price_min",
+        "price_max"
       ]
     },
     {
@@ -5355,8 +5603,8 @@
       "date": "2026-09-20",
       "time": null,
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 800,
+      "price_max": 1000,
       "status": "announced",
       "tags_type": [
         "專場"
@@ -5373,10 +5621,14 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:44:23.554Z",
-      "updated_at": "2026-09-17T07:44:23.554Z",
+      "updated_at": "2026-09-18T03:47:00.081Z",
       "id": "b96a6952cc2e8b96",
       "merged_ids": [
         "b96a6952cc2e8b96"
+      ],
+      "updated_fields": [
+        "price_min",
+        "price_max"
       ]
     },
     {
@@ -5393,8 +5645,8 @@
       "date": "2026-09-27",
       "time": null,
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 500,
+      "price_max": 550,
       "status": "announced",
       "tags_type": [
         "巡迴"
@@ -5411,10 +5663,14 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:44:23.554Z",
-      "updated_at": "2026-09-17T07:44:23.554Z",
+      "updated_at": "2026-09-18T03:47:00.081Z",
       "id": "8bde2e492f61925e",
       "merged_ids": [
         "8bde2e492f61925e"
+      ],
+      "updated_fields": [
+        "price_min",
+        "price_max"
       ]
     },
     {
@@ -5469,8 +5725,8 @@
       "date": "2026-10-17",
       "time": null,
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 666,
+      "price_max": 800,
       "status": "announced",
       "tags_type": [
         "專場"
@@ -5487,10 +5743,14 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:44:23.554Z",
-      "updated_at": "2026-09-17T07:44:23.554Z",
+      "updated_at": "2026-09-18T03:47:00.081Z",
       "id": "2111d7e0f5a72267",
       "merged_ids": [
         "2111d7e0f5a72267"
+      ],
+      "updated_fields": [
+        "price_min",
+        "price_max"
       ]
     },
     {
@@ -5511,8 +5771,8 @@
       "date": "2026-10-17",
       "time": null,
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 500,
+      "price_max": 600,
       "status": "announced",
       "tags_type": [
         "巡迴"
@@ -5529,10 +5789,14 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:44:23.554Z",
-      "updated_at": "2026-09-17T07:44:23.554Z",
+      "updated_at": "2026-09-18T03:47:00.081Z",
       "id": "0b430cbd751fe057",
       "merged_ids": [
         "0b430cbd751fe057"
+      ],
+      "updated_fields": [
+        "price_min",
+        "price_max"
       ]
     },
     {
@@ -5549,8 +5813,8 @@
       "date": "2026-10-18",
       "time": null,
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 1000,
+      "price_max": 1200,
       "status": "announced",
       "tags_type": [
         "專場"
@@ -5567,10 +5831,14 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:44:23.554Z",
-      "updated_at": "2026-09-17T07:44:23.554Z",
+      "updated_at": "2026-09-18T03:47:00.081Z",
       "id": "f686c4d6f7dc3c74",
       "merged_ids": [
         "f686c4d6f7dc3c74"
+      ],
+      "updated_fields": [
+        "price_min",
+        "price_max"
       ]
     },
     {
@@ -5587,8 +5855,8 @@
       "date": "2026-10-18",
       "time": null,
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 666,
+      "price_max": 800,
       "status": "announced",
       "tags_type": [
         "專場"
@@ -5605,10 +5873,14 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:44:23.554Z",
-      "updated_at": "2026-09-17T07:44:23.554Z",
+      "updated_at": "2026-09-18T03:47:00.081Z",
       "id": "a52db3d139bd551c",
       "merged_ids": [
         "a52db3d139bd551c"
+      ],
+      "updated_fields": [
+        "price_min",
+        "price_max"
       ]
     },
     {
@@ -5665,8 +5937,8 @@
       "date": "2026-10-25",
       "time": null,
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 500,
+      "price_max": 600,
       "status": "announced",
       "tags_type": [
         "拼盤"
@@ -5683,10 +5955,14 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:44:23.554Z",
-      "updated_at": "2026-09-17T07:44:23.554Z",
+      "updated_at": "2026-09-18T03:47:00.081Z",
       "id": "36b3ae00c89778dd",
       "merged_ids": [
         "36b3ae00c89778dd"
+      ],
+      "updated_fields": [
+        "price_min",
+        "price_max"
       ]
     },
     {
@@ -5703,8 +5979,8 @@
       "date": "2026-10-30",
       "time": null,
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 1800,
+      "price_max": 2200,
       "status": "announced",
       "tags_type": [
         "專場"
@@ -5721,10 +5997,14 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:44:23.554Z",
-      "updated_at": "2026-09-17T07:44:23.554Z",
+      "updated_at": "2026-09-18T03:47:00.081Z",
       "id": "cea9e7749a19bdaa",
       "merged_ids": [
         "cea9e7749a19bdaa"
+      ],
+      "updated_fields": [
+        "price_min",
+        "price_max"
       ]
     },
     {
@@ -5741,8 +6021,8 @@
       "date": "2026-10-31",
       "time": null,
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 1300,
+      "price_max": 1800,
       "status": "announced",
       "tags_type": [
         "專場"
@@ -5759,10 +6039,14 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:44:23.554Z",
-      "updated_at": "2026-09-17T07:44:23.554Z",
+      "updated_at": "2026-09-18T03:47:00.081Z",
       "id": "ed5b0b28f73e2019",
       "merged_ids": [
         "ed5b0b28f73e2019"
+      ],
+      "updated_fields": [
+        "price_min",
+        "price_max"
       ]
     },
     {
@@ -5817,8 +6101,8 @@
       "date": "2026-11-05",
       "time": null,
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 980,
+      "price_max": 1100,
       "status": "announced",
       "tags_type": [
         "專場"
@@ -5835,10 +6119,14 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:44:23.554Z",
-      "updated_at": "2026-09-17T07:44:23.554Z",
+      "updated_at": "2026-09-18T03:47:00.081Z",
       "id": "49653903dbe2d5e7",
       "merged_ids": [
         "49653903dbe2d5e7"
+      ],
+      "updated_fields": [
+        "price_min",
+        "price_max"
       ]
     },
     {
@@ -5969,8 +6257,8 @@
       "date": "2027-01-10",
       "time": null,
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 1900,
+      "price_max": 3500,
       "status": "announced",
       "tags_type": [
         "專場"
@@ -5987,10 +6275,14 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:44:23.555Z",
-      "updated_at": "2026-09-17T07:44:23.555Z",
+      "updated_at": "2026-09-18T03:47:00.081Z",
       "id": "c25c55b3396572cb",
       "merged_ids": [
         "c25c55b3396572cb"
+      ],
+      "updated_fields": [
+        "price_min",
+        "price_max"
       ]
     },
     {
@@ -6007,8 +6299,8 @@
       "date": "2026-12-19",
       "time": "17:00",
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 500,
+      "price_max": 1800,
       "status": "announced",
       "tags_type": [
         "專場"
@@ -6025,7 +6317,7 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:47:39.244Z",
-      "updated_at": "2026-09-17T07:47:39.244Z",
+      "updated_at": "2026-09-18T03:23:48.864Z",
       "id": "0bee734345ac5fcb",
       "merged_ids": [
         "0bee734345ac5fcb"
@@ -6047,8 +6339,8 @@
       "date": "2026-10-15",
       "time": "19:30",
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 650,
+      "price_max": 800,
       "status": "announced",
       "tags_type": [
         "拼盤"
@@ -6065,7 +6357,7 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:47:39.245Z",
-      "updated_at": "2026-09-17T07:47:39.245Z",
+      "updated_at": "2026-09-18T03:23:48.864Z",
       "id": "19a469846f9185d1",
       "merged_ids": [
         "19a469846f9185d1"
@@ -6085,8 +6377,8 @@
       "date": "2026-11-06",
       "time": "19:30",
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 800,
+      "price_max": 1000,
       "status": "announced",
       "tags_type": [
         "巡迴"
@@ -6103,7 +6395,7 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:47:39.245Z",
-      "updated_at": "2026-09-17T07:47:39.245Z",
+      "updated_at": "2026-09-18T03:23:48.864Z",
       "id": "4ffe0ccf1263f5c9",
       "merged_ids": [
         "4ffe0ccf1263f5c9"
@@ -6123,8 +6415,8 @@
       "date": "2026-11-08",
       "time": "19:30",
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 800,
+      "price_max": 1000,
       "status": "announced",
       "tags_type": [
         "巡迴"
@@ -6141,7 +6433,7 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:47:39.245Z",
-      "updated_at": "2026-09-17T07:47:39.245Z",
+      "updated_at": "2026-09-18T03:23:48.864Z",
       "id": "45c4836b04d25468",
       "merged_ids": [
         "45c4836b04d25468"
@@ -6161,8 +6453,8 @@
       "date": "2026-10-23",
       "time": "19:30",
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 500,
+      "price_max": 600,
       "status": "announced",
       "tags_type": [
         "專場"
@@ -6179,7 +6471,7 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:47:39.245Z",
-      "updated_at": "2026-09-17T07:47:39.245Z",
+      "updated_at": "2026-09-18T03:23:48.864Z",
       "id": "78653ad954ede005",
       "merged_ids": [
         "78653ad954ede005"
@@ -6199,8 +6491,8 @@
       "date": "2026-10-24",
       "time": "19:30",
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 600,
+      "price_max": 700,
       "status": "announced",
       "tags_type": [
         "專場"
@@ -6217,7 +6509,7 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:47:39.245Z",
-      "updated_at": "2026-09-17T07:47:39.245Z",
+      "updated_at": "2026-09-18T03:23:48.864Z",
       "id": "d8373265036193c2",
       "merged_ids": [
         "d8373265036193c2"
@@ -6239,8 +6531,8 @@
       "date": "2026-10-29",
       "time": "19:30",
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 600,
+      "price_max": 700,
       "status": "announced",
       "tags_type": [
         "拼盤"
@@ -6257,7 +6549,7 @@
         }
       ],
       "first_seen_at": "2026-09-17T09:46:21.823Z",
-      "updated_at": "2026-09-17T09:46:21.823Z",
+      "updated_at": "2026-09-18T03:23:48.864Z",
       "id": "561cd04ae45cbcaf",
       "merged_ids": [
         "561cd04ae45cbcaf"
@@ -6277,8 +6569,8 @@
       "date": "2026-11-01",
       "time": "13:00",
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 2140,
+      "price_max": 2140,
       "status": "announced",
       "tags_type": [
         "專場"
@@ -6295,7 +6587,7 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:47:39.245Z",
-      "updated_at": "2026-09-17T07:47:39.245Z",
+      "updated_at": "2026-09-18T03:23:48.864Z",
       "id": "efcdac2fcc544828-day",
       "merged_ids": [
         "efcdac2fcc544828-day"
@@ -6315,8 +6607,8 @@
       "date": "2026-11-01",
       "time": "18:30",
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 2140,
+      "price_max": 2140,
       "status": "announced",
       "tags_type": [
         "專場"
@@ -6333,7 +6625,7 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:47:39.245Z",
-      "updated_at": "2026-09-17T07:47:39.245Z",
+      "updated_at": "2026-09-18T03:23:48.864Z",
       "id": "efcdac2fcc544828-evening",
       "merged_ids": [
         "efcdac2fcc544828-evening"
@@ -6353,8 +6645,8 @@
       "date": "2026-10-22",
       "time": "19:30",
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 500,
+      "price_max": 600,
       "status": "announced",
       "tags_type": [
         "專場"
@@ -6371,7 +6663,7 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:47:39.245Z",
-      "updated_at": "2026-09-17T07:47:39.245Z",
+      "updated_at": "2026-09-18T03:23:48.864Z",
       "id": "a0c6f1b0d05a3db9",
       "merged_ids": [
         "a0c6f1b0d05a3db9"
@@ -6391,8 +6683,8 @@
       "date": "2026-11-06",
       "time": "19:30",
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 650,
+      "price_max": 2000,
       "status": "announced",
       "tags_type": [
         "專場"
@@ -6409,7 +6701,7 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:47:39.245Z",
-      "updated_at": "2026-09-17T07:47:39.245Z",
+      "updated_at": "2026-09-18T03:23:48.864Z",
       "id": "140012f0da5ad5e4",
       "merged_ids": [
         "140012f0da5ad5e4"
@@ -6429,8 +6721,8 @@
       "date": "2026-10-30",
       "time": "19:30",
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 550,
+      "price_max": 650,
       "status": "announced",
       "tags_type": [
         "專場"
@@ -6447,7 +6739,7 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:47:39.245Z",
-      "updated_at": "2026-09-17T07:47:39.245Z",
+      "updated_at": "2026-09-18T03:23:48.864Z",
       "id": "b85c63967525ccc9",
       "merged_ids": [
         "b85c63967525ccc9"
@@ -6467,8 +6759,8 @@
       "date": "2026-10-01",
       "time": "19:30",
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 500,
+      "price_max": 550,
       "status": "announced",
       "tags_type": [
         "專場"
@@ -6485,7 +6777,7 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:47:39.247Z",
-      "updated_at": "2026-09-17T07:47:39.247Z",
+      "updated_at": "2026-09-18T03:23:48.864Z",
       "id": "9c0f16320682ee77",
       "merged_ids": [
         "9c0f16320682ee77"
@@ -6505,8 +6797,8 @@
       "date": "2026-10-18",
       "time": "19:30",
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 700,
+      "price_max": 1200,
       "status": "announced",
       "tags_type": [
         "專場"
@@ -6523,7 +6815,7 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:47:39.247Z",
-      "updated_at": "2026-09-17T07:47:39.247Z",
+      "updated_at": "2026-09-18T03:23:48.864Z",
       "id": "99d7662de6dad9ef",
       "merged_ids": [
         "99d7662de6dad9ef"
@@ -6543,8 +6835,8 @@
       "date": "2026-11-13",
       "time": "20:00",
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 700,
+      "price_max": 1200,
       "status": "announced",
       "tags_type": [
         "專場"
@@ -6561,7 +6853,7 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:47:39.247Z",
-      "updated_at": "2026-09-17T07:47:39.247Z",
+      "updated_at": "2026-09-18T03:23:48.864Z",
       "id": "011e786f562eb5d4",
       "merged_ids": [
         "011e786f562eb5d4"
@@ -6619,8 +6911,8 @@
       "date": "2026-09-19",
       "time": "18:00",
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 940,
+      "price_max": 940,
       "status": "announced",
       "tags_type": [
         "專場"
@@ -6642,7 +6934,7 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:47:39.247Z",
-      "updated_at": "2026-09-17T07:47:39.247Z",
+      "updated_at": "2026-09-18T03:23:48.864Z",
       "id": "8cd3f7e64a3d64b9",
       "merged_ids": [
         "8cd3f7e64a3d64b9"
@@ -6662,8 +6954,8 @@
       "date": "2026-09-19",
       "time": "14:00",
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 940,
+      "price_max": 940,
       "status": "announced",
       "tags_type": [
         "專場"
@@ -6685,7 +6977,7 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:47:39.247Z",
-      "updated_at": "2026-09-17T07:47:39.247Z",
+      "updated_at": "2026-09-18T03:23:48.864Z",
       "id": "48e25f839d4b6dba",
       "merged_ids": [
         "48e25f839d4b6dba"
@@ -6705,8 +6997,8 @@
       "date": "2026-10-31",
       "time": "19:30",
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 4600,
+      "price_max": 4600,
       "status": "announced",
       "tags_type": [
         "專場"
@@ -6723,7 +7015,7 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:47:39.248Z",
-      "updated_at": "2026-09-17T07:47:39.248Z",
+      "updated_at": "2026-09-18T03:23:48.864Z",
       "id": "e79712b0a934152d",
       "merged_ids": [
         "e79712b0a934152d"
@@ -6819,8 +7111,8 @@
       "date": "2026-10-03",
       "time": "19:30",
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 500,
+      "price_max": 600,
       "status": "announced",
       "tags_type": [
         "專場"
@@ -6837,7 +7129,7 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:47:39.248Z",
-      "updated_at": "2026-09-17T07:47:39.248Z",
+      "updated_at": "2026-09-18T03:23:48.864Z",
       "id": "b7a0873d1aef7122",
       "merged_ids": [
         "b7a0873d1aef7122"
@@ -6859,8 +7151,8 @@
       "date": "2026-10-16",
       "time": "20:00",
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 1200,
+      "price_max": 2400,
       "status": "announced",
       "tags_type": [
         "拼盤"
@@ -6877,7 +7169,7 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:47:39.248Z",
-      "updated_at": "2026-09-17T07:47:39.248Z",
+      "updated_at": "2026-09-18T03:23:48.864Z",
       "id": "ebc02d7029383755",
       "merged_ids": [
         "ebc02d7029383755"
@@ -6983,8 +7275,8 @@
       "date": "2026-09-25",
       "time": "19:30",
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 500,
+      "price_max": 550,
       "status": "announced",
       "tags_type": [
         "專場"
@@ -7001,7 +7293,7 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:47:39.249Z",
-      "updated_at": "2026-09-17T07:47:39.249Z",
+      "updated_at": "2026-09-18T03:23:48.864Z",
       "id": "d43f8aabe5ef4620",
       "merged_ids": [
         "d43f8aabe5ef4620"
@@ -7025,8 +7317,8 @@
       "date": "2026-09-24",
       "time": "19:30",
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 500,
+      "price_max": 600,
       "status": "announced",
       "tags_type": [
         "拼盤"
@@ -7043,7 +7335,7 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:47:39.249Z",
-      "updated_at": "2026-09-17T07:47:39.249Z",
+      "updated_at": "2026-09-18T03:23:48.864Z",
       "id": "201a8a9a0e8a2b5c",
       "merged_ids": [
         "201a8a9a0e8a2b5c"
@@ -7063,8 +7355,8 @@
       "date": "2026-09-18",
       "time": "19:30",
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 500,
+      "price_max": 600,
       "status": "announced",
       "tags_type": [
         "專場"
@@ -7081,7 +7373,7 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:47:39.249Z",
-      "updated_at": "2026-09-17T07:47:39.249Z",
+      "updated_at": "2026-09-18T03:23:48.864Z",
       "id": "c25942542f9cfd77",
       "merged_ids": [
         "c25942542f9cfd77"
@@ -7101,8 +7393,8 @@
       "date": "2026-11-07",
       "time": "14:30",
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 2940,
+      "price_max": 2940,
       "status": "announced",
       "tags_type": [
         "專場"
@@ -7119,7 +7411,7 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:47:39.249Z",
-      "updated_at": "2026-09-17T07:47:39.249Z",
+      "updated_at": "2026-09-18T03:23:48.864Z",
       "id": "961df96f58cf6f2f",
       "merged_ids": [
         "961df96f58cf6f2f"
@@ -7139,8 +7431,8 @@
       "date": "2026-11-08",
       "time": "14:30",
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 2940,
+      "price_max": 2940,
       "status": "announced",
       "tags_type": [
         "專場"
@@ -7157,7 +7449,7 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:47:39.249Z",
-      "updated_at": "2026-09-17T07:47:39.249Z",
+      "updated_at": "2026-09-18T03:23:48.864Z",
       "id": "f37bf84da80bfb5a",
       "merged_ids": [
         "f37bf84da80bfb5a"
@@ -7177,8 +7469,8 @@
       "date": "2026-10-31",
       "time": "13:00",
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 2440,
+      "price_max": 2440,
       "status": "announced",
       "tags_type": [
         "專場"
@@ -7195,7 +7487,7 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:47:39.249Z",
-      "updated_at": "2026-09-17T07:47:39.249Z",
+      "updated_at": "2026-09-18T03:23:48.864Z",
       "id": "7d669648aaeb8388-day",
       "merged_ids": [
         "7d669648aaeb8388-day"
@@ -7215,8 +7507,8 @@
       "date": "2026-10-31",
       "time": "18:00",
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 2440,
+      "price_max": 2440,
       "status": "announced",
       "tags_type": [
         "專場"
@@ -7233,7 +7525,7 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:47:39.250Z",
-      "updated_at": "2026-09-17T07:47:39.250Z",
+      "updated_at": "2026-09-18T03:23:48.864Z",
       "id": "7d669648aaeb8388-evening",
       "merged_ids": [
         "7d669648aaeb8388-evening"
@@ -7255,8 +7547,8 @@
       "date": "2026-11-28",
       "time": "19:30",
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 700,
+      "price_max": 800,
       "status": "announced",
       "tags_type": [
         "拼盤"
@@ -7273,7 +7565,7 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:47:39.250Z",
-      "updated_at": "2026-09-17T07:47:39.250Z",
+      "updated_at": "2026-09-18T03:23:48.864Z",
       "id": "c3bc4742760a0b81",
       "merged_ids": [
         "c3bc4742760a0b81"
@@ -7293,8 +7585,8 @@
       "date": "2026-10-10",
       "time": "19:30",
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 600,
+      "price_max": 700,
       "status": "announced",
       "tags_type": [
         "專場"
@@ -7311,7 +7603,7 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:47:39.250Z",
-      "updated_at": "2026-09-17T07:47:39.250Z",
+      "updated_at": "2026-09-18T03:23:48.864Z",
       "id": "cbb7285c3726f8c2",
       "merged_ids": [
         "cbb7285c3726f8c2"
@@ -7331,8 +7623,8 @@
       "date": "2026-10-17",
       "time": "19:30",
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 900,
+      "price_max": 1000,
       "status": "announced",
       "tags_type": [
         "專場"
@@ -7349,7 +7641,7 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:47:39.250Z",
-      "updated_at": "2026-09-17T07:47:39.250Z",
+      "updated_at": "2026-09-18T03:23:48.864Z",
       "id": "63ee87cc5ca0825e",
       "merged_ids": [
         "63ee87cc5ca0825e"
@@ -7371,8 +7663,8 @@
       "date": "2026-11-27",
       "time": "19:30",
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 600,
+      "price_max": 800,
       "status": "announced",
       "tags_type": [
         "拼盤"
@@ -7389,7 +7681,7 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:47:39.250Z",
-      "updated_at": "2026-09-17T07:47:39.250Z",
+      "updated_at": "2026-09-18T03:23:48.864Z",
       "id": "bcc9657e335fbad3",
       "merged_ids": [
         "bcc9657e335fbad3"
@@ -7409,8 +7701,8 @@
       "date": "2026-10-03",
       "time": "18:00",
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 2940,
+      "price_max": 2940,
       "status": "announced",
       "tags_type": [
         "專場"
@@ -7437,7 +7729,7 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:47:39.250Z",
-      "updated_at": "2026-09-17T07:47:39.250Z",
+      "updated_at": "2026-09-18T03:23:48.864Z",
       "id": "048be206f0d7b8b4",
       "merged_ids": [
         "048be206f0d7b8b4"
@@ -7457,8 +7749,8 @@
       "date": "2026-09-26",
       "time": "19:30",
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 900,
+      "price_max": 1100,
       "status": "announced",
       "tags_type": [
         "專場"
@@ -7475,7 +7767,7 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:47:39.250Z",
-      "updated_at": "2026-09-17T07:47:39.250Z",
+      "updated_at": "2026-09-18T03:23:48.864Z",
       "id": "0b13c3334e8fe221",
       "merged_ids": [
         "0b13c3334e8fe221"
@@ -7495,8 +7787,8 @@
       "date": "2026-10-08",
       "time": "19:30",
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 900,
+      "price_max": 1100,
       "status": "announced",
       "tags_type": [
         "專場"
@@ -7513,7 +7805,7 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:47:39.250Z",
-      "updated_at": "2026-09-17T07:47:39.250Z",
+      "updated_at": "2026-09-18T03:23:48.864Z",
       "id": "3b68314b192bd87f",
       "merged_ids": [
         "3b68314b192bd87f"
@@ -7535,8 +7827,8 @@
       "date": "2026-09-19",
       "time": "19:30",
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 500,
+      "price_max": 600,
       "status": "announced",
       "tags_type": [
         "拼盤"
@@ -7553,7 +7845,7 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:47:39.250Z",
-      "updated_at": "2026-09-17T07:47:39.250Z",
+      "updated_at": "2026-09-18T03:23:48.864Z",
       "id": "b5119347bf7de501",
       "merged_ids": [
         "b5119347bf7de501"
@@ -7611,8 +7903,8 @@
       "date": "2026-11-14",
       "time": "13:00",
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 1840,
+      "price_max": 1840,
       "status": "announced",
       "tags_type": [
         "專場"
@@ -7629,7 +7921,7 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:47:39.250Z",
-      "updated_at": "2026-09-17T07:47:39.250Z",
+      "updated_at": "2026-09-18T03:23:48.864Z",
       "id": "24c05912c2217a9d-day",
       "merged_ids": [
         "24c05912c2217a9d-day"
@@ -7649,8 +7941,8 @@
       "date": "2026-11-14",
       "time": "17:00",
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 1840,
+      "price_max": 1840,
       "status": "announced",
       "tags_type": [
         "專場"
@@ -7667,7 +7959,7 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:47:39.250Z",
-      "updated_at": "2026-09-17T07:47:39.250Z",
+      "updated_at": "2026-09-18T03:23:48.864Z",
       "id": "24c05912c2217a9d-evening",
       "merged_ids": [
         "24c05912c2217a9d-evening"
@@ -7687,8 +7979,8 @@
       "date": "2026-09-19",
       "time": "18:00",
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 2800,
+      "price_max": 2800,
       "status": "announced",
       "tags_type": [
         "專場"
@@ -7705,7 +7997,7 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:47:39.250Z",
-      "updated_at": "2026-09-17T07:47:39.250Z",
+      "updated_at": "2026-09-18T03:23:48.864Z",
       "id": "6cc3921fb66ddb82",
       "merged_ids": [
         "6cc3921fb66ddb82"
@@ -7725,8 +8017,8 @@
       "date": "2026-09-20",
       "time": "16:00",
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 2800,
+      "price_max": 2800,
       "status": "announced",
       "tags_type": [
         "專場"
@@ -7743,7 +8035,7 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:47:39.250Z",
-      "updated_at": "2026-09-17T07:47:39.250Z",
+      "updated_at": "2026-09-18T03:23:48.864Z",
       "id": "cdca55dd26d5873b",
       "merged_ids": [
         "cdca55dd26d5873b"
@@ -7763,8 +8055,8 @@
       "date": "2026-10-08",
       "time": "19:30",
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 750,
+      "price_max": 750,
       "status": "announced",
       "tags_type": [
         "專場"
@@ -7781,7 +8073,7 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:47:39.250Z",
-      "updated_at": "2026-09-17T07:47:39.250Z",
+      "updated_at": "2026-09-18T03:23:48.864Z",
       "id": "1907c1044cec0b58",
       "merged_ids": [
         "1907c1044cec0b58"
@@ -7801,8 +8093,8 @@
       "date": "2026-10-16",
       "time": "19:30",
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 2200,
+      "price_max": 2500,
       "status": "announced",
       "tags_type": [
         "專場"
@@ -7819,7 +8111,7 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:47:39.250Z",
-      "updated_at": "2026-09-17T07:47:39.250Z",
+      "updated_at": "2026-09-18T03:23:48.864Z",
       "id": "daa00c6107381c4c",
       "merged_ids": [
         "daa00c6107381c4c"
@@ -7839,8 +8131,8 @@
       "date": "2026-10-09",
       "time": "18:00",
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 2900,
+      "price_max": 6300,
       "status": "announced",
       "tags_type": [
         "巡迴"
@@ -7857,7 +8149,7 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:47:39.251Z",
-      "updated_at": "2026-09-17T07:47:39.251Z",
+      "updated_at": "2026-09-18T03:23:48.864Z",
       "id": "a195ccc59dfcd22d",
       "merged_ids": [
         "a195ccc59dfcd22d"
@@ -7877,8 +8169,8 @@
       "date": "2026-10-10",
       "time": "18:00",
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 2900,
+      "price_max": 6300,
       "status": "announced",
       "tags_type": [
         "巡迴"
@@ -7895,7 +8187,7 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:47:39.251Z",
-      "updated_at": "2026-09-17T07:47:39.251Z",
+      "updated_at": "2026-09-18T03:23:48.864Z",
       "id": "1a6fdab63a359bbf",
       "merged_ids": [
         "1a6fdab63a359bbf"
@@ -7915,8 +8207,8 @@
       "date": "2026-10-02",
       "time": "19:30",
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 2200,
+      "price_max": 2500,
       "status": "announced",
       "tags_type": [
         "專場"
@@ -7933,7 +8225,7 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:47:39.251Z",
-      "updated_at": "2026-09-17T07:47:39.251Z",
+      "updated_at": "2026-09-18T03:23:48.864Z",
       "id": "b1b14cb24d5968ea",
       "merged_ids": [
         "b1b14cb24d5968ea"
@@ -8108,8 +8400,8 @@
       "date": "2026-08-15",
       "time": "20:00",
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 750,
+      "price_max": 2800,
       "status": "announced",
       "tags_type": [
         "專場"
@@ -8126,7 +8418,7 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:47:39.251Z",
-      "updated_at": "2026-09-17T07:47:39.251Z",
+      "updated_at": "2026-09-18T03:23:48.864Z",
       "id": "0d0a8ec665bb7ad1",
       "merged_ids": [
         "0d0a8ec665bb7ad1"
@@ -8146,8 +8438,8 @@
       "date": "2026-08-29",
       "time": "20:00",
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 750,
+      "price_max": 2800,
       "status": "announced",
       "tags_type": [
         "專場"
@@ -8164,7 +8456,7 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:47:39.251Z",
-      "updated_at": "2026-09-17T07:47:39.251Z",
+      "updated_at": "2026-09-18T03:23:48.864Z",
       "id": "f1506c175eb0c3ee",
       "merged_ids": [
         "f1506c175eb0c3ee"
@@ -8184,8 +8476,8 @@
       "date": "2026-09-25",
       "time": "19:30",
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 750,
+      "price_max": 2800,
       "status": "announced",
       "tags_type": [
         "專場"
@@ -8202,7 +8494,7 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:47:39.251Z",
-      "updated_at": "2026-09-17T07:47:39.251Z",
+      "updated_at": "2026-09-18T03:23:48.864Z",
       "id": "d133b37bbd9a342f",
       "merged_ids": [
         "d133b37bbd9a342f"
@@ -8222,8 +8514,8 @@
       "date": "2026-09-26",
       "time": "18:00",
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 1980,
+      "price_max": 6375,
       "status": "announced",
       "tags_type": [
         "專場"
@@ -8240,7 +8532,7 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:47:39.252Z",
-      "updated_at": "2026-09-17T07:47:39.252Z",
+      "updated_at": "2026-09-18T03:23:48.864Z",
       "id": "b810ed63bbab94ff",
       "merged_ids": [
         "b810ed63bbab94ff"
@@ -8260,8 +8552,8 @@
       "date": "2026-11-14",
       "time": "17:30",
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 2300,
+      "price_max": 2300,
       "status": "announced",
       "tags_type": [
         "專場"
@@ -8278,7 +8570,7 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:47:39.252Z",
-      "updated_at": "2026-09-17T07:47:39.252Z",
+      "updated_at": "2026-09-18T03:23:48.864Z",
       "id": "9d352e4e901c2f7d",
       "merged_ids": [
         "9d352e4e901c2f7d"
@@ -8298,8 +8590,8 @@
       "date": "2027-01-30",
       "time": "18:00",
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 2000,
+      "price_max": 2026,
       "status": "announced",
       "tags_type": [
         "巡迴"
@@ -8316,7 +8608,7 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:47:39.252Z",
-      "updated_at": "2026-09-17T07:47:39.252Z",
+      "updated_at": "2026-09-18T03:23:48.864Z",
       "id": "8a6c73c9632cafd6",
       "merged_ids": [
         "8a6c73c9632cafd6"
@@ -8336,8 +8628,8 @@
       "date": "2026-11-22",
       "time": "18:30",
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 1900,
+      "price_max": 1900,
       "status": "announced",
       "tags_type": [
         "巡迴"
@@ -8369,7 +8661,7 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:47:39.252Z",
-      "updated_at": "2026-09-17T07:47:39.252Z",
+      "updated_at": "2026-09-18T03:23:48.864Z",
       "id": "49a758928db5869b",
       "merged_ids": [
         "49a758928db5869b"
@@ -8389,8 +8681,8 @@
       "date": "2026-10-09",
       "time": "17:00",
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 400,
+      "price_max": 400,
       "status": "announced",
       "tags_type": [
         "專場"
@@ -8412,7 +8704,7 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:47:39.252Z",
-      "updated_at": "2026-09-17T07:47:39.252Z",
+      "updated_at": "2026-09-18T03:23:48.864Z",
       "id": "138a1d334220c645",
       "merged_ids": [
         "138a1d334220c645"
@@ -8432,8 +8724,8 @@
       "date": "2026-10-10",
       "time": "17:00",
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 400,
+      "price_max": 400,
       "status": "announced",
       "tags_type": [
         "專場"
@@ -8455,7 +8747,7 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:47:39.252Z",
-      "updated_at": "2026-09-17T07:47:39.252Z",
+      "updated_at": "2026-09-18T03:23:48.864Z",
       "id": "c2134db2f773a83c",
       "merged_ids": [
         "c2134db2f773a83c"
@@ -8475,8 +8767,8 @@
       "date": "2026-10-18",
       "time": "19:00",
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 3000,
+      "price_max": 3000,
       "status": "announced",
       "tags_type": [
         "專場"
@@ -8493,7 +8785,7 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:47:39.252Z",
-      "updated_at": "2026-09-17T07:47:39.252Z",
+      "updated_at": "2026-09-18T03:23:48.864Z",
       "id": "b41deb9ddd0e5fe1",
       "merged_ids": [
         "b41deb9ddd0e5fe1"
@@ -8513,8 +8805,8 @@
       "date": "2026-11-13",
       "time": "19:00",
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 2100,
+      "price_max": 2900,
       "status": "announced",
       "tags_type": [
         "巡迴"
@@ -8536,7 +8828,7 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:47:39.253Z",
-      "updated_at": "2026-09-17T07:47:39.253Z",
+      "updated_at": "2026-09-18T03:23:48.864Z",
       "id": "8da662efe0bb8444",
       "merged_ids": [
         "8da662efe0bb8444"
@@ -8556,8 +8848,8 @@
       "date": "2026-11-14",
       "time": "18:00",
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 2100,
+      "price_max": 2900,
       "status": "announced",
       "tags_type": [
         "巡迴"
@@ -8579,7 +8871,7 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:47:39.253Z",
-      "updated_at": "2026-09-17T07:47:39.253Z",
+      "updated_at": "2026-09-18T03:23:48.864Z",
       "id": "b65795c666bc065e",
       "merged_ids": [
         "b65795c666bc065e"
@@ -8599,8 +8891,8 @@
       "date": "2026-10-11",
       "time": "13:00",
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 1280,
+      "price_max": 1280,
       "status": "announced",
       "tags_type": [
         "見面會"
@@ -8617,7 +8909,7 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:47:39.253Z",
-      "updated_at": "2026-09-17T07:47:39.253Z",
+      "updated_at": "2026-09-18T03:23:48.864Z",
       "id": "adca1dc51292fdcf-day",
       "merged_ids": [
         "adca1dc51292fdcf-day"
@@ -8637,8 +8929,8 @@
       "date": "2026-10-11",
       "time": "17:00",
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 1280,
+      "price_max": 1280,
       "status": "announced",
       "tags_type": [
         "見面會"
@@ -8655,7 +8947,7 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:47:39.253Z",
-      "updated_at": "2026-09-17T07:47:39.253Z",
+      "updated_at": "2026-09-18T03:23:48.864Z",
       "id": "adca1dc51292fdcf-evening",
       "merged_ids": [
         "adca1dc51292fdcf-evening"
@@ -8718,8 +9010,8 @@
       "date": "2026-09-29",
       "time": "19:30",
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 1000,
+      "price_max": 1300,
       "status": "announced",
       "tags_type": [
         "巡迴"
@@ -8736,7 +9028,7 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:47:39.253Z",
-      "updated_at": "2026-09-17T07:47:39.253Z",
+      "updated_at": "2026-09-18T03:23:48.864Z",
       "id": "8c5b14d6148c9a16",
       "merged_ids": [
         "8c5b14d6148c9a16"
@@ -8756,8 +9048,8 @@
       "date": "2026-10-24",
       "time": "18:00",
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 900,
+      "price_max": 2000,
       "status": "announced",
       "tags_type": [
         "專場"
@@ -8774,7 +9066,7 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:47:39.253Z",
-      "updated_at": "2026-09-17T07:47:39.253Z",
+      "updated_at": "2026-09-18T03:23:48.864Z",
       "id": "0536a446efca6553",
       "merged_ids": [
         "0536a446efca6553"
@@ -8794,8 +9086,8 @@
       "date": "2026-10-04",
       "time": "19:30",
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 2800,
+      "price_max": 3300,
       "status": "announced",
       "tags_type": [
         "專場"
@@ -8812,7 +9104,7 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:47:39.254Z",
-      "updated_at": "2026-09-17T07:47:39.254Z",
+      "updated_at": "2026-09-18T03:23:48.864Z",
       "id": "33a35141b27afb90",
       "merged_ids": [
         "33a35141b27afb90"
@@ -8834,8 +9126,8 @@
       "date": "2026-10-24",
       "time": "19:00",
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 2200,
+      "price_max": 7500,
       "status": "announced",
       "tags_type": [
         "拼盤"
@@ -8857,7 +9149,7 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:47:39.254Z",
-      "updated_at": "2026-09-17T07:47:39.254Z",
+      "updated_at": "2026-09-18T03:23:48.864Z",
       "id": "5af121af4ca5f089",
       "merged_ids": [
         "5af121af4ca5f089"
@@ -8879,8 +9171,8 @@
       "date": "2026-10-25",
       "time": "18:30",
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 2200,
+      "price_max": 7500,
       "status": "announced",
       "tags_type": [
         "拼盤"
@@ -8897,7 +9189,7 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:47:39.254Z",
-      "updated_at": "2026-09-17T07:47:39.254Z",
+      "updated_at": "2026-09-18T03:23:48.864Z",
       "id": "ac29eda2fedd4557",
       "merged_ids": [
         "ac29eda2fedd4557"
@@ -8917,8 +9209,8 @@
       "date": "2026-10-31",
       "time": "19:00",
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 800,
+      "price_max": 5880,
       "status": "announced",
       "tags_type": [
         "專場"
@@ -8940,7 +9232,7 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:47:39.254Z",
-      "updated_at": "2026-09-17T07:47:39.254Z",
+      "updated_at": "2026-09-18T03:23:48.864Z",
       "id": "cb9ccdeee8db8d07",
       "merged_ids": [
         "cb9ccdeee8db8d07"
@@ -8960,8 +9252,8 @@
       "date": "2026-11-01",
       "time": "19:00",
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 800,
+      "price_max": 5880,
       "status": "announced",
       "tags_type": [
         "專場"
@@ -8983,7 +9275,7 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:47:39.254Z",
-      "updated_at": "2026-09-17T07:47:39.254Z",
+      "updated_at": "2026-09-18T03:23:48.864Z",
       "id": "a737c58b8ddd14d0",
       "merged_ids": [
         "a737c58b8ddd14d0"
@@ -9177,8 +9469,8 @@
       "date": "2026-09-18",
       "time": "19:30",
       "on_sale_at": null,
-      "price_min": null,
-      "price_max": null,
+      "price_min": 650,
+      "price_max": 1500,
       "status": "announced",
       "tags_type": [
         "拼盤"
@@ -9195,7 +9487,7 @@
         }
       ],
       "first_seen_at": "2026-09-17T07:47:39.255Z",
-      "updated_at": "2026-09-17T07:47:39.255Z",
+      "updated_at": "2026-09-18T03:23:48.864Z",
       "id": "46d77fb687ead33a",
       "merged_ids": [
         "46d77fb687ead33a"

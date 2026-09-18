@@ -228,6 +228,88 @@ function priceFromTickets(ticketsRaw) {
   return { min: Math.min(...prices), max: Math.max(...prices) };
 }
 
+// FANSI GO's decorative event pages write prices as fullwidth Unicode
+// ("ＮＴ＄５００") — \d and $ only match halfwidth characters, so this has to
+// run before any of the money regexes below. The fullwidth ASCII block
+// (！-～, U+FF01-FF5E) is a fixed +0xFEE0 shift from real ASCII for every
+// character in it (digits, letters, and punctuation like $ alike), so one
+// shift normalizes all of them at once.
+function normalizeFullwidthAscii(text) {
+  return text.replace(/[！-～]/g, (ch) => String.fromCharCode(ch.charCodeAt(0) - 0xfee0));
+}
+
+// Turns a raw HTML blob into newline-separated plain text WITHOUT breaking a
+// sentence mid-way — block-level tags (<br>/<p>/<div>/<li>) become line
+// breaks, everything else (<span>, <strong>, inline style wrappers) is just
+// stripped. This distinction matters here specifically: tixcraft's and
+// Ticket Plus's rich-text-authored price lines wrap individual numbers in
+// their own <span> ("<span>NT$ 3,380</span>起至 NT$ 7,980") — naively turning
+// EVERY tag into a newline would shatter "票價：" onto its own empty line,
+// separated from the numbers that are supposed to follow it on the same line.
+function htmlToLines(html) {
+  return html
+    .replace(/<(?:br|p|div|li)\b[^>]*>/gi, "\n")
+    .replace(/<\/(?:p|div|li)>/gi, "\n")
+    .replace(/<[^>]+>/g, "")
+    .replace(/&nbsp;/gi, " ")
+    .replace(/&amp;/gi, "&");
+}
+
+const PRICE_LABEL_RE = /(?:票價|門票)[：｜:]\s*([^\n]{1,200})/;
+const CURRENCY_NUMBER_RE = /(?:NT\$|\$)\s*([\d,]+)|([\d,]+)\s*元/g;
+// Looser fallback for pages with no overall "票價"/"門票" heading at all
+// (FANSI GO) — still requires a price-shaped word immediately next to the
+// number, not just any digit on the page.
+const PRICE_KEYWORD_RE = /(?:預售|現場|單人|雙人|套票|身障|愛心席|adv|door)[^\d]{0,8}(\d[\d,]*)/gi;
+
+function priceRangeFromNumbers(numbers) {
+  // Sanity floor/ceiling, not a source of truth: catches a stray one- or
+  // two-digit match (a footnote number, a percentage) without needing to
+  // second-guess genuinely expensive VIP tiers.
+  const plausible = numbers.filter((n) => n >= 50 && n <= 100000);
+  if (plausible.length === 0) return { min: null, max: null };
+  return { min: Math.min(...plausible), max: Math.max(...plausible) };
+}
+
+/**
+ * Extracts a {min, max} ticket price range out of freeform "節目介紹"/"活動
+ * 簡介" marketing text — every source except KKTIX puts price in prose, not
+ * a structured ticket table (real pages checked 2026-09-18: tixcraft's "🎫
+ * 票價：NT$3,380起至NT$7,980"，iNDIEVOX's "票價：...9900元／...3500元"，
+ * Ticket Plus's "演出門票｜預售單人$1,000/..."，FANSI GO's fullwidth-decorated
+ * "ＡＤＶ．ＮＴ＄５００／ＤＯＯＲ．ＮＴ＄６００" with no label at all).
+ *
+ * Two tiers, both deliberately conservative — same "don't fabricate a value"
+ * spirit as D15's artist matching, so a page with no clean match returns
+ * {null,null} rather than guessing:
+ *  1. Find a "票價"/"門票" labeled line and pull every $-marked or 元-suffixed
+ *     number OUT OF THAT LINE ONLY. Scoping to just the labeled line (not the
+ *     whole page) is what keeps an unrelated later line like tixcraft's
+ *     "系統服務費200元" from leaking into the result.
+ *  2. If no such label exists at all, fall back to keyword-anchored numbers
+ *     anywhere in the text (預售/現場/單人/雙人/ADV/DOOR immediately followed
+ *     by a number) — looser, but still requires a price-shaped word right
+ *     next to the digits, not just any number on the page.
+ * A shared-prefix list ("NT$2,990 / 2,690 / 2,490") only catches the one
+ * number that actually carries its own $ sign — an accepted under-extraction
+ * (price_min may end up a little higher than the true cheapest tier) rather
+ * than risking a wrong one.
+ */
+export function parsePriceFromText(html) {
+  if (!html) return { min: null, max: null };
+  const plain = normalizeFullwidthAscii(htmlToLines(html));
+
+  const labelMatch = plain.match(PRICE_LABEL_RE);
+  if (labelMatch) {
+    const numbers = [...labelMatch[1].matchAll(CURRENCY_NUMBER_RE)].map((m) => Number((m[1] ?? m[2]).replace(/,/g, "")));
+    const fromLabel = priceRangeFromNumbers(numbers);
+    if (fromLabel.min != null) return fromLabel;
+  }
+
+  const keywordNumbers = [...plain.matchAll(PRICE_KEYWORD_RE)].map((m) => Number(m[1].replace(/,/g, "")));
+  return priceRangeFromNumbers(keywordNumbers);
+}
+
 /**
  * "YYYY-MM-DD" for the current date in Taiwan time (UTC+8, no DST) — never
  * compare event dates via `new Date(dateStr) > new Date()`: the pipeline runs
@@ -305,7 +387,14 @@ export function normalize(rawEvent, artistsYml, venuesYml = []) {
   }
 
   const { venue, city } = parseVenue(rawEvent.venue_raw ?? "", venuesYml);
-  const { min, max } = priceFromTickets(rawEvent.tickets_raw ?? []);
+  // KKTIX is the only source with a real structured ticket-tier table
+  // (tickets_raw); everyone else's price lives in freeform description text
+  // (price_text_raw) — see parsePriceFromText's doc comment for the real
+  // examples that shaped this. Only fall through to the text parser when
+  // there's no ticket table at all, never both.
+  const { min, max } = (rawEvent.tickets_raw ?? []).length
+    ? priceFromTickets(rawEvent.tickets_raw)
+    : parsePriceFromText(rawEvent.price_text_raw ?? "");
   const { status, on_sale_at } = statusFromTickets(rawEvent.tickets_raw ?? [], dateParsed.date);
   // Union across ALL recognized headliners, not just headliners[0] — a
   // multi-artist bill (common now that artists.yml has ~230 entries) can mix

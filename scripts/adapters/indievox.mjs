@@ -93,6 +93,17 @@ function parseDateLine(html) {
   return m && /\d{4}/.test(m[1]) ? m[1].trim() : null;
 }
 
+/**
+ * "票價：Shhh! ALL IN｜三場套票 9900元 / ..." -> raw clause, same freeform-info
+ * block as the date/venue lines above, normalize.mjs's parsePriceFromText
+ * pulls the actual numbers back out. 200 chars (not date/venue's 60-80) since
+ * a multi-tier price list runs a lot longer than a venue name.
+ */
+function parsePriceLine(html) {
+  const m = html.match(/票價[｜:：]\s*(?:<[^>]+>\s*)*([^<\n]{2,200})/);
+  return m ? m[1].trim() : null;
+}
+
 async function fetchEventDetail(item) {
   const html = await fetchHtml(item.url);
   const venue_raw = parseVenueLine(html) ?? "";
@@ -104,7 +115,8 @@ async function fetchEventDetail(item) {
     title_raw: item.title_raw,
     date_raw,
     venue_raw,
-    tickets_raw: [], // price parsing skipped for v1 (freeform text, same tradeoff as venue) — price_min/max stay null, matching tixcraft's D16 precedent
+    tickets_raw: [],
+    price_text_raw: parsePriceLine(html) ?? "",
     source_name: name,
   };
 }

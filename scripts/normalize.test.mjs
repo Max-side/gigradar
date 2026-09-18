@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { normalize, parseIndievoxDate, parseIndievoxVenue, parseTicketPlusDate, parseKktixVenue, loadArtists, matchArtists } from "./normalize.mjs";
+import { normalize, parseIndievoxDate, parseIndievoxVenue, parseTicketPlusDate, parseKktixVenue, loadArtists, matchArtists, parsePriceFromText } from "./normalize.mjs";
 
 const artistsYml = [{ canonical: "深海系樂團", aliases: [], tags_origin_default: "本地" }];
 
@@ -235,4 +235,48 @@ test("artists.yml has no case-insensitive substring collisions between any two c
     }
   }
   assert.deepEqual(collisions, []);
+});
+
+test("parsePriceFromText: tixcraft's rich-text price line, numbers wrapped in their own <span>s", () => {
+  const html =
+    '點：高雄國家體育場<br><br><span><strong>🎫</strong> </span>票價：<span>NT$ 3,380</span>起至 NT$ 7,980及身障優惠票<span> (</span>陪同票) NT$ 2,990 / 2,690 / 2,490，實際票價以當下顯示為準。<br>※ 購買前請注意，本節目每張票券外加系統服務費<span>200</span>元。';
+  assert.deepEqual(parsePriceFromText(html), { min: 2990, max: 7980 });
+});
+
+test("parsePriceFromText: iNDIEVOX's 元-suffixed multi-tier list, no $ sign at all", () => {
+  const raw = "Shhh! ALL IN｜三場套票 9900元 / Self! SELECT｜單場票 3500元 / 愛心席 1750元（線上訂購）";
+  assert.deepEqual(parsePriceFromText(raw), { min: 1750, max: 9900 });
+});
+
+test("parsePriceFromText: Ticket Plus's HTML <p>/<span> info field with a 門票｜ label", () => {
+  const html =
+    '<p><span style="font-size:16px"><span>演出門票｜預售單人$1,000/ 預售雙人$1,800/ 現場單人$1,200/ 身障票 $500</span></span></p>';
+  assert.deepEqual(parsePriceFromText(html), { min: 500, max: 1800 });
+});
+
+test("parsePriceFromText: FANSI GO's fullwidth decorative text with no 票價/門票 label at all", () => {
+  const html = "<p>　  ＡＤＶ．ＮＴ＄５００</p><p> ＤＯＯＲ．ＮＴ＄６００</p>";
+  assert.deepEqual(parsePriceFromText(html), { min: 500, max: 600 });
+});
+
+test("parsePriceFromText: FANSI GO's plain-colon per-tier labels (no $ sign, no fullwidth)", () => {
+  const html = "<p>預售票：600　雙人套票：1000　現場票：700</p>";
+  assert.deepEqual(parsePriceFromText(html), { min: 600, max: 1000 });
+});
+
+test("parsePriceFromText: no price-shaped text anywhere returns null, not a guess", () => {
+  assert.deepEqual(parsePriceFromText("<p>這場活動很棒，敬請期待！</p>"), { min: null, max: null });
+  assert.deepEqual(parsePriceFromText(""), { min: null, max: null });
+});
+
+test("normalize(): falls back to parsePriceFromText's price_text_raw when tickets_raw is empty", () => {
+  const raw = makeRaw({
+    source_name: "拓元",
+    venue_raw: "Legacy Taipei / 台北市中正區",
+    tickets_raw: [],
+    price_text_raw: "票價：NT$800 / NT$1,200",
+  });
+  const { event } = normalize(raw, artistsYml, []);
+  assert.equal(event.price_min, 800);
+  assert.equal(event.price_max, 1200);
 });

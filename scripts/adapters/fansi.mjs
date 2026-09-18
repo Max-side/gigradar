@@ -1,5 +1,9 @@
-import { withPage } from "../browser.mjs";
+import { withBrowser, newPage } from "../browser.mjs";
 import { logProgress } from "../progress-log.mjs";
+
+function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
 
 /**
  * FANSI GO (go.fansi.me) adapter. Added 2026-09-17. Needs a real browser
@@ -21,6 +25,15 @@ import { logProgress } from "../progress-log.mjs";
  * name instead (e.g. "Wrong Game Records") — used as-is for `venue`, same
  * "good enough for coverage, not always precise" tradeoff as tixcraft's
  * untracked venues. City comes from data/venues.yml the same way.
+ *
+ * Price DOES live on each event's detail page, though — always inside a
+ * `.prose` div (confirmed stable across every event checked 2026-09-18),
+ * just as decoratively formatted as everything else on this site (fullwidth
+ * digits/currency signs, no consistent label). normalize.mjs's
+ * parsePriceFromText handles the fullwidth normalization and keyword-based
+ * fallback extraction this needs. Getting it means one extra Playwright page
+ * navigation per event on top of the single listing-page load this adapter
+ * used to need — real added time, see HANDOFF.md.
  */
 
 export const name = "FANSI GO";
@@ -58,27 +71,60 @@ async function fetchCards(page) {
   );
 }
 
+const PRICE_REQUEST_DELAY_MS = 800; // see tixcraft.mjs's identical constant — same rationale
+const PRICE_NAV_TIMEOUT_MS = 20000;
+
 export async function fetch() {
   logProgress("fetching FANSI GO /allevents");
-  let cards;
+  let results;
   try {
-    cards = await withPage(fetchCards);
+    results = await withBrowser(async (browser) => {
+      const listPage = await newPage(browser);
+      const cards = await fetchCards(listPage);
+      await listPage.close();
+
+      const events = cards
+        .filter((c) => c.status !== "周邊販售" && c.date_raw) // merch-only listings (if any) aren't real performances
+        .map((c) => ({
+          raw_id: c.url.split("/").filter(Boolean).pop(),
+          url: c.url,
+          title_raw: c.title,
+          date_raw: c.date_raw,
+          venue_raw: c.organizer,
+          tickets_raw: [],
+          price_text_raw: "",
+          source_name: name,
+        }));
+
+      let priceFailures = 0;
+      for (const event of events) {
+        await sleep(PRICE_REQUEST_DELAY_MS);
+        const page = await newPage(browser);
+        try {
+          await page.goto(event.url, { waitUntil: "domcontentloaded", timeout: PRICE_NAV_TIMEOUT_MS });
+          // .prose renders client-side a beat after domcontentloaded, same
+          // as tixcraft's #intro — an unguarded $eval right after goto()
+          // failed for every single event when this went untested against
+          // the real site (see tixcraft.mjs's identical fix for the story).
+          await page.waitForSelector(".prose", { timeout: PRICE_NAV_TIMEOUT_MS });
+          event.price_text_raw = await page.$eval(".prose", (el) => el.innerHTML);
+        } catch (err) {
+          priceFailures += 1;
+          logProgress(`FANSI GO price fetch failed for ${event.url}: ${err.message}`);
+        } finally {
+          await page.close();
+        }
+      }
+      if (priceFailures > 0) {
+        logProgress(`FANSI GO: price detail fetch failed for ${priceFailures}/${events.length} event(s)`);
+      }
+
+      return events;
+    });
   } catch (err) {
     logProgress(`FANSI GO fetch failed: ${err.stack}`);
     throw err;
   }
-
-  const results = cards
-    .filter((c) => c.status !== "周邊販售" && c.date_raw) // merch-only listings (if any) aren't real performances
-    .map((c) => ({
-      raw_id: c.url.split("/").filter(Boolean).pop(),
-      url: c.url,
-      title_raw: c.title,
-      date_raw: c.date_raw,
-      venue_raw: c.organizer,
-      tickets_raw: [],
-      source_name: name,
-    }));
 
   logProgress(`FANSI GO: ${results.length} event(s) fetched`);
   return results;

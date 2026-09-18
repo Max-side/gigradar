@@ -11,14 +11,20 @@ import { logProgress } from "../progress-log.mjs";
  * no freeform-text venue parsing like iNDIEVOX/FANSI GO needed: `sessions.json`
  * has structured `date`/`time`/`location`/`address` fields per session.
  *
- * Two-step fetch: `main/mainEvents.json` lists every currently active event's
- * id (confirmed: `allEventId.length` exactly matches the number of entries in
- * `allEventMainPageInfo` — this is genuinely the full catalog, not just a
- * homepage teaser); `event/{id}/sessions.json` gives each event's individual
- * show dates. A single event can have multiple sessions (e.g. a 2-city tour
- * with different dates/venues per session, or a Taipei run with a matinee and
- * an evening show) — each session becomes its own RawEvent, same as one
- * KKTIX/tixcraft listing row each.
+ * Three-step fetch: `main/mainEvents.json` lists every currently active
+ * event's id (confirmed: `allEventId.length` exactly matches the number of
+ * entries in `allEventMainPageInfo` — this is genuinely the full catalog, not
+ * just a homepage teaser); `event/{id}/sessions.json` gives each event's
+ * individual show dates. A single event can have multiple sessions (e.g. a
+ * 2-city tour with different dates/venues per session, or a Taipei run with
+ * a matinee and an evening show) — each session becomes its own RawEvent,
+ * same as one KKTIX/tixcraft listing row each.
+ *
+ * Price is the one field NOT in sessions.json's structured data — like
+ * tixcraft/iNDIEVOX/FANSI GO it only exists as prose, in `event/{id}/event.json`'s
+ * `info` field (the "活動介紹" tab's raw HTML, found 2026-09-18). Fetched once
+ * per eventId, not once per session, since normalize.mjs's parsePriceFromText
+ * does the actual number extraction from that HTML.
  */
 
 export const name = "Ticket Plus";
@@ -75,6 +81,27 @@ export async function fetch() {
       continue;
     }
 
+    // Price lives in this event's own freeform "活動介紹" (info) field, not
+    // in sessions.json (structured but has no price field at all) — fetched
+    // once per eventId, not once per session, since price is one value for
+    // the whole event, not per session/city (2026-09-18). A failure here
+    // isn't fatal to the event itself, just leaves its price unparsed.
+    //
+    // No separate sleep before this one: it piggybacks on the same eventId
+    // iteration as sessions.json above, right after it — a real measured run
+    // of a second REQUEST_DELAY_MS here doubled Ticket Plus's own total fetch
+    // time (~3min to ~6min out of ~14min for the whole pipeline) for very
+    // little politeness benefit over a same-eventId back-to-back pair; the
+    // 2s gap BETWEEN different eventIds (the sleep above) is what actually
+    // paces the request rate against the server.
+    let priceTextRaw = "";
+    try {
+      const eventData = await fetchJson(`event/${eventId}/event.json`);
+      priceTextRaw = eventData.info ?? "";
+    } catch (err) {
+      logProgress(`ticketplus event.json fetch failed for ${eventId}: ${err.message}`);
+    }
+
     for (const session of sessionsData.sessions ?? []) {
       if (session.hidden) continue; // withdrawn/not-yet-on-sale session, same spirit as KKTIX skipping non-listed events
       if (session.name?.includes("周邊商品")) continue; // merch pre-order listing, not a real performance (same filter FANSI GO needs)
@@ -89,6 +116,7 @@ export async function fetch() {
         // split — RawEvent only has a single date_raw field.
         date_raw: `${session.date ?? ""} ${session.time ?? ""}`,
         tickets_raw: [],
+        price_text_raw: priceTextRaw,
         source_name: name,
       });
     }

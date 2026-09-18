@@ -318,7 +318,11 @@ table tbody tr                             -> 每一種票種一列
 - `https://tixcraft.com/activity`（節目列表頁）：純 UA／Referer 檢查，帶正常瀏覽器的 User-Agent 字串就能拿到完整 HTML（伺服器端渲染，200 OK）。裸 UA（例如 `curl` 預設或 Node `fetch` 沒帶 User-Agent）會被擋，回應 `{"response":"block"}`（HTTP 403）。
 - `https://tixcraft.com/activity/detail/{slug}`（節目詳情頁，**票價在這裡**）：防護強得多。同樣的瀏覽器 UA、Referer、甚至帶著從列表頁拿到的 session cookie 一起送，一律回 `{"response":"identify"}`（HTTP 401）。實測用真瀏覽器（有執行 JS）可以正常看到內容，代表這層防護會執行某種 JS 挑戰（常見於 Akamai／PerimeterX 類服務），單純的 `fetch()` 過不去。
 
-**Phase 1 決策（D16，2026-09-15）**：拓元 adapter **只爬節目列表頁**（標題、日期、場館名稱），**不爬詳情頁**，代價是拿不到票價與售票狀態（`price_min/max` 留 `null`，`status` 一律 `announced`，前端顯示「票價請至頁面查看」並附上 `ticket_url` 導流）。要拿到價格需要上無頭瀏覽器（Playwright/Puppeteer）通過 JS 挑戰，這對 Phase 1 的免費額度／零維護目標（NFR-06、G5）不划算——GitHub Actions 加無頭瀏覽器會顯著拉長執行時間、增加相依套件的維護負擔，且拓元本來就是「大型海外巡演」的通路，使用者通常會自己點進 `ticket_url` 查價，比首頁直接顯示價格的急迫性低。若之後真的需要，可列入 Phase 3 再評估。
+**Phase 1 決策（D16，2026-09-15，已於 2026-09-18 部分推翻，見下）**：拓元 adapter **只爬節目列表頁**（標題、日期、場館名稱），**不爬詳情頁**，代價是拿不到票價與售票狀態（`price_min/max` 留 `null`，`status` 一律 `announced`，前端顯示「票價請至頁面查看」並附上 `ticket_url` 導流）。要拿到價格需要上無頭瀏覽器（Playwright/Puppeteer）通過 JS 挑戰，這對 Phase 1 的免費額度／零維護目標（NFR-06、G5）不划算——GitHub Actions 加無頭瀏覽器會顯著拉長執行時間、增加相依套件的維護負擔，且拓元本來就是「大型海外巡演」的通路，使用者通常會自己點進 `ticket_url` 查價，比首頁直接顯示價格的急迫性低。若之後真的需要，可列入 Phase 3 再評估。
+
+**D16 更新（2026-09-18）：詳情頁還是抓了，因為決策的前提條件已經不成立**。D16 當初的理由是「GitHub Actions 加無頭瀏覽器不划算」，但 S5（2026-09-17）已經把抓取改成純手動、只在使用者自己的機器上跑，Playwright 也已經因為 FANSI GO／KKTIX 搜尋策略變成既有相依套件——D16 的前提整個不再成立。使用者實際打開真實節目頁面確認**票價其實就寫在「節目介紹」分頁的自由格式文字裡**（例如「🎫 票價：NT$ 3,380起至 NT$ 7,980」），要求补上。做法：`scripts/adapters/tixcraft.mjs` 現在對**列表頁抓到的每一筆事件**都額外用 Playwright 開一次詳情頁，抓 `#intro`（節目介紹分頁，預設就是 active，不用點擊）的 `innerHTML`，交給 `normalize.mjs` 的 `parsePriceFromText()` 解析出價格區間。
+
+**代價很實在，不是免費的**：這讓「重新抓取」從原本幾分鐘變成明顯更久——每一筆事件多一次完整的 Playwright 分頁載入（開分頁、導航、抓 DOM、關分頁），拓元一次通常有 80-140 筆事件。實測數字見 `HANDOFF.md`。為了不把成本疊加兩次，詳情頁請求之間的延遲（`DETAIL_REQUEST_DELAY_MS`＝800ms）比純 fetch 的 2000ms 短，理由是一次完整的瀏覽器導航本身就已經有真實的秒級延遲，不需要再疊加同等長度的人為等待。
 
 **列表頁 HTML 結構**（`#all` 分頁，即「全部節目」，是「近期演出」與「最新開賣」兩個分頁的超集，直接爬這個就好）：
 
@@ -346,7 +350,7 @@ table tbody tr                             -> 每一種票種一列
 
 **場館格式**：多數有「場館名稱（地址）」可以直接比照 KKTIX 拆出地址判斷城市；少數只寫裸場館名稱（例如「野地方 Wildlab」），這種就退回 `data/venues.yml` 查表（跟拓元共用同一份表），查不到就 `city: null`。個位數活動完全沒填地點（自由格式文字，主辦方就是沒寫），也只能留空，不強求。
 
-**未做（v1 範圍之外）**：票價解析——跟場館一樣是自由格式文字，這次沒有投入時間做，`price_min/price_max` 一律 `null`，跟拓元目前的做法一致（D16 的同樣取捨精神）。
+**2026-09-18 補上票價解析**：票價其實就在同一個「🔻 活動資訊」自由格式文字區塊裡（例如「票價：Shhh! ALL IN｜三場套票 9900元 / Self! SELECT｜單場票 3500元」），用 `地點`/`日期` 一樣的「標籤＋分隔符號」pattern 多抓一個 `票價[｜:：]` 就拿得到，**完全不需要多打一次請求**——本來就已經在抓的詳情頁 HTML 裡就有。抓到的原始字串交給 `normalize.mjs` 的 `parsePriceFromText()` 解析出數字區間（iNDIEVOX 這裡的格式是「數字＋元」，不是「$數字」，跟拓元／Ticket Plus 不同，該函式兩種都認得）。
 
 ### 5.5 FANSI GO 端點實測結果、以及用 Playwright 解決 Cloudflare 的決定（2026-09-17）
 
@@ -359,6 +363,8 @@ table tbody tr                             -> 每一種票種一列
 **用 Playwright 順便修好 KKTIX 的 `SEARCH_VENUES`**：既然專案已經要為 FANSI GO 加 Playwright 這個相依套件，順便把 `kktix.mjs` 的 `fetchSearchResultUrls`（M11/M12 一路記錄的 Cloudflare 擋爬蟲問題）也改用 Playwright——實測**確認修好了**：同樣的 4 個搜尋關鍵字（Legacy Taipei/Taichung、Revolver、Clapper Studio）這次全部成功，0 個 sub-request 失敗。原理：Cloudflare 的 JS challenge 只擋不會執行 JS 的請求（plain `fetch()`/`curl`），真的瀏覽器引擎會自動跑完那段驗證腳本再送出請求。`fetchOrgListing`／`fetchEventDetail` 兩個既有函式**沒有改**，繼續用 plain fetch——這兩個端點本來就沒有這層防護，沒必要為了不需要的地方多花啟動瀏覽器的成本。
 
 **新增相依套件**：`playwright`（`npm install playwright` + `npx playwright install chromium`，後者會下載約 280MB 的 Chromium/Headless Shell 二進位檔到 `~/Library/Caches/ms-playwright`，不進 git）。共用的瀏覽器啟動/關閉邏輯抽到 `scripts/browser.mjs`（`withPage(fn)`），`kktix.mjs` 和 `fansi.mjs` 都用它，避免重複寫 `chromium.launch()`/`browser.close()` 的樣板程式碼。
+
+**2026-09-18 補上票價：這次真的需要多開一次詳情頁**。FANSI GO 的詳情頁跟場館一樣沒有固定標籤可以 pattern match，但實測發現價格文字穩定放在一個 class 是 `.prose` 的 `<div>`（每個活動頁都有，用 class 選取，不用文字比對），只是格式一樣裝飾性很重（全形數字/貨幣符號，例如「ＡＤＶ．ＮＴ＄５００」，或純冒號分隔無符號的「預售票：600」）——`parsePriceFromText()` 的 fullwidth 正規化與關鍵字後備比對就是為了這個來源設計的。`scripts/browser.mjs` 因此新增 `withBrowser(fn)`/`newPage(browser)` 兩個匯出：讓呼叫端可以只啟動一次瀏覽器、對多個活動各開一個分頁，而不是像 `withPage(fn)` 那樣每次呼叫都重新啟動整個瀏覽器程序——FANSI GO 目前約 26 場活動，等於每次抓取多跑 26 次 Playwright 分頁導航，時間成本不像拓元的 80-140 筆那麼明顯，但一樣是真實增加，不是免費的。
 
 ### 5.6 Ticket Plus 端點實測結果（2026-09-17，五個來源最後一個）
 
@@ -374,6 +380,8 @@ https://apis.ticketplus.com.tw/config/api/v1/getS3?path={資源路徑}
 **跟其他來源共用解析器**：`location`/`address` 兩個獨立欄位，adapter 組成 `"location / address"` 字串（跟 KKTIX 的 `venue_raw` 格式完全一樣），`normalize.mjs` 直接重用 `parseKktixVenue`，沒有另外寫函式；日期是 `date`+`time` 兩個欄位串在一起（`"2027-01-09 ~ 2027-01-09 18:00 ~ 18:00"`），新寫了 `parseTicketPlusDate` 抓開頭的日期跟第一個時間。
 
 **踩過的一個小坑**：少數活動的「場次」其實是官方週邊商品預購，不是真的表演（`location` 欄位會是「預購商品」這種非場館字串），用 `session.name.includes("周邊商品")` 濾掉，跟 FANSI GO 濾掉「周邊」性質列表同一個精神。
+
+**2026-09-18 補上票價**：`sessions.json` 完全沒有價格欄位，但同一個 API 底下還有 `path=event/{eventId}/event.json`，裡面的 `info` 欄位就是「活動介紹」分頁的原始 HTML，票價寫在類似「演出門票｜預售單人$1,000/ 預售雙人$1,800/」這樣的一行裡——**這是五個來源裡取得票價成本最低的一個**：不用 Playwright，就是多打一個一樣公開、不用登入的 JSON API（每個 `eventId` 打一次，不是每個場次都打一次，因為票價是整場活動共用，不分場次）。
 
 **這是五個來源裡對覆蓋率貢獻最大的一次追加**：對照 M12 的 29 場覆蓋率樣本，光是加入 Ticket Plus 就多命中 7 場（見 `reports/coverage-sample-2026-09-17.md`），因為它剛好覆蓋了女巫店、Zepp New Taipei、The Wall 這幾個先前完全碰不到的場館——這幾個場館主要就是透過 Ticket Plus 賣票，不在 KKTIX/拓元的售票生態圈裡。
 
