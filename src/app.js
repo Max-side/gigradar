@@ -54,9 +54,12 @@ import {
   importPrefsFromJson,
   loadViewFilters,
   saveViewFilters,
+  loadFavView,
+  saveFavView,
 } from "./state.js";
 import { renderEventList, renderFavoritesList, renderNewArrivalsList, renderEmptyList } from "./render.js";
 import { splitDate, daysSince } from "./format.js";
+import { buildMonthGrid, addMonths } from "./calendar.js";
 import {
   openExcludeMenu,
   confirmBlockArtist,
@@ -434,7 +437,70 @@ async function initNewArrivals(container) {
   render();
 }
 
+const CAL_WEEKDAYS = ["日", "一", "二", "三", "四", "五", "六"];
+
+/** Renders the month grid + (if a day is selected) that day's favorited events below it. */
+function renderFavCalendar(calendarEl, favorited, view) {
+  const byDate = new Map();
+  for (const event of favorited) {
+    if (!byDate.has(event.date)) byDate.set(event.date, []);
+    byDate.get(event.date).push(event);
+  }
+
+  const weeks = buildMonthGrid(view.year, view.month);
+  const todayIso = new Date().toISOString().slice(0, 10);
+
+  const cellsHtml = weeks
+    .map(
+      (week) => `
+    <div class="cal-week">
+      ${week
+        .map((cell) => {
+          if (!cell) return `<div class="cal-cell cal-cell--empty"></div>`;
+          const hasEvents = byDate.has(cell.date);
+          const classes = [
+            "cal-cell",
+            cell.date === todayIso ? "cal-cell--today" : "",
+            cell.date === view.selectedDate ? "cal-cell--selected" : "",
+          ]
+            .filter(Boolean)
+            .join(" ");
+          return `<button type="button" class="${classes}" data-cal-date="${cell.date}" ${hasEvents ? "" : "disabled"}>
+            <span class="cal-cell__day">${cell.day}</span>
+            ${hasEvents ? `<span class="cal-cell__dot"></span>` : ""}
+          </button>`;
+        })
+        .join("")}
+    </div>`,
+    )
+    .join("");
+
+  const selectedEvents = view.selectedDate ? (byDate.get(view.selectedDate) ?? []) : [];
+
+  calendarEl.innerHTML = `
+    <div class="cal-header">
+      <button type="button" class="icon-btn" data-cal-nav="-1" aria-label="上個月">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg>
+      </button>
+      <div class="cal-header__label">${view.year} 年 ${view.month} 月</div>
+      <button type="button" class="icon-btn" data-cal-nav="1" aria-label="下個月">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+      </button>
+    </div>
+    <div class="cal-weekday-row">${CAL_WEEKDAYS.map((d) => `<div class="cal-weekday">${d}</div>`).join("")}</div>
+    <div class="cal-grid">${cellsHtml}</div>
+    <div class="cal-day-events" id="cal-day-events">
+      ${
+        view.selectedDate
+          ? renderFavoritesList(selectedEvents) // a disabled (no-event) cell can't be clicked, so selectedEvents is never empty here
+          : renderEmptyList("這個月沒有收藏的場次。")
+      }
+    </div>
+  `;
+}
+
 async function initFavorites(container) {
+  const calendarEl = document.getElementById("fav-calendar");
   let events;
   try {
     await reconcileGistSync();
@@ -445,14 +511,77 @@ async function initFavorites(container) {
     return;
   }
 
+  let favView = loadFavView();
+  // Jumps to the month of the soonest favorited show the first time the
+  // calendar has data to show; month/day navigation after that is left alone
+  // across re-renders (e.g. after toggling a favorite) so the user doesn't
+  // get yanked back to the "soonest show" month mid-browse.
+  let calendarView = null;
+  let favorited = [];
+
+  // Re-renders just the calendar widget from the current calendarView state
+  // (month nav, day selection) without re-reading prefs/events — those only
+  // change via render() below, when a favorite is actually toggled.
+  function renderCalendarView() {
+    renderFavCalendar(calendarEl, favorited, calendarView);
+    wireTicketButtons(calendarEl);
+    wireFavoriteToggle(calendarEl, render);
+    calendarEl.querySelectorAll("[data-cal-nav]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const { year, month } = addMonths(calendarView.year, calendarView.month, Number(btn.dataset.calNav));
+        // The previously selected day almost certainly isn't in the new
+        // month — keeping it would silently show a stale, different month's
+        // event below a calendar that no longer has that day selected at
+        // all (found in testing: navigating to October still showed
+        // September's event with nothing on screen explaining why). Jump to
+        // this month's first favorited day instead, or clear the selection
+        // if it has none.
+        const prefix = `${year}-${String(month).padStart(2, "0")}`;
+        const firstInMonth = favorited.find((e) => e.date.startsWith(prefix));
+        calendarView = { year, month, selectedDate: firstInMonth?.date ?? null };
+        renderCalendarView();
+      });
+    });
+    calendarEl.querySelectorAll("[data-cal-date]:not([disabled])").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        calendarView = { ...calendarView, selectedDate: btn.dataset.calDate };
+        renderCalendarView();
+      });
+    });
+  }
+
   function render() {
     const prefs = loadPrefs();
     const { visible } = partitionEvents(events, prefs, {});
-    const favorited = visible.filter((item) => item.pinned).map((item) => item.event);
+    favorited = visible.filter((item) => item.pinned).map((item) => item.event);
     favorited.sort((a, b) => (a.date < b.date ? -1 : a.date > b.date ? 1 : 0));
 
     const summary = document.getElementById("fav-summary");
     if (summary) summary.textContent = `共 ${favorited.length} 場 · 依日期排序`;
+
+    if (!calendarView && favorited.length > 0) {
+      const [year, month] = favorited[0].date.split("-").map(Number);
+      calendarView = { year, month, selectedDate: favorited[0].date };
+    } else if (!calendarView) {
+      const today = new Date();
+      calendarView = { year: today.getFullYear(), month: today.getMonth() + 1, selectedDate: null };
+    } else if (calendarView.selectedDate && !favorited.some((e) => e.date === calendarView.selectedDate)) {
+      // The selected day's only event(s) just got unfavorited (e.g. from the
+      // exact card this calendar is showing) — the date it points at no
+      // longer has anything, so re-render() would otherwise call
+      // renderFavoritesList([]) and silently show nothing with no
+      // explanation, same stale-state class of bug the month-nav case above
+      // already had to handle.
+      calendarView = { ...calendarView, selectedDate: null };
+    }
+
+    container.hidden = favView === "calendar";
+    calendarEl.hidden = favView !== "calendar";
+
+    if (favView === "calendar") {
+      renderCalendarView();
+      return;
+    }
 
     container.innerHTML =
       favorited.length === 0
@@ -469,6 +598,16 @@ async function initFavorites(container) {
       });
     });
   }
+
+  document.querySelectorAll("[data-fav-view]").forEach((btn) => {
+    btn.setAttribute("aria-pressed", String(btn.dataset.favView === favView));
+    btn.addEventListener("click", () => {
+      favView = btn.dataset.favView;
+      saveFavView(favView);
+      document.querySelectorAll("[data-fav-view]").forEach((b) => b.setAttribute("aria-pressed", String(b === btn)));
+      render();
+    });
+  });
 
   render();
 }

@@ -250,6 +250,24 @@ export function saveViewFilters(filters) {
   localStorage.setItem(VIEW_FILTERS_KEY, JSON.stringify(filters));
 }
 
+// --- Favorites page view mode (list vs. calendar, 2026-09-18) -----------
+// Same "screen state, not a rule" spirit as the view filters above — which
+// view you last had open isn't something that needs to sync across devices.
+
+const FAV_VIEW_KEY = "gigradar:fav_view";
+
+export function loadFavView() {
+  try {
+    return localStorage.getItem(FAV_VIEW_KEY) === "calendar" ? "calendar" : "list";
+  } catch {
+    return "list";
+  }
+}
+
+export function saveFavView(view) {
+  localStorage.setItem(FAV_VIEW_KEY, view);
+}
+
 // --- Gist sync (M9, FR-65, SPEC §8) -------------------------------------
 // The PAT lives in its own localStorage key — never inside `prefs`, so
 // exporting prefs via FR-63 can never leak it, and it's never written into
