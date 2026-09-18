@@ -1,6 +1,6 @@
 # 交接文件 — 換電腦/換 session 接續開發前先看這份
 
-寫於 2026-09-15，2026-09-17 更新。M1~M12 全部跑完一輪，覆蓋率抽樣（M12）結果不好，過程中還發現 KKTIX 的搜尋策略被 Cloudflare 擋住。**同一天稍晚，Max 帶了一份參考實作過來（另一個 Claude 對話產出、已經有人實際跑起來的 Python/Flask 版本），示範了用 Playwright 真瀏覽器繞過 Cloudflare、外加幾個新來源的做法，因此：(1) 資料抓取改成純手動觸發（決策 S5，取消 GitHub Actions 排程），(2) 新增 iNDIEVOX、FANSI GO、Ticket Plus 三個 adapter（Max 一開始要求的完整來源清單全部做完了），(3) 用 Playwright 真的修好了 KKTIX 搜尋策略被 Cloudflare 擋住的問題，覆蓋率抽樣從 3.4% 一路推到 51.7%**——看下方各來源對應章節跟 `reports/coverage-sample-2026-09-17.md` 的完整過程。這份文件的目的：讓一個完全沒看過這個對話紀錄的人（包含未來的你，或另一台電腦上全新開的 Claude Code session）能在 5 分鐘內知道現在做到哪、能不能信任目前的程式碼、下一步該做什麼。
+寫於 2026-09-15，2026-09-19 更新。M1~M12 全部跑完一輪，覆蓋率抽樣（M12）結果不好，過程中還發現 KKTIX 的搜尋策略被 Cloudflare 擋住。**2026-09-19 最新狀態**：待整理清單從 71 筆清到只剩 1 筆（見文件尾端「待整理清單大清理」章節），下一個要做的大方向是把同步機制從 Gist token 換成真帳號登入（email/密碼＋Google），**這個還沒動工**，見文件最後一節。**同一天稍晚，Max 帶了一份參考實作過來（另一個 Claude 對話產出、已經有人實際跑起來的 Python/Flask 版本），示範了用 Playwright 真瀏覽器繞過 Cloudflare、外加幾個新來源的做法，因此：(1) 資料抓取改成純手動觸發（決策 S5，取消 GitHub Actions 排程），(2) 新增 iNDIEVOX、FANSI GO、Ticket Plus 三個 adapter（Max 一開始要求的完整來源清單全部做完了），(3) 用 Playwright 真的修好了 KKTIX 搜尋策略被 Cloudflare 擋住的問題，覆蓋率抽樣從 3.4% 一路推到 51.7%**——看下方各來源對應章節跟 `reports/coverage-sample-2026-09-17.md` 的完整過程。這份文件的目的：讓一個完全沒看過這個對話紀錄的人（包含未來的你，或另一台電腦上全新開的 Claude Code session）能在 5 分鐘內知道現在做到哪、能不能信任目前的程式碼、下一步該做什麼。
 
 ## 這是什麼專案
 
@@ -352,3 +352,34 @@ Max 選取「爛泥發芽」這張卡片問說：這是音樂祭，怎麼被標�
 剩下 67 筆待整理，大多是非音樂雜訊（用「忽略」按鈕清掉即可）或真的看不出主秀的拼盤場次，不需要特別處理。52% 左右的覆蓋率抽樣可以視為現階段用免費工具、五個來源都做完後的實際天花板，再往上要嘛擴大追蹤場館清單（投報率遞減，前面查證過大多數自營小場館很難批次找到），要嘛是接受這個範圍——不建議現在就投入。
 
 架構上目前仍是：**抓取一律手動觸發（決策 S5），不做自動排程**，`.github/workflows/daily-update.yml` 的 `schedule` 已經拿掉，只留 `workflow_dispatch`。**這個決策正在被重新討論**（見上一節最後一段）——Max 嫌手動按一次要等太久，正在考慮要不要換成「排程自動預先抓好存資料庫」的架構，但排程要在哪裡跑會重新踩到 M11 那個 IP 被封鎖的老問題，還沒有結論，先不要假設會維持現狀。
+
+## 待整理清單大清理：71 筆降到 1 筆（2026-09-18/19）
+
+Max 看了待整理清單問了三個問題，逐一處理：
+
+1. **「有些不是音樂祭嗎？」**——沒錯，根因跟爛泥發芽那次一樣：`normalize()` 要先辨識出至少一個 headliner 才會走到分類邏輯，光標題有「音樂祭」字樣但沒人被認出來的活動會直接卡在待整理，連分類都不會跑。逐一開票券頁查證後，把 ASIA METAL FESTIVAL、火球祭、秋夜爵醒祭、X-Formosa、囪擊音樂祭、FRIENDS MEETING、Kaohsiung Park Music Festival 等確認過的真音樂祭品牌名稱、跟幾個拼盤/派對系列品牌（河馬玖狂、西部地區懸賞公告、交個朋友吧、重型宇宙派對、Punk Strike…）加進 `artists.yml` + `normalize.mjs` 的 `TYPE_KEYWORDS`。
+2. **「非音樂雜訊不要進資料」**——`normalize.mjs` 新增 `NOISE_KEYWORDS`／`isNonMusicNoise()`，運動賽事、摔角、課程、展覽、蛋黃酥、脫口秀、Podcast 等在抓取階段直接排除（`normalize()` 回傳新的第三種結果 `{ excluded }`），不會再進 `needs-review.json`。**過程中意外抓到一個已經上線的真實 bug**：「臺北大巨蛋演唱會-歌迷返鄉專車【非官方服務】」這種冒用真演唱會名義賣接送巴士票的東西，因為標題裡有 Stray Kids/BTS/AAA/Post Malone 的真名，已經被誤判成正式場次混進 `events.json`——連同 4 筆一起用一次性腳本清掉了。
+3. **「只要在追蹤平台上就該加，不該我自己判斷冷不冷門」**——開了近 20 個票券頁逐筆查證身分（不是憑標題猜），`artists.yml` 補了約 47 筆真實藝人/樂團/品牌名稱。
+
+**順便修好一個既有 bug**：`findNameIndex`／`guessTagsType` 的比對是大小寫敏感的，真實資料裡同一個品牌會一種寫大寫一種寫小寫（例如「Punk Strike」vs「PUNK STRIKE」），全大寫的「TOUR」比對不到 `["Tour", "巡迴"]` 這條——已經改成大小寫不敏感比對，**連帶讓 37 筆現有場次從錯誤的「專場」改標成正確的「巡迴」**。
+
+跑完真實 pipeline 驗證：`needs-review.json` 71 筆降到 1 筆（剩 MOB PARTY 26，泰國清邁的活動，不在 GigRadar 的台灣場次追蹤範圍內，建議直接用「忽略」按鈕清掉，不算 bug）。`npm test` 77 個測試全過。改動已 commit（`8916204`）並 push 上 `origin/main`。
+
+## 下一個大方向（還沒動工）：改成真帳號登入（email/密碼＋Google 登入），取代 Gist 同步
+
+Max 想要「開網址、登入會員帳號、甚至可以綁 Gmail 登入，就能跨裝置同步」——比現在的 Gist 同步（決策 S1，要貼 GitHub PAT token 才能用）對一般人友善很多。**這是一個尚未動工的計畫，這裡只是把方向定下來、方便任何一台電腦接手時知道要往哪走，不是說已經做完。**
+
+這個方向會**推翻決策 D14（純靜態前端，沒有後端）**——D14 是很多既有設計的前提（M7 手動新增場次只存 localStorage/Gist、M8 指派藝人不會真的寫 `artists.yml`），一旦有了真後端，這些限制不再是技術上不得已，而是要重新決定要不要保留。接手的人要先意識到這一點，不要只當作「多加一個登入功能」。
+
+**建議的技術路線：Supabase**——一個服務同時給 Postgres 資料庫、使用者驗證（內建 email/密碼登入 + Google OAuth 登入，不用自己刻登入伺服器）、還有自動產生的 REST API，比另外接 Neon Postgres + 自己寫一套登入系統工程量小很多（這個比較在 2026-09-18 那次跟 Max 討論「1 分鐘內」那次已經提過一次，見上面章節）。
+
+**接手的人要做的事（照順序）**：
+
+1. **Max 自己**去 supabase.com 開一個免費專案（開帳號、建專案這一步只能 Max 本人做，Claude 不能代替使用者建立外部服務帳號）。
+2. **Max 自己**在 Google Cloud Console 開一個 OAuth 用戶端（Client ID/Secret），才能讓 Supabase 的 Google 登入選項真的動起來——這步也需要 Max 自己的 Google 帳號權限，不能代做。
+3. 在 Supabase 的 Auth 設定裡啟用 Email 跟 Google 兩種登入方式，把上一步拿到的 Client ID/Secret 貼進去。
+4. 設計一個 `user_prefs` 資料表（用 Supabase 的 `auth.uid()` 當 key），存的內容跟現在 Gist 同步的範圍一樣：`favorites`／`excluded_artists`／`excluded_types`／`mute_keywords`／`strict_mode`（見 FR-63/64、`GIGRADAR-SPEC.md` §8）。**畫面篩選狀態（城市/月份/價格/類型/地區 chip、收藏頁列表/日曆切換）刻意不用同步**，跟現在 Gist 同步的原則一樣——那些是「當下在看什麼」不是「跨裝置生效的規則」。
+5. 前端新增登入/註冊頁面（或彈窗），用 `@supabase/supabase-js` 這個 client 套件跟 Supabase 溝通。
+6. 決定要不要保留 Gist 同步當作「沒有帳號時的備援」，還是直接整條 `reconcileGistSync()` 路徑換掉——這個要問 Max，不要自己假設。
+
+**還沒做的部分**：以上全部，包含 Supabase 專案本身都還沒開。任何人接手前，先確認 Max 是否已經完成步驟 1/2（開帳號、開 OAuth 用戶端），沒有的話這個方向連開始寫程式碼都還不能動工。
