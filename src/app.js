@@ -22,10 +22,15 @@
  *   prefs calls reconcileGistSync() before its first render so a change made
  *   on another device shows up on load, not just after a manual settings-page
  *   visit.
- * M10 (current): 設定頁來源狀態儀表讀 data/sources.json；時間表在有來源異常
- *   時顯示警示 banner（FR-14/62, AC-14）。實際的告警（開 GitHub issue）在
- *   pipeline 端（scripts/notify.mjs），前端只負責把 sources.json 的 status
- *   顯示出來。
+ * M10: 設定頁來源狀態儀表讀 data/sources.json；時間表在有來源異常時顯示警示
+ *   banner（FR-14/62, AC-14）。實際的告警（開 GitHub issue）在 pipeline 端
+ *   （scripts/notify.mjs），前端只負責把 sources.json 的 status 顯示出來。
+ * 2026-09-20 (current): Gist 同步整個換成 Supabase 帳號登入——貼 GitHub PAT
+ *   對一般使用者太技術性。原本一起做了 email/密碼登入，但 Supabase 免費方案
+ *   寄出的驗證信用共用網域、無法客製內容，容易被誤認成詐騙信，所以拿掉了，
+ *   只留 Google 登入（Google 本身就是身分驗證，完全不涉及 Supabase 寄信）。
+ *   呼叫時機不變：reconcileSupabaseSync() 一樣在每個讀 prefs 的頁面初次渲染前呼叫一次；
+ *   登入是加分項不是門檻，沒登入時完全 no-op，跟以前沒連 Gist 時一樣。
  */
 
 import { partitionEvents, isPast } from "./filter.js";
@@ -46,10 +51,7 @@ import {
   addManualEvent,
   loadReviewDismissed,
   dismissReviewItem,
-  loadGistToken,
-  connectGistSync,
-  disconnectGistSync,
-  reconcileGistSync,
+  reconcileSupabaseSync,
   exportPrefsAsJson,
   importPrefsFromJson,
   loadViewFilters,
@@ -59,6 +61,7 @@ import {
   loadTheme,
   saveTheme,
 } from "./state.js";
+import { getSession, signInWithGoogle, signOut } from "./supabase.js";
 import { renderEventList, renderFavoritesList, renderNewArrivalsList, renderEmptyList } from "./render.js";
 import { splitDate, daysSince } from "./format.js";
 import { buildMonthGrid, addMonths } from "./calendar.js";
@@ -351,9 +354,9 @@ async function initTimeline(container) {
   let events;
   try {
     // Sequential, not Promise.all: loadEvents() reads manual events from
-    // localStorage, and reconcileGistSync() may just have overwritten them —
+    // localStorage, and reconcileSupabaseSync() may just have overwritten them —
     // running them concurrently risks loadEvents() reading the stale copy.
-    await reconcileGistSync();
+    await reconcileSupabaseSync();
     events = await loadEvents();
   } catch (err) {
     console.error("Failed to load events.json:", err);
@@ -403,7 +406,7 @@ async function initSearch(container) {
   const input = document.getElementById("search-input");
   let events;
   try {
-    await reconcileGistSync();
+    await reconcileSupabaseSync();
     events = await loadEvents();
   } catch (err) {
     console.error("Failed to load events.json:", err);
@@ -443,7 +446,7 @@ async function initSearch(container) {
 async function initNewArrivals(container) {
   let events;
   try {
-    await reconcileGistSync();
+    await reconcileSupabaseSync();
     events = await loadEvents();
   } catch (err) {
     console.error("Failed to load events.json:", err);
@@ -545,7 +548,7 @@ async function initFavorites(container) {
   const calendarEl = document.getElementById("fav-calendar");
   let events;
   try {
-    await reconcileGistSync();
+    await reconcileSupabaseSync();
     events = await loadEvents();
   } catch (err) {
     console.error("Failed to load events.json:", err);
@@ -657,7 +660,7 @@ async function initFavorites(container) {
 async function initHiddenManagement(container) {
   let events;
   try {
-    await reconcileGistSync();
+    await reconcileSupabaseSync();
     events = await loadEvents();
   } catch (err) {
     console.error("Failed to load events.json:", err);
@@ -821,14 +824,16 @@ function formatDateTime(iso) {
   return `${d.getFullYear()}/${pad(d.getMonth() + 1)}/${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
 }
 
-/** M9 (FR-65/§8 Gist sync, FR-63/64 backup export/import). settings.html has no single container — this wires individual elements by id instead. */
+/** Account/Supabase sync (2026-09-20, replaces M9's Gist sync), FR-63/64 backup export/import. settings.html has no single container — this wires individual elements by id instead. */
 function initSettings() {
   const syncStatus = document.getElementById("sync-status");
   const syncLast = document.getElementById("sync-last");
   const backupLast = document.getElementById("backup-last");
-  const tokenInput = document.getElementById("gist-token");
-  const connectBtn = document.getElementById("gist-connect-btn");
-  const disconnectBtn = document.getElementById("gist-disconnect-btn");
+  const accountLoggedOut = document.getElementById("account-logged-out");
+  const accountLoggedIn = document.getElementById("account-logged-in");
+  const accountEmail = document.getElementById("account-email");
+  const googleSigninBtn = document.getElementById("google-signin-btn");
+  const signoutBtn = document.getElementById("signout-btn");
   const exportBtn = document.getElementById("export-btn");
   const importBtn = document.getElementById("import-btn");
   const importFileInput = document.getElementById("import-file-input");
@@ -839,15 +844,35 @@ function initSettings() {
   const refetchStatus = document.getElementById("refetch-status");
   const themeButtons = document.querySelectorAll("[data-theme-value]");
 
-  function renderSyncStatus() {
+  // Google's redirectTo always points back at this page (see the click
+  // handler below), so an OAuth failure lands here too — but as a query
+  // string Supabase appends, not a thrown JS error. Found live (2026-09-19):
+  // a wrong Client Secret failed silently with zero UI feedback, and the
+  // only way to see what went wrong was reading the URL bar by hand. Surface
+  // it the same way every other failure in this file does, then clean the
+  // URL so a reload doesn't keep re-alerting the same stale error.
+  const oauthError = new URLSearchParams(window.location.search).get("error_description");
+  if (oauthError) {
+    alert(`Google 登入失敗：${decodeURIComponent(oauthError.replace(/\+/g, " "))}`);
+    history.replaceState(null, "", window.location.pathname);
+  }
+
+  async function renderSyncStatus() {
     const prefs = loadPrefs();
-    const connected = !!(prefs.gist_id && loadGistToken());
-    syncStatus.textContent = connected ? "● 已連接" : "○ 未連接";
-    syncLast.textContent = connected ? `上次同步：${formatDateTime(prefs.updated_at) ?? "尚未同步過"}` : "尚未同步過";
-    connectBtn.hidden = connected;
-    disconnectBtn.hidden = !connected;
-    if (connected) tokenInput.value = "";
+    const session = await getSession();
+    const loggedIn = !!session;
+    syncStatus.textContent = loggedIn ? "● 已登入" : "○ 未登入";
+    // Was text-only before this pass (a real design/code gap found while
+    // updating the design comp) — the badge sat gray in both states, same
+    // gap the old Gist-era UI had too. Match source-status.css's .status-ok
+    // treatment for "healthy" so 已登入 actually reads as a positive state.
+    syncStatus.style.background = loggedIn ? "var(--lime)" : "var(--surface-2)";
+    syncStatus.style.color = loggedIn ? "var(--lime-ink)" : "var(--muted)";
+    syncLast.textContent = loggedIn ? `上次同步：${formatDateTime(prefs.updated_at) ?? "尚未同步過"}` : "尚未同步過";
     backupLast.textContent = `上次備份日期：${formatDateTime(prefs.last_backup_at) ?? "無"}`;
+    accountLoggedOut.hidden = loggedIn;
+    accountLoggedIn.hidden = !loggedIn;
+    if (loggedIn) accountEmail.textContent = session.user.email ?? "";
   }
 
   function renderMuteKeywords() {
@@ -893,29 +918,24 @@ function initSettings() {
     renderMuteKeywords();
   });
 
-  connectBtn.addEventListener("click", async () => {
-    const token = tokenInput.value.trim();
-    if (!token) {
-      alert("請先貼上 GitHub Personal Access Token（gist 權限）。");
-      return;
-    }
-    connectBtn.disabled = true;
-    connectBtn.textContent = "連接中…";
+  googleSigninBtn.addEventListener("click", async () => {
+    googleSigninBtn.disabled = true;
     try {
-      await connectGistSync(token);
-      renderSyncStatus();
+      // Redirect back to this same page — simplest round-trip, matches
+      // login.html's own Google button doing the same for itself.
+      await signInWithGoogle(window.location.href);
     } catch (err) {
-      console.error("Gist connect failed:", err);
-      alert("連接失敗，請確認 token 是否有效、是否有 gist 權限。");
-    } finally {
-      connectBtn.disabled = false;
-      connectBtn.textContent = "連接同步";
+      console.error("Google sign-in failed:", err);
+      alert("Google 登入失敗，請稍後再試。");
+      googleSigninBtn.disabled = false;
     }
+    // No further code runs here on success — signInWithGoogle() navigates
+    // the whole page away to Google's consent screen.
   });
 
-  disconnectBtn.addEventListener("click", () => {
-    disconnectGistSync();
-    renderSyncStatus();
+  signoutBtn.addEventListener("click", async () => {
+    await signOut();
+    await renderSyncStatus();
   });
 
   exportBtn.addEventListener("click", () => {

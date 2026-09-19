@@ -1,6 +1,6 @@
 # 交接文件 — 換電腦/換 session 接續開發前先看這份
 
-寫於 2026-09-15，2026-09-19 更新。M1~M12 全部跑完一輪，覆蓋率抽樣（M12）結果不好，過程中還發現 KKTIX 的搜尋策略被 Cloudflare 擋住。**2026-09-19 最新狀態**：待整理清單從 71 筆清到只剩 1 筆（見文件尾端「待整理清單大清理」章節），下一個要做的大方向是把同步機制從 Gist token 換成真帳號登入（email/密碼＋Google），**這個還沒動工**，見文件最後一節。**同一天稍晚，Max 帶了一份參考實作過來（另一個 Claude 對話產出、已經有人實際跑起來的 Python/Flask 版本），示範了用 Playwright 真瀏覽器繞過 Cloudflare、外加幾個新來源的做法，因此：(1) 資料抓取改成純手動觸發（決策 S5，取消 GitHub Actions 排程），(2) 新增 iNDIEVOX、FANSI GO、Ticket Plus 三個 adapter（Max 一開始要求的完整來源清單全部做完了），(3) 用 Playwright 真的修好了 KKTIX 搜尋策略被 Cloudflare 擋住的問題，覆蓋率抽樣從 3.4% 一路推到 51.7%**——看下方各來源對應章節跟 `reports/coverage-sample-2026-09-17.md` 的完整過程。這份文件的目的：讓一個完全沒看過這個對話紀錄的人（包含未來的你，或另一台電腦上全新開的 Claude Code session）能在 5 分鐘內知道現在做到哪、能不能信任目前的程式碼、下一步該做什麼。
+寫於 2026-09-15，2026-09-20 更新。M1~M12 全部跑完一輪，覆蓋率抽樣（M12）結果不好，過程中還發現 KKTIX 的搜尋策略被 Cloudflare 擋住。**2026-09-20 最新狀態**：Gist token 同步已經整個換成 Supabase 帳號登入，**已經動工完成並實測過**（真的登入成功、資料庫真的寫入資料）——只留 Google 登入，email/密碼那條路做完後又拿掉了，細節見文件尾端「Supabase 帳號登入上線」章節。2026-09-19 待整理清單也從 71 筆清到只剩 1 筆（見「待整理清單大清理」章節）。**同一天稍晚，Max 帶了一份參考實作過來（另一個 Claude 對話產出、已經有人實際跑起來的 Python/Flask 版本），示範了用 Playwright 真瀏覽器繞過 Cloudflare、外加幾個新來源的做法，因此：(1) 資料抓取改成純手動觸發（決策 S5，取消 GitHub Actions 排程），(2) 新增 iNDIEVOX、FANSI GO、Ticket Plus 三個 adapter（Max 一開始要求的完整來源清單全部做完了），(3) 用 Playwright 真的修好了 KKTIX 搜尋策略被 Cloudflare 擋住的問題，覆蓋率抽樣從 3.4% 一路推到 51.7%**——看下方各來源對應章節跟 `reports/coverage-sample-2026-09-17.md` 的完整過程。這份文件的目的：讓一個完全沒看過這個對話紀錄的人（包含未來的你，或另一台電腦上全新開的 Claude Code session）能在 5 分鐘內知道現在做到哪、能不能信任目前的程式碼、下一步該做什麼。
 
 ## 這是什麼專案
 
@@ -383,3 +383,23 @@ Max 想要「開網址、登入會員帳號、甚至可以綁 Gmail 登入，就
 6. 決定要不要保留 Gist 同步當作「沒有帳號時的備援」，還是直接整條 `reconcileGistSync()` 路徑換掉——這個要問 Max，不要自己假設。
 
 **還沒做的部分**：以上全部，包含 Supabase 專案本身都還沒開。任何人接手前，先確認 Max 是否已經完成步驟 1/2（開帳號、開 OAuth 用戶端），沒有的話這個方向連開始寫程式碼都還不能動工。
+
+## Supabase 帳號登入上線（2026-09-20，上面那節的計畫已經做完）
+
+上面整節「下一個大方向（還沒動工）」已經**做完並實測成功**。跟原計畫的差異、實際踩到的坑，記在這裡。
+
+**跟原計畫的差異：只做 Google 登入，email/密碼整個拿掉了**——一開始兩個都做了（signup/signin 表單、忘記密碼、重寄驗證信，`login.html`＋`reset-password.html`），但 Supabase 免費方案寄出的驗證信/重設密碼信用共用網域（`mail.app.supabase.io`），內容不能改、看起來很像詐騙信（要客製內容得先接自訂 SMTP，還要有自己的網域才有辦法讓信件不被當垃圾信擋掉）。Max 決定乾脆只留 Google 登入——Google 本身就是身分驗證，完全不會有 Supabase 寄信的問題。所以 `login.html`／`reset-password.html`／`src/supabase.js` 裡密碼相關的 5 個函式都已經刪掉，現在 `src/supabase.js` 只剩 `getSession`／`signInWithGoogle`／`signOut` 三個函式。
+
+**資料庫**：`user_prefs` 表已經在 Supabase 建好（user_id/prefs/manual_events/updated_at，RLS 只允許 `auth.uid() = user_id`），而且因為「自動曝光新表」被關掉了，額外需要手動 `grant select, insert, update on public.user_prefs to authenticated;`（沒有 grant 給 anon，匿名完全連不到這張表，測過會回傳 401 permission denied，這是預期行為）。
+
+**架構調整**：`src/state.js` 的 Gist 同步整段換成 Supabase 版本（`pushToSupabase`／`scheduleSupabaseSync`／`reconcileSupabaseSync`），邏輯跟原本的 Gist 機制一模一樣（2 秒 debounce push、頁面載入時 last-write-wins 比對 `updated_at`），只是資料來源從 GitHub Gist API 換成 `supabase.from('user_prefs')`。呼叫時機也沒變，一樣是 `initTimeline`／`initSearch`／`initNewArrivals`／`initFavorites`／`initHiddenManagement` 這 5 個頁面的 init 函式各呼叫一次，settings.html 本身不會觸發同步（只顯示狀態）。
+
+**過程中踩到的坑，照時間順序**：
+1. **忘記密碼流程一開始有做，後來整個拿掉**——連同 `resetPasswordForEmail`/`updatePassword`/`resendConfirmationEmail` 一起刪了，理由同上（Google-only 決定）。
+2. **關閉 Email provider 前要注意**：Supabase 免費方案下**沒接自訂 SMTP 就不能編輯任何信件模板**（Subject/Body 欄位是唯讀的），一開始以為能簡單改文案降低詐騙感，試了才發現整個編輯功能都被鎖住。
+3. **Google OAuth 用戶端在開發過程中被刪除過一次**——具體原因不明（可能是 Max 操作 Google Cloud Console 時手滑），造成一次「The OAuth client was deleted」401 錯誤，靠重建一個新的用戶端（新的 Client ID 開頭一樣是 `418431742356-`，但後半段完全不同）解決，記得如果之後又遇到 `deleted_client` 錯誤，先去 `https://console.cloud.google.com/apis/credentials` 確認用戶端還在不在。
+4. **Supabase 的「允許跳轉網址」（Redirect URLs）預設沒有把本機網址放進去**——只有預設的 `http://localhost:3000`，但 `npm run serve` 實際跑在 `8000`，要手動去 Authentication → URL Configuration 加一筆 `http://localhost:8000/**`。這個機制本身是安全設計（防止登入完成後被導到未經同意的網址），不是 bug，只是預設值跟這個專案的 port 對不上，之後 GitHub Pages 開通有正式網址後，這裡還要再加一筆正式站網址。
+5. **真正卡最久的問題**：Client Secret 重設過後，Supabase 那邊沒有真的存到最新的值，導致 Google 那邊授權碼換權杖失敗，錯誤是 `error=server_error&error_code=unexpected_failure&error_description=Unable+to+exchange+external+code`。**這個錯誤原本完全不會顯示在畫面上**——`initSettings()` 沒有檢查網址列的 `?error=...` 參數，使用者點登入、走完 Google 流程、跳回來，畫面就只是靜靜地維持「未登入」，沒有任何提示，只能自己去看網址列才找得到線索。已經修好：`initSettings()` 現在會檢查 `error_description` 參數，用 `alert()` 顯示出來（跟這個檔案其他地方的錯誤提示風格一致），顯示完會把網址清乾淨，重新整理不會一直跳同一個舊錯誤。
+6. **驗證方式**：不只看畫面顯示「已登入」就信了，有直接查 `user_prefs` 表確認真的寫進一筆資料（`prefs` 欄位格式正確），也用假的 anon 請求測過 RLS 真的擋得住匿名存取（401），這兩個都是實測過、不是憑印象猜的。
+
+**目前狀態**：Google 登入完整測過、資料庫讀寫都驗證過，`npm test` 77 個測試全過。**還沒做的**：GitHub Pages 還沒開通（部署出去的正式站網址還不存在），正式站網址確定後要記得回去 Supabase 的 Redirect URLs 補一筆。`GIGRADAR-SPEC.md` §7/§8（原本描述 Gist 同步的技術文件）跟 `GIGRADAR-SRS.md` 的 FR-65 現在是過時內容，還沒有回去更新。
